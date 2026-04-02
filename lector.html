@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/lector-guard.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector Operations Dashboard — AI Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            font-weight: 800;
+        }
+
+        .sidebar p {
+            color: var(--text-muted);
+            font-size: 0.83rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .view-btn {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: 0.2s ease;
+        }
+
+        .view-btn:hover {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: rgba(59, 130, 246, 0.25);
+            color: var(--text-primary);
+        }
+
+        .view-btn.active {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.35);
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .sidebar-actions {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.18);
+        }
+
+        .main {
+            padding: 28px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .refresh-chip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 100px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+        }
+
+        .card .label {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .card.blue .value { color: var(--accent-blue); }
+        .card.green .value { color: var(--accent-green); }
+        .card.orange .value { color: var(--accent-orange); }
+        .card.red .value { color: var(--accent-red); }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .panel h3 {
+            margin-bottom: 10px;
+            font-size: 1.08rem;
+        }
+
+        .panel p {
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .filters input,
+        .filters select,
+        .filters button,
+        .action-btn,
+        .status-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .filters input {
+            min-width: 220px;
+        }
+
+        .filters button,
+        .action-btn,
+        .status-btn {
+            cursor: pointer;
+        }
+
+        .filters button:hover,
+        .action-btn:hover,
+        .status-btn:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 920px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(59, 130, 246, 0.06);
+            font-weight: 700;
+        }
+
+        td {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
+
+        tr:hover td {
+            background: rgba(59, 130, 246, 0.04);
+        }
+
+        .student-id {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid transparent;
+        }
+
+        .badge.green { color: #6ee7b7; background: rgba(16, 185, 129, 0.16); border-color: rgba(16, 185, 129, 0.4); }
+        .badge.yellow { color: #fde68a; background: rgba(245, 158, 11, 0.16); border-color: rgba(245, 158, 11, 0.4); }
+        .badge.orange { color: #fdba74; background: rgba(249, 115, 22, 0.16); border-color: rgba(249, 115, 22, 0.4); }
+        .badge.red { color: #fca5a5; background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.4); }
+        .badge.gray { color: #94a3b8; background: rgba(100, 116, 139, 0.16); border-color: rgba(100, 116, 139, 0.35); }
+        .badge.blue { color: #93c5fd; background: rgba(59, 130, 246, 0.16); border-color: rgba(59, 130, 246, 0.4); }
+
+        .activity-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .activity-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+        }
+
+        .activity-item .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .activity-item .meta {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 28px;
+        }
+
+        .disclosure-list {
+            margin-left: 18px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .disclosure-list code {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 5px;
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 100%;
+            max-width: 640px;
+            position: relative;
+        }
+
+        .modal-box h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .modal-box .close-btn {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .modal-box .close-btn:hover {
+            border-color: var(--accent-red);
+            color: #fca5a5;
+        }
+
+        .modal-box label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        .modal-box label:first-of-type {
+            margin-top: 0;
+        }
+
+        .modal-box select,
+        .modal-box input,
+        .modal-box textarea {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            font-size: 0.88rem;
+            font-family: inherit;
+        }
+
+        .modal-box textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .modal-box .modal-actions button {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .modal-box .modal-actions button:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .modal-box .modal-actions .btn-primary {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+        }
+
+        .modal-box .modal-actions .btn-primary:hover {
+            background: rgba(59, 130, 246, 0.28);
+        }
+
+        .modal-box .modal-actions .btn-success {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
+        }
+
+        .modal-box .modal-actions .btn-success:hover {
+            background: rgba(16, 185, 129, 0.28);
+        }
+
+        .modal-result {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .modal-result.visible {
+            display: block;
+        }
+
+        .modal-result.success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .modal-result.error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th.sortable:hover {
+            color: var(--accent-blue);
+        }
+
+        th.sortable::after {
+            content: ' \2195';
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 960px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .main {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <h1>AI Academy Ops</h1>
+            <p>Live console for one-lector operation: monitor AI Academy flow, handle fallbacks, and track student activity.</p>
+            <button class="view-btn active" data-view="live-view">Live AI Academy</button>
+            <button class="view-btn" data-view="fallback-view">Fallback Queue</button>
+            <button class="view-btn" data-view="progress-view">Progress Explorer</button>
+            <a href="/teams/mission-control.html" class="view-btn" style="display:block;text-align:center;text-decoration:none;margin-top:12px;border-top:1px solid var(--border);padding-top:16px;">🚀 Mission Control</a>
+
+            <div class="sidebar-actions">
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="header">
+                <div>
+                    <h2>Lector Operations Dashboard</h2>
+                    <p>Fallback-aware operations for synchronized online sessions.</p>
+                </div>
+                <div class="refresh-chip" id="refresh-chip">Refreshing…</div>
+            </header>
+
+            <section class="cards">
+                <article class="card blue">
+                    <div class="label">Total Students</div>
+                    <div class="value" id="stat-total">0</div>
+                </article>
+                <article class="card green">
+                    <div class="label">Active (15 min)</div>
+                    <div class="value" id="stat-active">0</div>
+                </article>
+                <article class="card orange">
+                    <div class="label">Behind Schedule</div>
+                    <div class="value" id="stat-behind">0</div>
+                </article>
+                <article class="card red">
+                    <div class="label">Fallback Open</div>
+                    <div class="value" id="stat-open">0</div>
+                </article>
+                <article class="card green">
+                    <div class="label">Resolved Today</div>
+                    <div class="value" id="stat-resolved">0</div>
+                </article>
+            </section>
+
+            <section id="live-view" class="view active">
+                <div class="panel">
+                    <h3>Live AI Academy</h3>
+                    <p>Green = active and healthy. Yellow = slowed. Red = open fallback ticket. Gray = inactive.</p>
+                </div>
+                <div class="panel">
+                    <div class="filters">
+                        <input id="ai-academy-search" type="text" placeholder="Search by name, email, or role">
+                        <select id="ai-academy-status-filter">
+                            <option value="all">All statuses</option>
+                            <option value="green">Green</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="red">Red</option>
+                            <option value="gray">Gray</option>
+                        </select>
+                        <select id="ai-academy-role-filter">
+                            <option value="all">All roles</option>
+                            <option value="FDE">FDE</option>
+                            <option value="AI-SE">AI-SE</option>
+                            <option value="AI-DS">AI-DS</option>
+                            <option value="AI-DA">AI-DA</option>
+                            <option value="AI-PM">AI-PM</option>
+                            <option value="AI-FE">AI-FE</option>
+                            <option value="AI-SEC">AI-SEC</option>
+                            <option value="AI-DX">AI-DX</option>
+                        </select>
+                        <button id="ai-academy-refresh-btn">Refresh now</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Week / Day</th>
+                                    <th>Messages</th>
+                                    <th>Last Active</th>
+                                    <th>Fallbacks</th>
+                                    <th>Health</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ai-academy-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="fallback-view" class="view">
+                <div class="panel">
+                    <h3>Fallback Queue</h3>
+                    <p>Use <strong>Acknowledge</strong> when you start handling a ticket. Use <strong>Resolve</strong> when the blocker is removed.</p>
+                </div>
+                <div class="panel">
+                    <div class="filters">
+                        <select id="fallback-status-filter">
+                            <option value="open">Open</option>
+                            <option value="acknowledged">Acknowledged</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                            <option value="all">All</option>
+                        </select>
+                        <button id="fallback-refresh-btn">Refresh queue</button>
+                        <button id="fallback-close-all-btn" style="border-color: rgba(239, 68, 68, 0.35); color: #fca5a5;">Close All Open</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Opened</th>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Role / Day</th>
+                                    <th>Reason</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fallback-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="progress-view" class="view">
+                <div class="panel">
+                    <h3>Progress Explorer</h3>
+                    <p>Completion-based view from <code>student_progress</code>. Useful for historical tracking, not live incident response.</p>
+                </div>
+                <div class="panel">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Current</th>
+                                    <th>Completed Lessons</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="progress-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="progress-details" class="panel" style="display:none; margin-top: 12px;"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            const views = Array.from(document.querySelectorAll('.view'));
+            const viewButtons = Array.from(document.querySelectorAll('.view-btn'));
+            const refreshChip = document.getElementById('refresh-chip');
+
+            const statTotal = document.getElementById('stat-total');
+            const statActive = document.getElementById('stat-active');
+            const statBehind = document.getElementById('stat-behind');
+            const statOpen = document.getElementById('stat-open');
+            const statResolved = document.getElementById('stat-resolved');
+
+            const aiAcademyTbody = document.getElementById('ai-academy-tbody');
+            const fallbackTbody = document.getElementById('fallback-tbody');
+            const progressTbody = document.getElementById('progress-tbody');
+            const progressDetails = document.getElementById('progress-details');
+
+            const aiAcademySearch = document.getElementById('ai-academy-search');
+            const aiAcademyStatusFilter = document.getElementById('ai-academy-status-filter');
+            const aiAcademyRoleFilter = document.getElementById('ai-academy-role-filter');
+            const fallbackStatusFilter = document.getElementById('fallback-status-filter');
+
+            const state = {
+                live: null,
+                aiAcademyMembers: [],
+                fallbackTickets: [],
+                students: [],
+                refreshInterval: null,
+            };
+
+            const getLectorToken = () => {
+                if (window.lectorToken && window.lectorToken !== 'undefined') return window.lectorToken;
+                try {
+                    const raw = localStorage.getItem('sb-lector-session');
+                    if (!raw) return null;
+                    return JSON.parse(raw)?.access_token || null;
+                } catch {
+                    return null;
+                }
+            };
+
+            const waitForToken = async (maxAttempts = 30, delayMs = 100) => {
+                for (let i = 0; i < maxAttempts; i++) {
+                    const token = getLectorToken();
+                    if (token) return token;
+                    await new Promise((resolve) => setTimeout(resolve, delayMs));
+                }
+                return null;
+            };
+
+            function formatTime(ts) {
+                if (!ts) return '—';
+                const date = new Date(ts);
+                if (Number.isNaN(date.getTime())) return '—';
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function minutesAgo(ts) {
+                if (!ts) return null;
+                const delta = Date.now() - new Date(ts).getTime();
+                if (!Number.isFinite(delta)) return null;
+                return Math.max(0, Math.round(delta / 60000));
+            }
+
+            function statusBadge(status) {
+                const s = String(status || '').toLowerCase();
+                if (s === 'green') return '<span class="badge green">Green</span>';
+                if (s === 'yellow') return '<span class="badge yellow">Yellow</span>';
+                if (s === 'red') return '<span class="badge red">Red</span>';
+                return '<span class="badge gray">Gray</span>';
+            }
+
+            function fallbackStatusBadge(status) {
+                const s = String(status || '').toLowerCase();
+                if (s === 'open') return '<span class="badge red">Open</span>';
+                if (s === 'acknowledged') return '<span class="badge orange">Acknowledged</span>';
+                if (s === 'resolved') return '<span class="badge green">Resolved</span>';
+                return '<span class="badge gray">Closed</span>';
+            }
+
+            function severityBadge(severity) {
+                const s = String(severity || '').toLowerCase();
+                if (s === 'critical' || s === 'high') return '<span class="badge red">' + s + '</span>';
+                if (s === 'medium') return '<span class="badge orange">medium</span>';
+                return '<span class="badge blue">low</span>';
+            }
+
+            async function request(path, options = {}) {
+                const token = await waitForToken();
+                if (!token) throw new Error('Authentication token not available');
+                const headers = Object.assign({}, options.headers || {}, { Authorization: 'Bearer ' + token });
+                const response = await fetch(path, Object.assign({}, options, { headers }));
+                let payload = null;
+                try { payload = await response.json(); } catch { payload = null; }
+                if (!response.ok) {
+                    const errorText = payload?.error || ('Request failed: ' + response.status);
+                    throw new Error(errorText);
+                }
+                return payload;
+            }
+
+            function renderSummary(summary) {
+                statTotal.textContent = summary?.total_students ?? 0;
+                statActive.textContent = summary?.active_last_15m ?? 0;
+                statBehind.textContent = summary?.behind_schedule ?? 0;
+                statOpen.textContent = summary?.fallback_open ?? 0;
+                statResolved.textContent = summary?.fallback_resolved_today ?? 0;
+            }
+
+            function filteredAIAcademyMembers() {
+                const q = aiAcademySearch.value.trim().toLowerCase();
+                const status = aiAcademyStatusFilter.value;
+                const role = aiAcademyRoleFilter.value;
+                return state.aiAcademyMembers.filter((row) => {
+                    const statusMatch = status === 'all' || row.live_status === status;
+                    if (!statusMatch) return false;
+                    const roleMatch = role === 'all' || (row.role_track || '').toUpperCase() === role;
+                    if (!roleMatch) return false;
+                    if (!q) return true;
+                    const haystack = [
+                        row.student_name,
+                        row.student_email,
+                        row.student_id,
+                        row.role_track
+                    ].join(' ').toLowerCase();
+                    return haystack.includes(q);
+                });
+            }
+
+            function renderAIAcademyMembersTable() {
+                const rows = filteredAIAcademyMembers();
+                if (!rows.length) {
+                    aiAcademyTbody.innerHTML = '<tr><td colspan="8" class="empty">No AI Academy records for current filter.</td></tr>';
+                    return;
+                }
+                aiAcademyTbody.innerHTML = rows.map((row) => {
+                    const lastMin = minutesAgo(row.last_seen_at);
+                    return '<tr>'
+                        + '<td><span class="student-id">' + (row.student_name || 'Unknown') + '</span></td>'
+                        + '<td>' + (row.student_email || '—') + '</td>'
+                        + '<td>' + (row.role_track || '—') + '</td>'
+                        + '<td>' + (row.current_label || ('Week ' + (row.current_week || 0) + ' / Day ' + (row.current_day || row.day_number || 0))) + '</td>'
+                        + '<td>' + (row.message_count || 0) + '</td>'
+                        + '<td>' + (lastMin === null ? '—' : (lastMin + ' min ago')) + '</td>'
+                        + '<td>' + (row.fallback_open_count || 0) + '</td>'
+                        + '<td>' + statusBadge(row.live_status) + '</td>'
+                        + '</tr>';
+                }).join('');
+            }
+
+            function renderFallbackTable() {
+                const status = fallbackStatusFilter.value;
+                const rows = state.fallbackTickets.filter((ticket) => status === 'all' || ticket.status === status);
+                if (!rows.length) {
+                    fallbackTbody.innerHTML = '<tr><td colspan="8" class="empty">No fallback tickets for this filter.</td></tr>';
+                    return;
+                }
+                fallbackTbody.innerHTML = rows.map((ticket) => {
+                    const actionButtons = [];
+                    if (ticket.status === 'open') {
+                        actionButtons.push('<button class="status-btn" data-action="ack" data-id="' + ticket.id + '">Acknowledge</button>');
+                    }
+                    if (ticket.status === 'open' || ticket.status === 'acknowledged') {
+                        actionButtons.push('<button class="status-btn" data-action="resolve" data-id="' + ticket.id + '">Resolve</button>');
+                    }
+                    if (ticket.status === 'resolved') {
+                        actionButtons.push('<button class="status-btn" data-action="close" data-id="' + ticket.id + '">Close</button>');
+                    }
+                    return '<tr>'
+                        + '<td>' + formatTime(ticket.opened_at) + '</td>'
+                        + '<td><span class="student-id">' + (ticket.student_name || 'Unknown') + '</span></td>'
+                        + '<td>' + (ticket.student_email || '—') + '</td>'
+                        + '<td>' + (ticket.role || '—') + ' / Day ' + (ticket.day_number || 0) + '</td>'
+                        + '<td>' + (ticket.reason || '—') + '</td>'
+                        + '<td>' + severityBadge(ticket.severity) + '</td>'
+                        + '<td>' + fallbackStatusBadge(ticket.status) + '</td>'
+                        + '<td>' + (actionButtons.join(' ') || '—') + '</td>'
+                        + '</tr>';
+                }).join('');
+            }
+
+            function renderProgressTable() {
+                if (!state.students.length) {
+                    progressTbody.innerHTML = '<tr><td colspan="6" class="empty">No student progress records found.</td></tr>';
+                    return;
+                }
+                progressTbody.innerHTML = state.students.map((student) => {
+                    const completed = (student.progress || []).filter((p) => p.status === 'completed').length;
+                    return '<tr>'
+                        + '<td><span class="student-id">' + (student.student_name || String(student.student_id || '').slice(0, 8)) + '</span></td>'
+                        + '<td>' + (student.student_email || '—') + '</td>'
+                        + '<td>' + (student.role_track || '—') + '</td>'
+                        + '<td>Week ' + (student.currentWeek || 0) + ' / Day ' + (student.currentDay || 0) + '</td>'
+                        + '<td>' + completed + '</td>'
+                        + '<td><button class="action-btn" data-progress-student="' + student.student_id + '">Details</button></td>'
+                        + '</tr>';
+                }).join('');
+            }
+
+            function renderProgressDetails(studentId) {
+                const student = state.students.find((s) => s.student_id === studentId);
+                if (!student) return;
+                progressDetails.style.display = 'block';
+                progressDetails.innerHTML = '<h3>Progress Details — ' + (student.student_name || String(student.student_id).slice(0, 8)) + '</h3>'
+                    + '<div class="table-wrap" style="margin-top: 12px;">'
+                    + '<table>'
+                    + '<thead><tr><th>Week</th><th>Day</th><th>Status</th><th>Summary</th></tr></thead>'
+                    + '<tbody>'
+                    + (student.progress || []).map((p) => {
+                        return '<tr>'
+                            + '<td>' + (p.week_number || '—') + '</td>'
+                            + '<td>' + (p.day_number || '—') + '</td>'
+                            + '<td>' + fallbackStatusBadge(p.status === 'completed' ? 'resolved' : 'open') + '</td>'
+                            + '<td>' + (p.ai_summary || '—') + '</td>'
+                            + '</tr>';
+                    }).join('')
+                    + '</tbody></table></div>';
+            }
+
+
+            async function loadLiveData() {
+                const payload = await request('/api/lector/live');
+                state.live = payload;
+                state.aiAcademyMembers = Array.isArray(payload.ai_academy_members) ? payload.ai_academy_members : [];
+                state.fallbackTickets = Array.isArray(payload.fallback_tickets) ? payload.fallback_tickets : [];
+                renderSummary(payload.summary || {});
+                renderAIAcademyMembersTable();
+                renderFallbackTable();
+            }
+
+            async function loadStudentsData() {
+                const payload = await request('/api/lector/students');
+                state.students = Array.isArray(payload.students) ? payload.students : [];
+                renderProgressTable();
+            }
+
+            async function refreshAll() {
+                const started = Date.now();
+                refreshChip.textContent = 'Refreshing…';
+                try {
+                    await Promise.all([loadLiveData(), loadStudentsData()]);
+                    const elapsed = Math.max(0, Math.round((Date.now() - started) / 1000));
+                    refreshChip.textContent = 'Updated ' + elapsed + 's ago';
+                } catch (error) {
+                    refreshChip.textContent = 'Refresh failed: ' + error.message;
+                }
+            }
+
+            async function updateFallbackStatus(id, action) {
+                let status = 'open';
+                if (action === 'ack') status = 'acknowledged';
+                if (action === 'resolve') status = 'resolved';
+                if (action === 'close') status = 'closed';
+                await request('/api/lector/fallbacks', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id,
+                        status,
+                        resolution_note: action === 'resolve' ? 'Resolved by lector from dashboard.' : ''
+                    })
+                });
+                await loadLiveData();
+            }
+
+            function activateView(viewId) {
+                views.forEach((view) => view.classList.toggle('active', view.id === viewId));
+                viewButtons.forEach((btn) => btn.classList.toggle('active', btn.getAttribute('data-view') === viewId));
+            }
+
+            viewButtons.forEach((button) => {
+                button.addEventListener('click', () => activateView(button.getAttribute('data-view')));
+            });
+
+            aiAcademySearch.addEventListener('input', renderAIAcademyMembersTable);
+            aiAcademyStatusFilter.addEventListener('change', renderAIAcademyMembersTable);
+            aiAcademyRoleFilter.addEventListener('change', renderAIAcademyMembersTable);
+            fallbackStatusFilter.addEventListener('change', renderFallbackTable);
+
+            document.getElementById('ai-academy-refresh-btn').addEventListener('click', loadLiveData);
+            document.getElementById('fallback-refresh-btn').addEventListener('click', loadLiveData);
+            document.getElementById('fallback-close-all-btn').addEventListener('click', async () => {
+                const openCount = state.fallbackTickets.filter((t) => t.status === 'open' || t.status === 'acknowledged').length;
+                if (!openCount) { alert('No open tickets to close.'); return; }
+                if (!confirm('Close all ' + openCount + ' open/acknowledged ticket(s)?')) return;
+                const btn = document.getElementById('fallback-close-all-btn');
+                btn.disabled = true;
+                btn.textContent = 'Closing…';
+                try {
+                    await request('/api/lector/fallbacks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'close_all' }),
+                    });
+                    await loadLiveData();
+                } catch (error) {
+                    alert('Failed to close tickets: ' + error.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Close All Open';
+                }
+            });
+
+            fallbackTbody.addEventListener('click', async (event) => {
+                const button = event.target.closest('[data-action]');
+                if (!button) return;
+                const id = button.getAttribute('data-id');
+                const action = button.getAttribute('data-action');
+                if (!id || !action) return;
+                button.disabled = true;
+                button.textContent = 'Working…';
+                try {
+                    await updateFallbackStatus(id, action);
+                } catch (error) {
+                    alert('Could not update fallback status: ' + error.message);
+                } finally {
+                    button.disabled = false;
+                    button.textContent = action === 'ack' ? 'Acknowledge' : action === 'resolve' ? 'Resolve' : 'Close';
+                }
+            });
+
+            progressTbody.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-progress-student]');
+                if (!button) return;
+                renderProgressDetails(button.getAttribute('data-progress-student'));
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('sb-lector-session');
+                window.location.href = '/lector-login.html';
+            });
+
+            let started = false;
+            async function init() {
+                if (started) return;
+                started = true;
+                await refreshAll();
+                state.refreshInterval = setInterval(refreshAll, 20000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init, { once: true });
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

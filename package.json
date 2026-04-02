@@ -1,0 +1,20 @@
+{
+  "name": "ai-academy-mentor-agents",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Mentor Agent system for Kyndryl AI Academy 2026",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "build": "echo 'No build step needed — static files + serverless functions'",
+    "test": "node --test api/__tests__/chat.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0",
+    "@upstash/redis": "^1.36.2",
+    "openai": "^6.22.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

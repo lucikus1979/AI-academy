@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — AI Academy Kyndryl</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1419;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .login-card {
+            background: #1a1f26;
+            border: 1px solid #2d3748;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #2d3748;
+            background: #0f1419;
+            color: #f1f5f9;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input::placeholder {
+            color: #475569;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .success-msg {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .login-btn:hover { opacity: 0.92; }
+        .login-btn:active { transform: scale(0.98); }
+        .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-link a {
+            color: #64748b;
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-link a:hover { color: #3b82f6; }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px;
+                margin: 16px;
+                border-radius: 12px;
+            }
+        }
+    
+        /* ── Auto-extracted inline styles ──────────────────── */
+        .d-none { display:none; }
+
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1 class="login-title">AI ACADEMY KYNDRYL</h1>
+        <p class="login-subtitle">Sign in to continue</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required placeholder="your.name@kyndryl.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="Enter your password" autocomplete="current-password">
+            </div>
+            <div id="error-msg" class="error-msg d-none"></div>
+            <div id="success-msg" class="success-msg d-none"></div>
+            <button type="submit" class="login-btn" id="login-btn">Sign In</button>
+        </form>
+
+        <div class="forgot-link">
+            <a href="#" id="forgot-password">Forgot password?</a>
+        </div>
+
+        <!-- Password reset form (shown after clicking recovery link in email) -->
+        <form id="reset-form" style="display:none;">
+            <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" required placeholder="Min. 8 characters, at least 1 number" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" required placeholder="Repeat new password" autocomplete="new-password">
+            </div>
+            <div id="reset-error-msg" class="error-msg d-none"></div>
+            <div id="reset-success-msg" class="success-msg d-none"></div>
+            <button type="submit" class="login-btn" id="reset-btn">Update Password</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
+    <script>
+        // ── Supabase config ─────────────────────────────────────
+        // Anon key is public by design — Row Level Security protects data.
+        // Replace these with your Supabase project values.
+        var SUPABASE_URL = 'https://hiofwpndkuzrsfvnuyet.supabase.co';
+        var SUPABASE_ANON_KEY = 'sb_publishable_pGXJ2OfBXz5HJqzISmQdBg_23Hx64PI';
+
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ── Auth cookie helper (mirrors auth-guard.js) ────────────
+        function setAuthCookie(token) {
+            document.cookie = 'academy_session=' + encodeURIComponent(token) +
+                '; path=/; max-age=604800; secure; samesite=lax';
+        }
+
+        // ── Redirect target (from middleware ?redirect= or default /) ─
+        function getRedirectTarget() {
+            var params = new URLSearchParams(window.location.search);
+            var target = params.get('redirect');
+            // Only allow relative paths (prevent open redirect)
+            if (target && target.startsWith('/') && !target.startsWith('//')) {
+                return target;
+            }
+            return '/';
+        }
+
+        // ── Detect password recovery mode from URL hash ─────────────
+        var isRecoveryMode = window.location.hash.indexOf('type=recovery') !== -1;
+
+        function showResetForm() {
+            document.getElementById('login-form').style.display = 'none';
+            document.querySelector('.forgot-link').style.display = 'none';
+            document.querySelector('.login-subtitle').textContent = 'Set your new password';
+            document.getElementById('reset-form').style.display = 'block';
+            document.getElementById('new-password').focus();
+        }
+
+        // ── Listen for PASSWORD_RECOVERY event ──────────────────────
+        sb.auth.onAuthStateChange(function(event) {
+            if (event === 'PASSWORD_RECOVERY') {
+                showResetForm();
+            }
+        });
+
+        // Show reset form immediately if URL has recovery hash
+        if (isRecoveryMode) {
+            showResetForm();
+        }
+
+        // ── If already logged in, redirect to target ──────────────
+        (async function() {
+            if (isRecoveryMode) return; // Don't redirect during password recovery
+            try {
+                var result = await sb.auth.getSession();
+                if (result.data && result.data.session) {
+                    setAuthCookie(result.data.session.access_token);
+                    window.location.replace(getRedirectTarget());
+                }
+            } catch (e) { /* ignore — show login form */ }
+        })();
+
+        // ── DOM refs ────────────────────────────────────────────
+        var form = document.getElementById('login-form');
+        var emailInput = document.getElementById('email');
+        var passwordInput = document.getElementById('password');
+        var loginBtn = document.getElementById('login-btn');
+        var errorMsg = document.getElementById('error-msg');
+        var successMsg = document.getElementById('success-msg');
+        var forgotLink = document.getElementById('forgot-password');
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+        }
+
+        function showSuccess(msg) {
+            successMsg.textContent = msg;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        function clearMessages() {
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+        }
+
+        // ── Login handler ───────────────────────────────────────
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearMessages();
+
+            var email = emailInput.value.trim();
+            var password = passwordInput.value;
+
+            if (!email || !password) {
+                showError('Please fill in both email and password.');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+
+            try {
+                var result = await sb.auth.signInWithPassword({ email: email, password: password });
+
+                if (result.error) {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                    showError(result.error.message || 'Sign-in failed. Please check your credentials.');
+                    return;
+                }
+
+                // Set auth cookie for Vercel middleware before redirect
+                setAuthCookie(result.data.session.access_token);
+                window.location.replace(getRedirectTarget());
+            } catch (err) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+                showError('An unexpected error occurred. Please try again.');
+            }
+        });
+
+        // ── Forgot password handler ─────────────────────────────
+        forgotLink.addEventListener('click', async function(e) {
+            e.preventDefault();
+            clearMessages();
+
+            var email = emailInput.value.trim();
+            if (!email) {
+                showError('Please enter your email address first, then click "Forgot password?"');
+                emailInput.focus();
+                return;
+            }
+
+            forgotLink.style.pointerEvents = 'none';
+            forgotLink.textContent = 'Sending...';
+
+            try {
+                var result = await sb.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/login.html'
+                });
+
+                forgotLink.style.pointerEvents = '';
+                forgotLink.textContent = 'Forgot password?';
+
+                if (result.error) {
+                    showError(result.error.message || 'Could not send reset email. Please try again.');
+                    return;
+                }
+
+                showSuccess('Password reset email sent. Check your inbox.');
+            } catch (err) {
+                forgotLink.style.pointerEvents = '';
+                forgotLink.textContent = 'Forgot password?';
+                showError('Could not send reset email. Please try again.');
+            }
+        });
+
+        // ── Password reset form handler ───────────────────────────
+        var resetForm = document.getElementById('reset-form');
+        var resetBtn = document.getElementById('reset-btn');
+        var resetErrorMsg = document.getElementById('reset-error-msg');
+        var resetSuccessMsg = document.getElementById('reset-success-msg');
+
+        resetForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            resetErrorMsg.style.display = 'none';
+            resetSuccessMsg.style.display = 'none';
+
+            var newPwd = document.getElementById('new-password').value;
+            var confirmPwd = document.getElementById('confirm-password').value;
+
+            if (!newPwd || newPwd.length < 8 || !/\d/.test(newPwd)) {
+                resetErrorMsg.textContent = 'Password must be at least 8 characters and contain at least 1 number.';
+                resetErrorMsg.style.display = 'block';
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                resetErrorMsg.textContent = 'Passwords do not match.';
+                resetErrorMsg.style.display = 'block';
+                return;
+            }
+
+            resetBtn.disabled = true;
+            resetBtn.textContent = 'Updating...';
+
+            try {
+                var result = await sb.auth.updateUser({ password: newPwd });
+
+                if (result.error) {
+                    resetBtn.disabled = false;
+                    resetBtn.textContent = 'Update Password';
+                    resetErrorMsg.textContent = result.error.message || 'Failed to update password.';
+                    resetErrorMsg.style.display = 'block';
+                    return;
+                }
+
+                resetSuccessMsg.textContent = 'Password updated! Redirecting to dashboard...';
+                resetSuccessMsg.style.display = 'block';
+                resetBtn.style.display = 'none';
+
+                // Clear recovery hash and redirect
+                setAuthCookie(result.data.user ? (await sb.auth.getSession()).data.session.access_token : '');
+                setTimeout(function() {
+                    window.location.replace('/');
+                }, 1500);
+            } catch (err) {
+                resetBtn.disabled = false;
+                resetBtn.textContent = 'Update Password';
+                resetErrorMsg.textContent = 'An error occurred. Please try again.';
+                resetErrorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

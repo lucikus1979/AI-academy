@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy 2026 — Kyndryl</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://hiofwpndkuzrsfvnuyet.supabase.co">
+    <style>
+        /* ═══════════════════════════════════════════════
+           AI ACADEMY 2026 — Obsidian Glass Design System
+           ═══════════════════════════════════════════════ */
+
+        /* ── Design Tokens ───────────────────────────── */
+        :root {
+            --radius: 14px;
+            --radius-sm: 10px;
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.25s var(--ease);
+            --max-w: 1100px;
+            --nav-h: 52px;
+        }
+
+        [data-theme="dark"] {
+            --bg-base: #0a0a0f;
+            --bg-surface: #13131a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-medium: rgba(255, 255, 255, 0.12);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            --accent-blue: #3b82f6;
+            --accent-violet: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --shadow-card: 0 0 0 1px var(--border-subtle);
+            --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.4), 0 0 0 1px var(--border-medium);
+            --nav-bg: rgba(10, 10, 15, 0.85);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f7f7f5;
+            --bg-surface: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-card-hover: rgba(255, 255, 255, 1);
+            --border-subtle: rgba(0, 0, 0, 0.07);
+            --border-medium: rgba(0, 0, 0, 0.12);
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --accent-blue: #2563eb;
+            --accent-violet: #7c3aed;
+            --accent-emerald: #059669;
+            --accent-amber: #d97706;
+            --accent-rose: #dc2626;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --gradient: linear-gradient(135deg, #2563eb, #7c3aed);
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px var(--border-subtle);
+            --shadow-card-hover: 0 12px 28px rgba(0,0,0,0.08), 0 0 0 1px var(--border-medium);
+            --nav-bg: rgba(247, 247, 245, 0.85);
+        }
+
+        /* ── Reset & Base ────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Hero Section ────────────────────────────── */
+        .hero {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0f;
+            overflow: hidden;
+        }
+
+        /* Noise texture for premium feel */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Gradient accent line at hero bottom */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), rgba(139,92,246,0.4), transparent);
+            z-index: 3;
+        }
+
+        .hero-orbs {
+            position: absolute;
+            inset: -120px;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            will-change: transform;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59,130,246,0.35), transparent 70%);
+            top: 5%;
+            left: 20%;
+            animation: drift1 25s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%);
+            top: 25%;
+            right: 10%;
+            animation: drift2 30s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle, rgba(6,182,212,0.25), transparent 70%);
+            bottom: -5%;
+            left: 8%;
+            animation: drift3 22s ease-in-out infinite;
+        }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -40px) scale(1.05); }
+            66% { transform: translate(-30px, 30px) scale(0.95); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-40px, 30px) scale(0.97); }
+            66% { transform: translate(30px, -50px) scale(1.03); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(35px, 15px) scale(1.04); }
+            66% { transform: translate(-45px, -25px) scale(0.96); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 24px;
+        }
+
+        /* Readability backdrop behind hero text */
+        .hero-content::before {
+            content: '';
+            position: absolute;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, rgba(10,10,15,0.7), transparent 65%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+
+        .hero-year {
+            display: block;
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-subtitle {
+            color: #71717a;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 400;
+            margin-top: 16px;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            margin-top: 36px;
+            padding: 14px 36px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            color: #60a5fa;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .hero-cta:hover {
+            background: rgba(59, 130, 246, 0.22);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Smooth transition from dark hero to themed content */
+        .hero-transition {
+            height: 100px;
+            background: linear-gradient(to bottom, #0a0a0f, var(--bg-base));
+            pointer-events: none;
+        }
+
+        /* ── Sticky Navigation ───────────────────────── */
+        .week-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .week-nav-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .week-nav-inner::-webkit-scrollbar { display: none; }
+
+        .week-nav-item {
+            padding: 16px 18px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: color var(--transition), border-color var(--transition);
+            letter-spacing: 0.02em;
+        }
+
+        .week-nav-item:hover { color: var(--text-secondary); }
+
+        .week-nav-item.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .week-nav-sep {
+            width: 1px;
+            height: 20px;
+            background: var(--border-subtle);
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+
+        /* ── Content Container ───────────────────────── */
+        .content {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        /* ── Week Sections ───────────────────────────── */
+        .week-section {
+            padding: 52px 0 0;
+            scroll-margin-top: calc(var(--nav-h) + 16px);
+        }
+
+        .week-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .week-num-large {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.2;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .week-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .week-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* ── Progress Track (Week 1) ─────────────────── */
+        .progress-track {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: var(--border-subtle);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        /* ── Lesson Items (Week 1) ───────────────────── */
+        .lesson-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+
+        .lesson-item:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .lesson-info { flex: 1; min-width: 0; }
+
+        .lesson-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 6px;
+            line-height: 1.35;
+        }
+
+        .lesson-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            letter-spacing: 0.02em;
+        }
+
+        .tag-violet { background: rgba(139, 92, 246, 0.1); color: var(--accent-violet); }
+        .tag-cyan   { background: rgba(6, 182, 212, 0.1);   color: var(--accent-cyan); }
+        .tag-amber  { background: rgba(245, 158, 11, 0.1);  color: var(--accent-amber); }
+        .tag-rose   { background: rgba(244, 63, 94, 0.1);   color: var(--accent-rose); }
+        .tag-emerald{ background: rgba(16, 185, 129, 0.1);  color: var(--accent-emerald); }
+        .tag-pink   { background: rgba(236, 72, 153, 0.1);  color: var(--accent-pink); }
+
+        .lesson-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .status-not-started {
+            background: rgba(82, 82, 91, 0.15);
+            color: var(--text-muted);
+        }
+
+        .status-in-progress {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--accent-blue);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-emerald);
+        }
+
+        /* ── Completed state for day-cards & day-groups ── */
+        .day-card.is-completed,
+        .day-group.is-completed {
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .day-card.is-completed .day-label,
+        .day-group.is-completed .day-label {
+            color: var(--accent-emerald);
+        }
+
+        .day-card.is-completed .day-label::after,
+        .day-group.is-completed .day-label::after {
+            content: ' \2713';
+        }
+
+        .lesson-item.is-completed {
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-lesson {
+            padding: 7px 18px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            color: var(--accent-blue);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            white-space: nowrap;
+        }
+
+        .btn-lesson:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+
+        /* ── Day Card Grids ──────────────────────────── */
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .day-grid-multi {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        /* ── Day Cards (Simple) ──────────────────────── */
+        .day-card {
+            display: block;
+            padding: 18px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all var(--transition);
+        }
+
+        .day-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .day-card.is-disabled {
+            opacity: 0.45;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .day-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+
+        .day-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+
+        .is-disabled .day-label { color: var(--text-muted); }
+        .is-disabled .day-title { color: var(--text-secondary); }
+
+        /* ── Day Card with context menu ─────────────── */
+        .day-card-multi { cursor: pointer; }
+        .day-menu {
+            display: none;
+            position: fixed;
+            min-width: 180px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            z-index: 9000;
+            overflow: hidden;
+        }
+        .day-menu.menu-visible { display: block; }
+        .day-menu-item {
+            display: block;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background var(--transition);
+        }
+        .day-menu-item:hover {
+            background: var(--bg-card-hover);
+        }
+        .day-menu-item + .day-menu-item {
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* ── Day Groups (Week 2 multi-lesson) ────────── */
+        .day-group {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+
+        .day-group:hover {
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .day-group-header {
+            padding: 16px 20px 10px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .day-lessons { padding: 6px 0; }
+
+        .lesson-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 20px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .lesson-link:hover {
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+            padding-left: 24px;
+        }
+
+        [data-theme="light"] .lesson-link:hover {
+            background: rgba(37, 99, 235, 0.06);
+        }
+
+        .ln {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.12);
+            min-width: 22px;
+            flex-shrink: 0;
+        }
+
+        .ln-alt {
+            color: var(--accent-violet);
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        /* ── Cert & Resource Cards ───────────────────── */
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .cert-card {
+            display: block;
+            padding: 18px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all var(--transition);
+        }
+
+        .cert-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .cert-role {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .cert-name {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        /* Role accent colors */
+        .cert-card[data-role="FDE"]    .cert-role { color: var(--accent-blue); }
+        .cert-card[data-role="AI-SE"]  .cert-role { color: var(--accent-violet); }
+        .cert-card[data-role="AI-DS"]  .cert-role { color: var(--accent-cyan); }
+        .cert-card[data-role="AI-DA"]  .cert-role { color: var(--accent-emerald); }
+        .cert-card[data-role="AI-PM"]  .cert-role { color: var(--accent-amber); }
+        .cert-card[data-role="AI-FE"]  .cert-role { color: var(--accent-pink); }
+        .cert-card[data-role="AI-SEC"] .cert-role { color: var(--accent-rose); }
+        .cert-card[data-role="AI-DX"]  .cert-role { color: var(--accent-violet); }
+        .cert-card[data-role="RES"]    .cert-role { color: var(--accent-cyan); }
+
+        .resources .cert-card:hover { border-color: rgba(6, 182, 212, 0.3); }
+
+        /* ── Instructor Notes ────────────────────────── */
+        .instructor {
+            margin-top: 32px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 8px;
+        }
+
+        .instructor-toggle {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            list-style: none;
+            padding: 16px 0;
+        }
+
+        .instructor-toggle::-webkit-details-marker,
+        .instructor-toggle::marker { display: none; content: ''; }
+
+        .instructor-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructor-toggle-icon { font-size: 1.2rem; }
+
+        .instructor-toggle-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .instructor-toggle-hint {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .instructor-chevron {
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        details[open] .instructor-chevron { transform: rotate(90deg); }
+
+        .instructor-weeks { padding: 8px 0 24px; }
+
+        .instructor-week-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 24px 0 10px;
+        }
+
+        .instructor-week-label:first-child { margin-top: 0; }
+
+        .instructor-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+        }
+
+        .instructor-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .instructor-link:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .instructor-link .il-day {
+            font-weight: 700;
+            color: var(--accent-amber);
+            white-space: nowrap;
+            min-width: 48px;
+        }
+
+        .instructor-link .il-title {
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Modal ───────────────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay[style*="display: flex"] {
+            display: flex !important;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-medium);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalIn 0.25s ease;
+        }
+
+        .modal-title {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin: 0 0 24px;
+        }
+
+        .modal-summary {
+            background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-summary h4 {
+            color: var(--accent-blue);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 10px;
+        }
+
+        .modal-summary p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .modal-disclosure {
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-disclosure h4 {
+            color: var(--accent-emerald);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 10px;
+        }
+
+        .modal-disclosure ul {
+            margin: 0 0 0 18px;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .modal-disclosure li {
+            margin-bottom: 4px;
+        }
+
+        .modal-disclosure code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            padding: 1px 6px;
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+        }
+
+        .modal-label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.2s;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .modal-textarea::placeholder { color: var(--text-muted); }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-secondary:hover { background: var(--bg-card-hover); }
+
+        /* ── Theme Toggle ────────────────────────────── */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 280px;
+            display: flex;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            padding: 3px;
+            z-index: 99990;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+        }
+
+        .theme-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .theme-btn svg { width: 16px; height: 16px; }
+
+        /* ── Scroll Animations ───────────────────────── */
+        .week-section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .week-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger children within visible sections */
+        .week-section.visible .day-card,
+        .week-section.visible .day-group,
+        .week-section.visible .cert-card,
+        .week-section.visible .lesson-item {
+            animation: cardIn 0.4s ease both;
+        }
+
+        .week-section.visible .day-card:nth-child(1),
+        .week-section.visible .day-group:nth-child(1),
+        .week-section.visible .cert-card:nth-child(1),
+        .week-section.visible .lesson-item:nth-child(1) { animation-delay: 0s; }
+
+        .week-section.visible .day-card:nth-child(2),
+        .week-section.visible .day-group:nth-child(2),
+        .week-section.visible .cert-card:nth-child(2),
+        .week-section.visible .lesson-item:nth-child(2) { animation-delay: 0.05s; }
+
+        .week-section.visible .day-card:nth-child(3),
+        .week-section.visible .day-group:nth-child(3),
+        .week-section.visible .cert-card:nth-child(3),
+        .week-section.visible .lesson-item:nth-child(3) { animation-delay: 0.1s; }
+
+        .week-section.visible .day-card:nth-child(4),
+        .week-section.visible .day-group:nth-child(4),
+        .week-section.visible .cert-card:nth-child(4),
+        .week-section.visible .lesson-item:nth-child(4) { animation-delay: 0.15s; }
+
+        .week-section.visible .day-card:nth-child(5),
+        .week-section.visible .day-group:nth-child(5),
+        .week-section.visible .cert-card:nth-child(5),
+        .week-section.visible .lesson-item:nth-child(5) { animation-delay: 0.2s; }
+
+        .week-section.visible .day-card:nth-child(n+6),
+        .week-section.visible .day-group:nth-child(n+6),
+        .week-section.visible .cert-card:nth-child(n+6),
+        .week-section.visible .lesson-item:nth-child(n+6) { animation-delay: 0.25s; }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Responsive ──────────────────────────────── */
+        @media (max-width: 768px) {
+            .hero { min-height: 55vh; }
+
+            .orb-1 { width: 300px; height: 300px; }
+            .orb-2 { width: 250px; height: 250px; }
+            .orb-3 { width: 220px; height: 220px; }
+
+            .hero-transition { height: 60px; }
+
+            .week-section { padding: 36px 0 0; }
+
+            .week-num-large { font-size: 2.2rem; }
+
+            .day-grid,
+            .day-grid-multi,
+            .cert-grid { grid-template-columns: 1fr; }
+
+            .lesson-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .lesson-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .instructor-links { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .content { padding: 0 16px 60px; }
+
+            .week-nav-item {
+                padding: 14px 12px;
+                font-size: 0.78rem;
+            }
+
+            .week-header { gap: 12px; }
+            .week-num-large { font-size: 1.8rem; }
+            .week-title { font-size: 1.1rem; }
+        }
+
+        /* ── Accessibility ───────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+
+            .orb { animation: none !important; }
+
+            .week-section {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+
+            .week-section.visible .day-card,
+            .week-section.visible .day-group,
+            .week-section.visible .cert-card,
+            .week-section.visible .lesson-item {
+                animation: none !important;
+            }
+
+            .hero-cta,
+            .day-card,
+            .day-group,
+            .cert-card,
+            .lesson-item,
+            .btn-lesson,
+            .btn-primary {
+                transition: none !important;
+            }
+        }
+
+        /* Focus visible for keyboard navigation */
+        :focus-visible {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* ── Locked day card ─────────────────────────── */
+        .day-card.is-locked {
+            opacity: 0.55;
+            cursor: default;
+            pointer-events: none;
+            position: relative;
+            border-style: dashed;
+        }
+        .day-card.is-locked .day-label {
+            color: var(--text-muted);
+        }
+        .day-card.is-locked .day-title {
+            color: var(--text-secondary);
+        }
+        .day-card.is-locked .lock-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="hero">
+        <div class="hero-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="hero-content">
+            <h1>AI ACADEMY<span class="hero-year">2026</span></h1>
+            <p class="hero-subtitle">Master AI-Native Delivery with Kyndryl</p>
+            <a href="#week-1" class="hero-cta" id="start-learning-btn">Start Learning</a>
+        </div>
+    </section>
+    <div class="hero-transition"></div>
+
+    <!-- ═══ STICKY NAVIGATION ═══ -->
+    <nav class="week-nav" id="week-nav">
+        <div class="week-nav-inner">
+            <a href="#week-1" class="week-nav-item active">Week 1</a>
+            <a href="#week-2" class="week-nav-item">Week 2</a>
+            <a href="#week-3" class="week-nav-item">Week 3</a>
+            <a href="#week-4" class="week-nav-item">Week 4</a>
+            <a href="#week-5" class="week-nav-item">Week 5</a>
+            <a href="#week-6" class="week-nav-item">Week 6</a>
+            <div class="week-nav-sep"></div>
+            <a href="#certs" class="week-nav-item">Certs</a>
+            <a href="#resources" class="week-nav-item">Resources</a>
+        </div>
+    </nav>
+
+    <!-- ═══ CONTENT ═══ -->
+    <main class="content">
+
+        <!-- ── Week 1: Foundations ──────────────────── -->
+        <section id="week-1" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">01</span>
+                <div>
+                    <h2 class="week-title">Foundations</h2>
+                </div>
+            </div>
+
+            <div class="day-grid-multi">
+                <div class="day-group" data-lesson-id="week1-day1">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 1</span>
+                        <h3 class="day-title">The New Reality (AI Landscape)</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#journey"><span class="ln">L1</span> Your 25-Day Journey</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#tshape"><span class="ln">L2</span> T-Shaped Learning</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#roles"><span class="ln">L3</span> The 7 AI Roles</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#landscape"><span class="ln">L4</span> AI Landscape 2026</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#kaf"><span class="ln">L5</span> KAF Framework</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#prompts"><span class="ln">L6</span> Prompt Engineering</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#tools"><span class="ln">L7</span> Your AI Toolkit</a>
+                        <a class="lesson-link" href="/Week%201/Day1/ai-academy-day1.html#exercises"><span class="ln ln-alt">EX</span> Exercises</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week1-day2">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 2</span>
+                        <h3 class="day-title">AI Security Fundamentals</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#security"><span class="ln">L1</span> Why AI Security Matters</a>
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#codebase"><span class="ln">L2</span> AI Code Structure</a>
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#owasp"><span class="ln">L3</span> OWASP Top 10 for LLMs</a>
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#analysis"><span class="ln">L4</span> Security Code Analysis</a>
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#auth"><span class="ln">L5</span> Secure Authentication</a>
+                        <a class="lesson-link" href="/Week%201/Day2/ai-academy-day2.html#exercise"><span class="ln ln-alt">EX</span> Security Analysis Exercise</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week1-day3">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 3</span>
+                        <h3 class="day-title">Databases &amp; Memory for Agents</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%201/Day3/ai-academy-day3.html#databases"><span class="ln">L1</span> Database Types for AI</a>
+                        <a class="lesson-link" href="/Week%201/Day3/ai-academy-day3.html#vector"><span class="ln">L2</span> Vector Databases</a>
+                        <a class="lesson-link" href="/Week%201/Day3/ai-academy-day3.html#supabase"><span class="ln">L3</span> Supabase / Neon Setup</a>
+                        <a class="lesson-link" href="/Week%201/Day3/ai-academy-day3.html#data-operations"><span class="ln">L4</span> Search &amp; Insert Operations</a>
+                        <a class="lesson-link" href="/Week%201/Day3/ai-academy-day3.html#exercise"><span class="ln ln-alt">EX</span> The Forgetful Agent</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week1-day4">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 4</span>
+                        <h3 class="day-title">System Design &amp; Governance</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%201/Day4/ai-academy-day4.html#blueprint"><span class="ln">L1</span> Governance Blueprint</a>
+                        <a class="lesson-link" href="/Week%201/Day4/ai-academy-day4.html#kaf"><span class="ln">L2</span> KAF Components Architecture</a>
+                        <a class="lesson-link" href="/Week%201/Day4/ai-academy-day4.html#governance-deep"><span class="ln">L3</span> Governance Deep Dive</a>
+                        <a class="lesson-link" href="/Week%201/Day4/ai-academy-day4.html#questions"><span class="ln">L4</span> 20 Killer Questions</a>
+                        <a class="lesson-link" href="/Week%201/Day4/ai-academy-day4.html#documentation"><span class="ln">L5</span> AI Project Documentation</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week1-day5">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 5</span>
+                        <h3 class="day-title">Agent Design Patterns</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#recap"><span class="ln">L1</span> Week 1 Recap</a>
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#mapping"><span class="ln">L2</span> Governance &rarr; Architecture</a>
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#patterns"><span class="ln">L3</span> Four Agent Patterns</a>
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#decision"><span class="ln">L4</span> Decision Framework</a>
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#exercise"><span class="ln ln-alt">EX</span> 3 Client Scenarios</a>
+                        <a class="lesson-link" href="/Week%201/Day5/ai-academy-day5.html#wrapup"><span class="ln ln-alt">CAP</span> Capstone Assignment</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Week 2: Role Deep Dive ──────────────── -->
+        <section id="week-2" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">02</span>
+                <div>
+                    <h2 class="week-title">Role Deep Dive</h2>
+                </div>
+            </div>
+
+            <div class="day-grid-multi">
+                <div class="day-group" data-lesson-id="week2-day6">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 6</span>
+                        <h3 class="day-title">Role Workflow &amp; AI Tools</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%202/Day6/ai-academy-day6-lesson1.html"><span class="ln">L1</span> Role Workflow Mapping</a>
+                        <a class="lesson-link" href="/Week%202/Day6/ai-academy-day6-lesson2.html"><span class="ln">L2</span> The CEO Wants AI</a>
+                        <a class="lesson-link" href="/Week%202/Day6/ai-academy-day6-lesson3.html"><span class="ln">L3</span> AI-Powered Coding Tools</a>
+                        <a class="lesson-link" href="/Week%202/Day6/ai-academy-day6-lesson4.html"><span class="ln">L4</span> Use Case Framing</a>
+                        <a class="lesson-link" href="/Week%202/Day6/ai-academy-knowledge-hub.html"><span class="ln ln-alt">HUB</span> Knowledge Hub</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week2-day7">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 7</span>
+                        <h3 class="day-title">RAG &amp; Data Quality</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%202/Day7/ai-academy-day7-lesson1.html"><span class="ln">L1</span> What is RAG?</a>
+                        <a class="lesson-link" href="/Week%202/Day7/ai-academy-day7-lesson2.html"><span class="ln">L2</span> Run a RAG Pipeline</a>
+                        <a class="lesson-link" href="/Week%202/Day7/ai-academy-day7-lesson3.html"><span class="ln">L3</span> Data Quality &amp; KPIs</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week2-day8">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 8</span>
+                        <h3 class="day-title">Security, Evaluation &amp; ROI</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson1.html"><span class="ln">L1</span> AI Security &amp; Threats</a>
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson1-mindmap.html"><span class="ln ln-alt">&#128506;</span> Mind Map: Security</a>
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson2.html"><span class="ln">L2</span> Model Evaluation &amp; Testing</a>
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson2-mindmap.html"><span class="ln ln-alt">&#128506;</span> Mind Map: Evaluation</a>
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson3.html"><span class="ln">L3</span> ROI, Business Case &amp; Dashboards</a>
+                        <a class="lesson-link" href="/Week%202/Day8/ai-academy-day8-lesson3-mindmap.html"><span class="ln ln-alt">&#128506;</span> Mind Map: ROI</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week2-day9">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 9</span>
+                        <h3 class="day-title">Deployment, Regulation &amp; KAF</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%202/Day9/ai-academy-day9-lesson1.html"><span class="ln">L1</span> Deployment &amp; CI/CD</a>
+                        <a class="lesson-link" href="/Week%202/Day9/ai-academy-day9-lesson2.html"><span class="ln">L2</span> AI Regulation</a>
+                        <a class="lesson-link" href="/Week%202/Day9/ai-academy-day9-lesson3.html"><span class="ln">L3</span> KAF &amp; Innovation Lab</a>
+                    </div>
+                </div>
+
+                <div class="day-group" data-lesson-id="week2-day10">
+                    <div class="day-group-header">
+                        <span class="day-label">Day 10</span>
+                        <h3 class="day-title">Client Simulation: HealthCare Co.</h3>
+                    </div>
+                    <div class="day-lessons">
+                        <a class="lesson-link" href="/Week%202/Day10/ai-academy-day10.html"><span class="ln">L1</span> Full Simulation</a>
+                        <a class="lesson-link" href="/Week%202/Day10/healthcare-co-demo.html"><span class="ln ln-alt">DEMO</span> CKA Interactive Demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Week 3: Spring Break ────────────────── -->
+        <section id="week-3" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">03</span>
+                <div>
+                    <h2 class="week-title">Spring Break</h2>
+                    <p class="week-subtitle">Self-Paced Practice</p>
+                </div>
+            </div>
+            <div class="day-grid">
+                <span class="day-card is-disabled">
+                    <span class="day-label">Optional</span>
+                    <h3 class="day-title">Practice Template (OneDrive)</h3>
+                </span>
+            </div>
+        </section>
+
+        <!-- ── Week 4: Discovery + Architecture ────── -->
+        <section id="week-4" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">04</span>
+                <div><h2 class="week-title">Discovery + Architecture</h2></div>
+            </div>
+            <div class="day-grid">
+                <a class="day-card" data-lesson-id="week4-day11" href="/Week%204/Day11/ai-academy-day11.html"><span class="day-label">Day 11</span><h3 class="day-title">Welcome Back &amp; Client Brief</h3></a>
+                <a class="day-card" data-lesson-id="week4-day12" href="/Week%204/Day12/ai-academy-day12.html"><span class="day-label">Day 12</span><h3 class="day-title">First Client Meeting &amp; Discovery</h3></a>
+                <a class="day-card" data-lesson-id="week4-day13" href="/Week%204/Day13/ai-academy-day13.html"><span class="day-label">Day 13</span><h3 class="day-title">Architecture &amp; KAF Deep Dive</h3></a>
+                <a class="day-card" data-lesson-id="week4-day14" href="/Week%204/Day14/ai-academy-day14.html"><span class="day-label">Day 14</span><h3 class="day-title">EU AI Act &amp; Compliance</h3></a>
+                <a class="day-card" data-lesson-id="week4-day15" href="/Week%204/Day15/ai-academy-day15.html"><span class="day-label">Day 15</span><h3 class="day-title">Go/No-Go Gate</h3></a>
+            </div>
+        </section>
+
+        <!-- ── Week 5: Build + Verify ──────────────── -->
+        <section id="week-5" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">05</span>
+                <div><h2 class="week-title">Build + Verify</h2></div>
+            </div>
+            <div class="day-grid">
+                <a class="day-card" data-lesson-id="week5-day16" href="/Week%205/Day16/ai-academy-day16.html"><span class="day-label">Day 16</span><h3 class="day-title">First Code &amp; Sprint Start</h3></a>
+                <a class="day-card" data-lesson-id="week5-day17" href="/Week%205/Day17/ai-academy-day17.html"><span class="day-label">Day 17</span><h3 class="day-title">Dirty Data &amp; Edge Cases</h3></a>
+                <a class="day-card" data-lesson-id="week5-day18" href="/Week%205/Day18/ai-academy-day18.html"><span class="day-label">Day 18</span><h3 class="day-title">MVP Demo &amp; Feedback</h3></a>
+                <a class="day-card" data-lesson-id="week5-day19" href="/Week%205/Day19/ai-academy-day19.html"><span class="day-label">Day 19</span><h3 class="day-title">Evaluation &amp; Metrics</h3></a>
+                <div class="day-card day-card-multi" data-lesson-id="week5-day20" onclick="toggleDayMenu(event, this)">
+                    <span class="day-label">Day 20</span>
+                    <h3 class="day-title">Checkpoint Retro</h3>
+                    <div class="day-menu">
+                        <a class="day-menu-item" href="/Week%205/Day20/ai-academy-day20.html">Lesson</a>
+                        <a class="day-menu-item" href="/teams/team.html">Mission Control</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Week 6: Ship + Prove ────────────────── -->
+        <section id="week-6" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">06</span>
+                <div><h2 class="week-title">Ship + Prove</h2></div>
+            </div>
+            <div class="day-grid">
+                <a class="day-card" data-lesson-id="week6-day21" href="/Week%206/Day21/ai-academy-day21.html"><span class="day-label">Day 21</span><h3 class="day-title">Deployment &amp; Operations</h3></a>
+                <a class="day-card" data-lesson-id="week6-day22" href="/Week%206/Day22/ai-academy-day22.html"><span class="day-label">Day 22</span><h3 class="day-title">Incident Drill</h3></a>
+                <a class="day-card" data-lesson-id="week6-day23" href="/Week%206/Day23/ai-academy-day23.html"><span class="day-label">Day 23</span><h3 class="day-title">Presentation Prep</h3></a>
+                <a class="day-card" data-lesson-id="week6-day24" href="/Week%206/Day24/ai-academy-day24.html"><span class="day-label">Day 24</span><h3 class="day-title">Dress Rehearsal</h3></a>
+                <a class="day-card" data-lesson-id="week6-day25" href="/Week%206/Day25/ai-academy-day25.html"><span class="day-label">Day 25</span><h3 class="day-title">HACKATHON</h3></a>
+            </div>
+        </section>
+
+        <!-- ── Certification Prep ──────────────────── -->
+        <section id="certs" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">&#9733;</span>
+                <div><h2 class="week-title">Certification Prep</h2></div>
+            </div>
+            <div class="cert-grid">
+                <a class="cert-card" data-role="FDE" href="/Certifications/cert-fde.html"><div class="cert-role">FDE</div><div class="cert-name">AWS Developer + AI-900</div></a>
+                <a class="cert-card" data-role="AI-SE" href="/Certifications/cert-ai-se.html"><div class="cert-role">AI-SE</div><div class="cert-name">AZ-400 DevOps + AI-900</div></a>
+                <a class="cert-card" data-role="AI-DS" href="/Certifications/cert-ai-ds.html"><div class="cert-role">AI-DS</div><div class="cert-name">DP-100 Data Scientist + AI-900</div></a>
+                <a class="cert-card" data-role="AI-DA" href="/Certifications/cert-ai-da.html"><div class="cert-role">AI-DA</div><div class="cert-name">PL-300 Power BI + AI-900</div></a>
+                <a class="cert-card" data-role="AI-PM" href="/Certifications/cert-ai-pm.html"><div class="cert-role">AI-PM</div><div class="cert-name">AI-900 + AWS AI Practitioner</div></a>
+                <a class="cert-card" data-role="AI-FE" href="/Certifications/cert-ai-fe.html"><div class="cert-role">AI-FE</div><div class="cert-name">AI-900 + Google UX Design</div></a>
+                <a class="cert-card" data-role="AI-SEC" href="/Certifications/cert-ai-sec.html"><div class="cert-role">AI-SEC</div><div class="cert-name">SC-200 Security + CompTIA AI+</div></a>
+                <a class="cert-card" data-role="AI-DX" href="/Certifications/cert-ai-dx.html"><div class="cert-role">AI-DX</div><div class="cert-name">AZ-204 Developer + AI-900</div></a>
+            </div>
+        </section>
+
+        <!-- ── Resources ───────────────────────────── -->
+        <section id="resources" class="week-section">
+            <div class="week-header">
+                <span class="week-num-large">&#9776;</span>
+                <div><h2 class="week-title">Resources</h2></div>
+            </div>
+            <div class="cert-grid resources">
+                <a class="cert-card" data-role="RES" href="/Glossary/ai-academy-glossary.html"><div class="cert-role">Glossary</div><div class="cert-name">120+ AI &amp; Technical Terms</div></a>
+            </div>
+        </section>
+
+        <!-- ── Instructor Notes ────────────────────── -->
+        <details class="instructor">
+            <summary class="instructor-toggle">
+                <div class="instructor-toggle-left">
+                    <span class="instructor-toggle-icon">&#128218;</span>
+                    <span class="instructor-toggle-title">Instructor Notes</span>
+                    <span class="instructor-toggle-hint">&mdash; deep-dive prep materials for each day</span>
+                </div>
+                <svg class="instructor-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </summary>
+            <div class="instructor-weeks">
+                <div class="instructor-week-label">Week 1 &mdash; Foundations</div>
+                <div class="instructor-links">
+                    <a class="instructor-link" href="/Week%201/Day1/AI_Academy_Day1_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 1</span><span class="il-title">The New Reality &mdash; AI Landscape 2026</span></a>
+                    <a class="instructor-link" href="/Week%201/Day2/AI_Academy_Day2_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 2</span><span class="il-title">AI Security Fundamentals</span></a>
+                    <a class="instructor-link" href="/Week%201/Day3/AI_Academy_Day3_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 3</span><span class="il-title">Databases &amp; Memory for AI Agents</span></a>
+                    <a class="instructor-link" href="/Week%201/Day4/AI_Academy_Day4_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 4</span><span class="il-title">System Design &amp; Governance Blueprint</span></a>
+                    <a class="instructor-link" href="/Week%201/Day5/AI_Academy_Day5_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 5</span><span class="il-title">Governance to Agent Design Patterns</span></a>
+                </div>
+
+                <div class="instructor-week-label">Week 2 &mdash; Role Deep Dive</div>
+                <div class="instructor-links">
+                    <a class="instructor-link" href="/Week%202/Day6/AI_Academy_Day6_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 6</span><span class="il-title">Instructor Preparation</span></a>
+                    <a class="instructor-link" href="/Week%202/Day7/ai_academy_day7_syllabus_en.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 7</span><span class="il-title">RAG &amp; Data Quality</span></a>
+                    <a class="instructor-link" href="/Week%202/Day8/ai_academy_day8_syllabus_en.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 8</span><span class="il-title">Security, Evaluation &amp; Business Value</span></a>
+                    <a class="instructor-link" href="/Week%202/Day9/ai_academy_day9_syllabus_en.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 9</span><span class="il-title">Deployment, AI Regulation &amp; KAF Method</span></a>
+                    <a class="instructor-link" href="/Week%202/Day10/ai_academy_day10_syllabus_en.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 10</span><span class="il-title">Client Simulation &amp; Week 2 Wrap-Up</span></a>
+                </div>
+
+                <div class="instructor-week-label">Week 4 &mdash; Discovery + Architecture</div>
+                <div class="instructor-links">
+                    <a class="instructor-link" href="/Week%204/Day11/AI_Academy_Day11_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 11</span><span class="il-title">Welcome Back &mdash; The World Moved</span></a>
+                    <a class="instructor-link" href="/Week%204/Day12/AI_Academy_Day12_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 12</span><span class="il-title">First Client Meeting</span></a>
+                    <a class="instructor-link" href="/Week%204/Day13/AI_Academy_Day13_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 13</span><span class="il-title">Architecture &mdash; Policy as Code</span></a>
+                    <a class="instructor-link" href="/Week%204/Day14/AI_Academy_Day14_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 14</span><span class="il-title">EU AI Act Meets Reality</span></a>
+                    <a class="instructor-link" href="/Week%204/Day15/AI_Academy_Day15_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 15</span><span class="il-title">Steering Committee &mdash; Go/No-Go</span></a>
+                </div>
+
+                <div class="instructor-week-label">Week 5 &mdash; Build + Verify</div>
+                <div class="instructor-links">
+                    <a class="instructor-link" href="/Week%205/Day16/AI_Academy_Day16_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 16</span><span class="il-title">First Lines of Code</span></a>
+                    <a class="instructor-link" href="/Week%205/Day17/AI_Academy_Day17_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 17</span><span class="il-title">Data Is Always Dirty</span></a>
+                    <a class="instructor-link" href="/Week%205/Day18/AI_Academy_Day18_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 18</span><span class="il-title">MVP Demo + Hackathon Teams</span></a>
+                    <a class="instructor-link" href="/Week%205/Day19/AI_Academy_Day19_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 19</span><span class="il-title">Evaluation + Policy Compliance</span></a>
+                    <a class="instructor-link" href="/Week%205/Day20/AI_Academy_Day20_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 20</span><span class="il-title">Week 5 Checkpoint</span></a>
+                </div>
+
+                <div class="instructor-week-label">Week 6 &mdash; Ship + Prove</div>
+                <div class="instructor-links">
+                    <a class="instructor-link" href="/Week%206/Day21/AI_Academy_Day21_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 21</span><span class="il-title">Deployment to Production</span></a>
+                    <a class="instructor-link" href="/Week%206/Day22/AI_Academy_Day22_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 22</span><span class="il-title">Incident Response Drill</span></a>
+                    <a class="instructor-link" href="/Week%206/Day23/AI_Academy_Day23_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 23</span><span class="il-title">Tell the Story &mdash; Presentation Prep</span></a>
+                    <a class="instructor-link" href="/Week%206/Day24/AI_Academy_Day24_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 24</span><span class="il-title">Dress Rehearsal</span></a>
+                    <a class="instructor-link" href="/Week%206/Day25/AI_Academy_Day25_Instructor_Prep.md" target="_blank" rel="noopener noreferrer"><span class="il-day">Day 25</span><span class="il-title">HACKATHON &mdash; Final Day</span></a>
+                </div>
+            </div>
+        </details>
+
+    </main>
+
+    <!-- ═══ LESSON COMPLETION MODAL ═══ -->
+    <div id="lesson-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">Lesson Complete! &#127881;</h2>
+            <p class="modal-subtitle">Great work! Tell us what you learned.</p>
+
+            <div class="modal-summary">
+                <h4>AI Interaction Summary</h4>
+                <div id="modal-ai-summary"><p>Loading summary...</p></div>
+            </div>
+
+            <div class="modal-disclosure">
+                <h4>What Is Shared with the Instructor</h4>
+                <ul id="modal-data-shared">
+                    <li><code>lesson_id</code>, <code>week_number</code>, and <code>day_number</code></li>
+                    <li><code>ai_summary</code> generated from your mentor interactions</li>
+                    <li><code>mentor_interactions</code> (roles, count, time spent)</li>
+                    <li><code>student_notes</code> if you provide them</li>
+                    <li><code>completed_at</code> timestamp</li>
+                </ul>
+            </div>
+
+            <div>
+                <label for="student-notes" class="modal-label">Your Reflection (optional)</label>
+                <textarea id="student-notes" class="modal-textarea" placeholder="What was your key takeaway from this lesson?"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button id="modal-submit-btn" class="btn-primary">Mark as Complete</button>
+                <button id="modal-cancel-btn" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ THEME TOGGLE ═══ -->
+    <div class="theme-toggle">
+        <button class="theme-btn" id="theme-light" aria-label="Light theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button class="theme-btn active" id="theme-dark" aria-label="Dark theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+    </div>
+
+    <!-- ═══ SCRIPTS ═══ -->
+
+    <!-- Day card context menu -->
+    <script>
+    var activeMenu = null;
+    var activeMenuParent = null;
+    function closeDayMenu() {
+        if (activeMenu) {
+            activeMenu.classList.remove('menu-visible');
+            activeMenuParent.appendChild(activeMenu);
+            activeMenu = null;
+            activeMenuParent = null;
+        }
+    }
+    function toggleDayMenu(e, card) {
+        if (e.target.closest('.day-menu-item')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var menu = card.querySelector('.day-menu');
+        var wasOpen = activeMenu === menu;
+        closeDayMenu();
+        if (wasOpen) return;
+        var rect = card.getBoundingClientRect();
+        activeMenuParent = card;
+        activeMenu = menu;
+        menu.style.top = (rect.bottom + 4) + 'px';
+        menu.style.left = rect.left + 'px';
+        menu.style.width = rect.width + 'px';
+        document.body.appendChild(menu);
+        menu.classList.add('menu-visible');
+    }
+    document.addEventListener('click', function(e) {
+        if (activeMenu && !activeMenu.contains(e.target)) {
+            closeDayMenu();
+        }
+    });
+    </script>
+
+    <!-- Theme Switcher -->
+    <script>
+    (function() {
+        var saved = localStorage.getItem('academy-theme');
+        if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+        var lightBtn = document.getElementById('theme-light');
+        var darkBtn = document.getElementById('theme-dark');
+
+        function setTheme(t) {
+            document.documentElement.setAttribute('data-theme', t);
+            localStorage.setItem('academy-theme', t);
+            lightBtn.classList.toggle('active', t === 'light');
+            darkBtn.classList.toggle('active', t === 'dark');
+        }
+
+        var current = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(current);
+
+        lightBtn.addEventListener('click', function() { setTheme('light'); });
+        darkBtn.addEventListener('click', function() { setTheme('dark'); });
+    })();
+    </script>
+
+    <!-- Lesson Modal Logic -->
+    <script>
+    (function() {
+        var modal = document.getElementById('lesson-modal');
+        var submitBtn = document.getElementById('modal-submit-btn');
+        var cancelBtn = document.getElementById('modal-cancel-btn');
+        var notesTextarea = document.getElementById('student-notes');
+        var aiSummaryDiv = document.getElementById('modal-ai-summary');
+        var dataSharedList = document.getElementById('modal-data-shared');
+        var currentLessonData = null;
+
+        window.openLessonModal = function(lessonId, mentorInteractions) {
+            currentLessonData = { lessonId: lessonId, mentorInteractions: mentorInteractions };
+
+            var roles = (mentorInteractions && mentorInteractions.roles) || [];
+            var count = (mentorInteractions && mentorInteractions.count) || 0;
+            var timeMins = (mentorInteractions && mentorInteractions.time_spent_mins) || 0;
+
+            aiSummaryDiv.innerHTML =
+                '<p><strong>Mentors Used:</strong> ' + (roles.join(', ') || 'None') + '</p>' +
+                '<p><strong>Interactions:</strong> ' + count + ' questions/responses</p>' +
+                '<p><strong>Time Spent:</strong> ' + timeMins + ' minutes</p>';
+            if (dataSharedList) {
+                dataSharedList.innerHTML =
+                    '<li><code>lesson_id</code>: ' + lessonId + '</li>' +
+                    '<li><code>week_number</code>/<code>day_number</code>: derived from lesson ID</li>' +
+                    '<li><code>ai_summary</code>: \"Studied with ' + (roles.join(', ') || 'no mentors') + '\"</li>' +
+                    '<li><code>mentor_interactions</code>: roles=' + (roles.join(', ') || 'none') + ', count=' + count + ', minutes=' + timeMins + '</li>' +
+                    '<li><code>student_notes</code>: only if you submit text</li>' +
+                    '<li><code>completed_at</code>: server-side timestamp</li>';
+            }
+            notesTextarea.value = '';
+            modal.style.display = 'flex';
+        };
+
+        submitBtn.addEventListener('click', async function() {
+            if (!currentLessonData) return;
+
+            var studentNotes = notesTextarea.value;
+            var token = window.__academyAuthToken;
+            var match = currentLessonData.lessonId.match(/week(\d+)-day(\d+)/);
+            var weekNum = parseInt((match && match[1]) || 1);
+            var dayNum = parseInt((match && match[2]) || 1);
+            var mi = currentLessonData.mentorInteractions || {};
+
+            var payload = {
+                lesson_id: currentLessonData.lessonId,
+                week_number: weekNum,
+                day_number: dayNum,
+                ai_summary: 'Studied with ' + ((mi.roles || []).join(', ')) + ' roles. ' + (mi.count || 0) + ' interactions.',
+                mentor_interactions: mi,
+                student_notes: studentNotes,
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            try {
+                var response = await fetch('/api/progress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) throw new Error('Failed to save progress');
+                await response.json();
+
+                alert('Lesson marked as complete! \u2705');
+                modal.style.display = 'none';
+
+                var lessonCard = document.querySelector('[data-lesson-id="' + currentLessonData.lessonId + '"]');
+                if (lessonCard) lessonCard.classList.add('completed');
+            } catch (error) {
+                alert('Error saving progress: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Mark as Complete';
+            }
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            currentLessonData = null;
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                currentLessonData = null;
+            }
+        });
+    })();
+    </script>
+
+    <!-- Helper Functions -->
+    <script>
+    window.openLessonContent = function(lessonId) {
+        var link = document.querySelector('a[href*="' + lessonId + '"]');
+        if (link) {
+            link.click();
+        } else {
+            alert('Opening ' + lessonId + '...');
+        }
+    };
+
+    window.getMentorInteractions = function(lessonId) {
+        return (window.lessonMentorInteractions && window.lessonMentorInteractions[lessonId]) || {
+            roles: [],
+            count: 0,
+            time_spent_mins: 0,
+        };
+    };
+    </script>
+
+    <!-- Progress Loader -->
+    <script>
+    (function() {
+        // Wait for auth token, then fetch + apply progress
+        function waitForToken(cb, attempts) {
+            if (window.__academyAuthToken) return cb(window.__academyAuthToken);
+            if (attempts > 60) return; // give up after ~6s
+            setTimeout(function() { waitForToken(cb, (attempts || 0) + 1); }, 100);
+        }
+
+        function loadProgress(token) {
+            fetch('/api/progress', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data || !data.progress) return;
+                applyProgress(data.progress);
+            })
+            .catch(function() { /* silent — progress display is non-critical */ });
+        }
+
+        function applyProgress(records) {
+            // Build a set of completed lesson IDs
+            var completed = {};
+            records.forEach(function(r) {
+                if (r.status === 'completed') {
+                    completed[r.lesson_id] = true;
+                }
+            });
+
+            // ── All weeks: Update day-groups and day-cards ───
+            var allElements = document.querySelectorAll('[data-lesson-id]');
+            allElements.forEach(function(el) {
+                var id = el.getAttribute('data-lesson-id');
+                if (completed[id]) {
+                    el.classList.add('is-completed');
+                }
+            });
+        }
+
+        waitForToken(loadProgress, 0);
+    })();
+    </script>
+
+    <!-- Scroll Spy & Animations -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ── Scroll spy for navigation ────────────────
+        var navItems = document.querySelectorAll('.week-nav-item');
+        var sections = document.querySelectorAll('.week-section');
+
+        var spyObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var id = entry.target.id;
+                    navItems.forEach(function(item) {
+                        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+                    });
+                }
+            });
+        }, { rootMargin: '-20% 0px -75% 0px' });
+
+        sections.forEach(function(section) { spyObserver.observe(section); });
+
+        // ── Scroll-triggered fade-in animations ──────
+        var animObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        sections.forEach(function(section) { animObserver.observe(section); });
+    });
+    </script>
+
+    <script>
+    // ── Day unlock gating on dashboard ───────────────────────────────
+    (function () {
+        var SCHEDULE = {
+            11: '2026-02-23', 12: '2026-02-24', 13: '2026-02-25',
+            14: '2026-02-26', 15: '2026-02-27',
+            16: '2026-03-02', 17: '2026-03-03', 18: '2026-03-04',
+            19: '2026-03-05', 20: '2026-03-06',
+            21: '2026-03-09', 22: '2026-03-10', 23: '2026-03-11',
+            24: '2026-03-12', 25: '2026-03-13',
+        };
+
+        var now = new Date();
+        var today = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+
+        function formatShort(dateStr) {
+            var p = dateStr.split('-');
+            return new Date(+p[0], +p[1] - 1, +p[2])
+                .toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        }
+
+        document.querySelectorAll('.day-card[data-lesson-id]').forEach(function (card) {
+            var id = card.getAttribute('data-lesson-id'); // e.g. "week4-day11"
+            var match = id.match(/day(\d+)$/);
+            if (!match) return;
+            var dayNum = parseInt(match[1], 10);
+            var unlockDate = SCHEDULE[dayNum];
+            if (!unlockDate) return;
+            if (today >= unlockDate) return; // available
+
+            // Lock the card
+            card.classList.add('is-locked');
+            card.removeAttribute('href');
+            var badge = document.createElement('span');
+            badge.className = 'lock-badge';
+            badge.innerHTML = '🔒 Unlocks ' + formatShort(unlockDate);
+            card.appendChild(badge);
+        });
+    })();
+    </script>
+
+</body>
+</html>
