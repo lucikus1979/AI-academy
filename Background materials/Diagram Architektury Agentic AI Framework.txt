@@ -1,0 +1,285 @@
+1) Architektúrny diagram (vrstvy + komponenty)
+graph LR
+  %% User / Front
+  U[User / Business UI<br/>(Chat, Dashboard, Low-code Agent Builder)]
+  Dev[Agent Developer / CI]()
+  U -->|HTTP/WS| APIGW[API Gateway / Ingress]
+  Dev -->|GitOps| CI_CD[CI/CD & Repo]
+
+
+  %% Edge / Security
+  APIGW --> Auth[Identity & RBAC / Policy Enforcement]
+  Auth --> Orchestrator
+
+
+  %% Core Orchestration
+  Orchestrator[Orchestrator / AI Core<br/>(runtime intelligence,<br/>plan & execution manager)]
+  AgentRegistry[Agent Registry & Catalog]
+  AgentDesigner[Agent Builder / Designer (low-code)]
+  ModelRouter[Model Router / LLM Orchestrator]
+  Orchestrator --> AgentRegistry
+  AgentDesigner --> AgentRegistry
+  AgentRegistry --> Orchestrator
+  Orchestrator --> ModelRouter
+
+
+  %% Execution plane
+  AgentExec[Agent Execution Engine<br/>(sandboxed containers / serverless)]
+  WorkflowEngine[Workflow Engine / Orchestration Engine]
+  Orchestrator --> WorkflowEngine
+  WorkflowEngine --> AgentExec
+  AgentExec --> ToolSandbox[Tool Execution Sandbox<br/>(scripts, SDKs, connectors)]
+  AgentExec --> ShortMem[Short-term Memory (Redis/Session)]
+  AgentExec --> LongMem[Long-term Memory (Vector DB / RAG store)]
+  AgentExec --> ModelRouter
+
+
+  %% Integrations
+  ToolSandbox --> Connectors[Connectors / Adapters<br/>(ServiceNow, CRM, DBs, Hyperscalers, WebSearch)]
+  Connectors --> ExternalSystems[(External Systems)]
+
+
+  %% Ingestion & Knowledge
+  Ingest[Agentic Ingestion / Data Pipeline<br/>(crawl, metadata, schema, POA)]
+  Ingest --> LongMem
+  Ingest --> KnowledgeStore[(Knowledge stores & DBs)]
+
+
+  %% Platform Services
+  Secrets[Secrets / KMS / Vault]
+  PolicyEngine[Policy & Guardrails (OPA / PDP)]
+  Audit[Audit Logging & Compliance]
+  Monitoring[Monitoring / Observability<br/>(Metrics, Traces, Logs)]
+  CostGovern[Cost & Model Governance]
+
+
+  %% Connections
+  AgentExec -->|audit,event| Audit
+  Orchestrator --> PolicyEngine
+  Auth --> PolicyEngine
+  AllSecrets((KMS)) --- Secrets
+  Orchestrator --> Monitoring
+  CI_CD -->|deploy| AgentExec
+  CI_CD --> AgentRegistry
+  CI_CD --> ModelRouter
+  CostGovern --> ModelRouter
+
+
+  %% Platform base
+  subgraph PLATFORM ["Platform / Bridge / KAIF"]
+    Orchestrator
+    AgentRegistry
+    AgentDesigner
+    ModelRouter
+    WorkflowEngine
+    AgentExec
+    PolicyEngine
+    Audit
+    Monitoring
+    Secrets
+  end
+
+Tento diagram zodpovedá myšlienke KAIF/Bridge ako „agentic ecosystem“ — core runtime (Orchestrator/AI Core), Agent Builder, Agent Registry, memory management, connectors a governance vrstvou. (zdroj: Kyndryl Agentic AI Framework / Bridge popis). 
+
+Agentic AI Framework
+
+2) Sekvenčný tok (príklad spracovania jednej požiadavky)
+sequenceDiagram
+  participant User
+  participant UI as UI/Low-code
+  participant API as API GW/Auth
+  participant Orch as Orchestrator (AI Core)
+  participant Reg as Agent Registry
+  participant MR as Model Router / LLM
+  participant Exec as Agent Execution Engine
+  participant SM as Short-term Memory
+  participant LM as Long-term Memory (Vector DB)
+  participant Tools as Tools/Connectors
+  participant Policy as Policy Engine
+  participant Audit as Audit/Logging
+
+
+  User->>UI: zadanie požiadavky (NL)
+  UI->>API: POST /agent/execute {intent, context}
+  API->>Policy: check policies & RBAC
+  Policy-->>API: ok
+  API->>Orch: forward request + auth context
+  Orch->>Reg: fetch agent design & workflow
+  Reg-->>Orch: agent blueprint
+  Orch->>SM: load short-term context/session
+  SM-->>Orch: session/context
+  Orch->>MR: request model suggestion (cost/perf)
+  MR-->>Orch: select model (e.g., gptX / local LLM)
+  Orch->>Exec: spawn agent runtime (sandbox)
+  Exec->>LM: RAG lookup (k-NN on vector store)
+  LM-->>Exec: relevant docs / embeddings
+  Exec->>MR: call LLM with RAG + prompt
+  MR-->>Exec: response / plan
+  Exec->>Tools: call external API / action (e.g., update CRM)
+  Tools-->>Exec: result
+  Exec->>SM: update short-term memory / conversation
+  Exec->>Audit: log actions & evidence
+  Exec-->>Orch: final result & status
+  Orch->>UI: return result (and actions performed)
+  UI->>User: zobraz výsledok / request aprobácie (HITL)
+3) Komponenty — čo robia a návrhové rozhodnutia
+Orchestrator / AI Core
+
+Zodpovednosť: Riadi plánovanie úloh, rozhoduje ktoré agenty/úlohy spustiť, koordinuje multi-agentné scénare a rozhoduje o human-in-the-loop eskaláciách. Tiež komunikuje s model routerom pre výber LLM/strategie.
+
+Kľúčové vlastnosti: stateful runtime, retry/persistence, orchestration policies, pluggable workflow engine.
+
+Odporúčanie technológií: Kubernetes + Knative / serverless runtime; workflow: Temporal/Argo/Zeebe; orchestrator logika v microservice (Python/Go).
+
+Dokument: Orchestrátor = runtime intelligence, agent orchestration vs workflow rozdiel. 
+
+Agentic AI Framework
+
+Agent Registry & Catalog
+
+Zodpovednosť: Ukladá agent blueprints, verzovanie, metadata, šablóny a marketplace. Slúži pre discovery a governance (kto smie používať).
+
+Implementácia: relačná DB (Postgres) pre metadata + object store pre artefakty; UI pre katalogizáciu.
+
+Dokument: Agent Registry sú súčasť core services. 
+
+Agentic AI Framework
+
+Agent Designer / Agent Builder (Low-code)
+
+Zodpovednosť: Guided UX, wizard, generuje blueprint / test artefakty; podporuje non-technical persony.
+
+Dokument: Agent Designer – guided discovery, generuje design blueprint. 
+
+Agentic AI Framework
+
+Model Router / LLM Orchestrator
+
+Zodpovednosť: Rozhoduje, ktorý model volať na základe nákladov / presnosti / dátovej citlivosti; vie fallbackovať na lokálne LLM alebo menšie modely podľa politík.
+
+Funkcie: routing rules, cost/perf policies, model caching, versioning.
+
+Dokument: doporučené je “recommend optimal AI models” a model routing. 
+
+Agentic AI Framework
+
+Memory (short & long-term)
+
+Short-term: Redis/Memory store pre session, kontext, transakčné stavy.
+
+Long-term: Vector DB (Milvus / Weaviate / Pinecone) + metadata store pre RAG. Zabezpečiť izoláciu podľa tenantov a dátovej suverenity.
+
+Dokument: Memory management (short & long term) a prechod stavu medzi agentmi. 
+
+Agentic AI Framework
+
+Tool Execution Sandbox & Connectors
+
+Zodpovednosť: Bezpečne vykonať akcie (API calls, DB updates, skripty). Sandbox (container + IAM + network policies) s auditingom.
+
+Integrácie: Predpripravené konektory na ServiceNow, Dynatrace, hyperscalers, interné DB, websearch. 
+
+Agentic AI Framework
+
+Policy / Governance / Audit
+
+Zodpovednosť: OPA (Policy Decision Point) / PDP pre rozhodovanie pred exekúciou akcií, RBAC, guardrails, automatizované auditovanie, logging. Povinné: evidovanie každej akcie (kto/čo/kedy).
+
+Dokument: „Security-by-design“, zero-trust, audity a compliance reporting. 
+
+Agentic AI Framework
+
+Agentic Ingestion & Knowledge Pipeline
+
+Zodpovednosť: Automatické spracovanie zákazníkovho estate — kód, politiky, dokumenty, schémy — na vybudovanie knowledge graph + vklad do RAG.
+
+Dáta: ETL, metadata extraction, PII detection, data classification, vectorization.
+
+Dokument: Agentic ingestion analyzuje technický a dátový estate. 
+
+Seller Presentation Kyndryl Age…
+
+CI/CD, Testing & Lifecycle
+
+GitOps model: všetky agent blueprints a infra ako kód v repozitári. Automatické testy (unit + integration + safety tests), canary deploy, verzovanie agentov a rollback.
+
+Implementácia: ArgoCD/Flux, GitHub Actions + integration test runner (sandboxed).
+
+Monitoring, Observability & Cost Governance
+
+Metrics (Prometheus), Tracing (Jaeger), Logs (ELK / Splunk), Biz KPI dashboards. Cost governance zahŕňa model-call cost metriky a alarmy.
+
+Dokument: monitoring & cost governance sú súčasťou core services. 
+
+Agentic AI Framework
+
+4) Dátové toky — krok po kroku (technicky)
+
+Ingest: Ingest pipeline čistí, anonymizuje (ak treba), extrahuje metadata a indexuje dokumenty do vector DB + pripojí metadata do knowledge store. (Agentic Ingestion) 
+
+Seller Presentation Kyndryl Age…
+
+Design: Business user alebo developer navrhne agenta v Agent Designer — vygeneruje blueprint, test-cases a zaregistruje do Agent Registry. (verzovanie) 
+
+Agentic AI Framework
+
+Execute (runtime): Užívateľ UI pošle požiadavku → APIGW validuje → Orchestrator načíta blueprint, session z short-term memory → Orchestrator požiada Model Router o výber modelu → AgentExec vykoná RAG lookup v long-term memory → zavolá LLM → podľa plánu zavolá ToolSandbox/Connectors → výsledky sa uložia a zaznamenajú do audit logu. (sekvencia v diagrame) 
+
+Agentic AI Framework
+
+Human-in-the-loop: Ak politiky alebo confidence level vyžadujú, workflow pauzuje a posiela request na schválenie cez UI (HITL).
+
+Continuous Learning: Feedback loop — výsledky, schválenia a opravy sú uložené do long-term memory a slúžia pre continuous learning/prioritizáciu agentov.
+
+5) Bezpečnosť, compliance a data-sovereignty
+
+Zero-trust: každé volanie autentifikovať a autorizovať; RBAC + scopes. (Kyndryl zdôrazňuje zero-trust) 
+
+Agentic AI Framework
+
+Policy enforcement: OPA/PDPS pre pravidlá, napr. ktoré modely použiť s citlivými dátami, ktoré akcie sú povolené.
+
+Audit: plné záznamy: prompt, model ver., odpoveď, akcie, výsledky, kto schválil.
+
+Encryption & KMS: encrypt-at-rest a encrypt-in-transit. Separácia kľúčov podľa tenantov/region.
+
+Data sovereignty: možnosť regionálneho vrstvenia (lokálne vector DB alebo souverain cloud).
+
+Safety: content-filtering, guardrails, red-team testing pred nasadením agentov (safety-tests v CI).
+
+6) Model routing a optimalizácia nákladov
+
+Model Router rozhoduje podľa: latencie, cena/požiadavka, citlivosti dát (sú to PII?), SLA. Môže použiť: preference → cena/perf skóring → fallback chain.
+
+Cache & batching: cache výsledkov, batch requesty pre embeddings, rate-limiting.
+
+Fallbacks: ak externé LLM zlyhá, fallback na lokálny model alebo heuristiku.
+
+7) Príklad multi-agent orchestration (konkrétny scenár)
+
+Scenár: „Zisti root cause incidentu, navrhni remediation, vytvor ticket v ServiceNow a pošli summary vedúcemu.“
+
+Kroky:
+
+Orchestrator aktivuje „Investigation Agent“ → vykoná RAG lookup do logs vector DB a konfiguračnej knowledge.
+
+Investigation Agent použije Root-Cause Agent (specializovaný) → vráti hypothesisy.
+
+Remediation Agent (beží súbežne) simuluje nápravné kroky v sandboxe.
+
+Orchestrator vyhodnotí confidence; ak nad threshold → exekvuje ToolSandbox: vytvor ServiceNow ticket. Inak → HITL na review.
+
+Všetky kroky sa auditujú a výsledky idú do long-term memory pre learning.
+(Orchestrácia a multi-agentná spolupráca sú explicitne podporované v dizajne dokumentu.) 
+
+Agentic AI Framework
+
+8) Rýchle odporúčania pre implementačný plán (MVP -> Production)
+
+MVP: Orchestrator + Agent Registry + jednoduchý Agent Exec + Vector DB + jednoduchý model router (1 externý LLM + 1 lokálny). Low-code builder minimalne.
+
+Stredná fáza: pridaj Policy Engine, sandboxed Tool execution, short + long memory, konektory.
+
+Prod: multitenancy, full governance (audit, compliance reports), cost governance, CI/CD, monitoring, autoscaling a model routing.
+
+Testy: Safety tests + red-team + performance/chaos tests.
