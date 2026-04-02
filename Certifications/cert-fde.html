@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDE Certification Guide - AI Academy 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════════
+           THEME VARIABLES
+           ══════════════════════════════════════════════ */
+        :root {
+            --radius: 14px;
+            --transition: 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-card: #1a1f26;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --glass: rgba(26,31,38,0.8);
+            --glass-border: rgba(255,255,255,0.08);
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --bg-tertiary: #242b35;
+            --bg-hover: #242b35;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-purple: #7c3aed;
+            --accent-orange: #d97706;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --glass: rgba(255,255,255,0.85);
+            --glass-border: rgba(0,0,0,0.08);
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --bg-tertiary: #f1f5f9;
+            --bg-hover: #f1f5f9;
+        }
+
+        /* ══════════════════════════════════════════════
+           BASE
+           ══════════════════════════════════════════════ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+        /* ══════════════════════════════════════════════
+           HEADER
+           ══════════════════════════════════════════════ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--glass);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            z-index: 200;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            transition: all 0.2s;
+        }
+        .back-link:hover { background: rgba(59,130,246,0.2); }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .logo-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            display: flex;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 3px;
+        }
+        .theme-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+        .theme-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* ══════════════════════════════════════════════
+           MAIN CONTENT
+           ══════════════════════════════════════════════ */
+        .main {
+            margin-top: 60px;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 2.5rem 1rem 2rem;
+            background: radial-gradient(ellipse at top, rgba(59,130,246,0.08) 0%, transparent 60%);
+            border-radius: var(--radius);
+            margin-bottom: 2.5rem;
+        }
+        .hero-icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .hero h1 {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .hero-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .hero-role strong { color: var(--accent-blue); }
+
+        /* Section Headers */
+        .section {
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-icon {
+            font-size: 1.3rem;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+
+        /* Cert Cards */
+        .cert-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .cert-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 1px var(--accent-blue), var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .cert-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cert-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        .cert-number.priority { background: var(--accent-green); }
+        .cert-number.recommended { background: var(--accent-blue); }
+        .cert-number.advanced { background: var(--accent-purple); }
+
+        .cert-info { flex: 1; min-width: 0; }
+        .cert-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .cert-provider {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .cert-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+        .cert-badge.priority {
+            background: rgba(16,185,129,0.12);
+            color: var(--accent-green);
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .cert-badge.recommended {
+            background: rgba(59,130,246,0.12);
+            color: var(--accent-blue);
+            border: 1px solid rgba(59,130,246,0.25);
+        }
+        .cert-badge.advanced {
+            background: rgba(139,92,246,0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(139,92,246,0.25);
+        }
+
+        .cert-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .cert-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+        }
+        .cert-meta-item span.label { color: var(--text-muted); font-weight: 500; }
+        .cert-meta-item span.value { font-weight: 600; }
+
+        .cert-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            transition: all 0.2s;
+        }
+        .cert-link:hover {
+            background: rgba(59,130,246,0.2);
+            transform: translateX(2px);
+        }
+
+        /* Resources */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.75rem;
+        }
+        .resource-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            transition: all 0.2s;
+        }
+        .resource-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 1px var(--accent-cyan);
+            transform: translateY(-1px);
+        }
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            background: rgba(6,182,212,0.1);
+            border: 1px solid rgba(6,182,212,0.2);
+        }
+        .resource-info { min-width: 0; }
+        .resource-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .resource-url {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .resource-arrow {
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+        .resource-card:hover .resource-arrow {
+            transform: translateX(3px);
+            color: var(--accent-cyan);
+        }
+
+        /* Tips */
+        .tips-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .tip-card {
+            display: flex;
+            gap: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+        .tip-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            background: rgba(245,158,11,0.12);
+            color: var(--accent-orange);
+            border: 1px solid rgba(245,158,11,0.25);
+        }
+        .tip-content { flex: 1; }
+        .tip-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .tip-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Study Plan */
+        .plan-timeline {
+            position: relative;
+        }
+        .plan-timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+            border-radius: 1px;
+        }
+        .plan-week {
+            position: relative;
+            padding-left: 52px;
+            padding-bottom: 1.5rem;
+        }
+        .plan-week:last-child { padding-bottom: 0; }
+
+        .plan-dot {
+            position: absolute;
+            left: 12px;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-blue);
+            background: var(--bg-primary);
+            z-index: 1;
+        }
+        .plan-week:nth-child(2) .plan-dot { border-color: var(--accent-green); }
+        .plan-week:nth-child(3) .plan-dot { border-color: var(--accent-purple); }
+        .plan-week:nth-child(4) .plan-dot { border-color: var(--accent-orange); }
+
+        .plan-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 0.35rem;
+        }
+        .plan-week:nth-child(2) .plan-label { color: var(--accent-green); }
+        .plan-week:nth-child(3) .plan-label { color: var(--accent-purple); }
+        .plan-week:nth-child(4) .plan-label { color: var(--accent-orange); }
+
+        .plan-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+        .plan-tasks {
+            list-style: none;
+        }
+        .plan-tasks li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 0.2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .plan-tasks li::before {
+            content: '\2022';
+            color: var(--text-muted);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Progress Bar */
+        .progress-bar-wrap {
+            margin-top: 1.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 100px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.8s ease;
+        }
+        .progress-bar-fill {
+            width: 0%;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .progress-label--hint {
+            margin-top: 0.3rem;
+        }
+        .progress-hint-text {
+            font-size: 0.72rem;
+        }
+        #progressPercent {
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+        .cert-card-info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .cert-check-label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .cert-check {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+        }
+        .cert-check--green {
+            accent-color: var(--accent-green);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .footer strong {
+            color: var(--text-secondary);
+        }
+
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+           ══════════════════════════════════════════════ */
+        @media (max-width: 640px) {
+            .main { padding: 1.25rem 1rem 3rem; }
+            .cert-card-top { flex-direction: column; gap: 0.5rem; }
+            .cert-meta { flex-direction: column; gap: 0.5rem; }
+            .resource-grid { grid-template-columns: 1fr; }
+            .header { padding: 0 1rem; }
+            .logo-text { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="header">
+    <div class="header-left">
+        <a href="/index.html" class="back-link">&larr; Back to Dashboard</a>
+        <div class="logo">
+            <div class="logo-icon">AI</div>
+            <span class="logo-text">Academy 2026</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="theme-toggle">
+            <button class="theme-btn" id="lightBtn" onclick="setTheme('light')" title="Light mode">&#9788;</button>
+            <button class="theme-btn active" id="darkBtn" onclick="setTheme('dark')" title="Dark mode">&#9790;</button>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+    <!-- Section 1: Role Overview -->
+    <div class="hero">
+        <span class="hero-icon">&#128736;</span>
+        <h1>Full-stack Developer Engineer</h1>
+        <p class="hero-subtitle">Certification Study Guide</p>
+        <div class="hero-role">
+            <strong>FDE</strong> &mdash; Builds full-stack AI applications end-to-end: frontend, backend, APIs, databases, and deployment pipelines.
+        </div>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div class="section">
+        <div class="progress-label">
+            <span>Certification progress</span>
+            <span id="progressText">0 of 2 certifications</span>
+        </div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-label progress-label--hint">
+            <span class="progress-hint-text">Click a checkbox on any cert card to track your progress</span>
+            <span id="progressPercent">0%</span>
+        </div>
+    </div>
+
+    <!-- Section 2: Certification Path -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">&#127942;</span>
+            <span class="section-title">Recommended Certification Path</span>
+            <span class="section-count">2 certifications</span>
+        </div>
+
+        <!-- Cert 1: Your Anchor -->
+        <div class="cert-card">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <label class="cert-check-label">
+                        <input type="checkbox" class="cert-check cert-check--green" aria-label="Mark certification as completed" onchange="updateProgress()">
+                    </label>
+                    <div class="cert-number priority">1</div>
+                    <div class="cert-info">
+                        <div class="cert-name">AWS Certified Developer - Associate</div>
+                        <div class="cert-provider">Amazon Web Services (AWS) &mdash; Your Anchor</div>
+                    </div>
+                </div>
+                <span class="cert-badge priority">Your Anchor</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item">
+                    <span class="label">Level:</span>
+                    <span class="value">Intermediate</span>
+                </div>
+                <div class="cert-meta-item">
+                    <span class="label">Cost:</span>
+                    <span class="value">$150</span>
+                </div>
+                <div class="cert-meta-item">
+                    <span class="label">Study Time:</span>
+                    <span class="value">~2-3 months</span>
+                </div>
+            </div>
+            <a href="https://aws.amazon.com/certification/certified-developer-associate/" target="_blank" rel="noopener" class="cert-link">
+                View Certification &#8594;
+            </a>
+        </div>
+
+        <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">Microsoft AZ-204: Azure Developer Associate</div>
+                        <div class="cert-provider">Microsoft</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Intermediate</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$165</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~2-3 months</span></div>
+            </div>
+            <a href="https://learn.microsoft.com/en-us/certifications/azure-developer/" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">Google Cloud Professional Developer</div>
+                        <div class="cert-provider">Google Cloud</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Intermediate</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$200</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~3 months</span></div>
+            </div>
+            <a href="https://cloud.google.com/learn/certification/cloud-developer" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+
+        <!-- Cert 2: Entry Gate -->
+        <div class="cert-card">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <label class="cert-check-label">
+                        <input type="checkbox" class="cert-check" aria-label="Mark certification as completed" onchange="updateProgress()">
+                    </label>
+                    <div class="cert-number recommended">2</div>
+                    <div class="cert-info">
+                        <div class="cert-name">Microsoft AI-900: Azure AI Fundamentals</div>
+                        <div class="cert-provider">Microsoft &mdash; Entry Gate</div>
+                    </div>
+                </div>
+                <span class="cert-badge recommended">Entry Gate</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item">
+                    <span class="label">Level:</span>
+                    <span class="value">Beginner</span>
+                </div>
+                <div class="cert-meta-item">
+                    <span class="label">Cost:</span>
+                    <span class="value">$165</span>
+                </div>
+                <div class="cert-meta-item">
+                    <span class="label">Study Time:</span>
+                    <span class="value">~1 month</span>
+                </div>
+            </div>
+            <a href="https://learn.microsoft.com/en-us/certifications/azure-ai-fundamentals/" target="_blank" rel="noopener" class="cert-link">
+                View Certification &#8594;
+            </a>
+        </div>
+
+        <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">AWS Certified AI Practitioner</div>
+                        <div class="cert-provider">AWS</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$150</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~1-2 months</span></div>
+            </div>
+            <a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">Google Cloud Digital Leader</div>
+                        <div class="cert-provider">Google Cloud</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$99</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~1 month</span></div>
+            </div>
+            <a href="https://cloud.google.com/learn/certification/cloud-digital-leader" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+    </div>
+
+    <!-- Section 3: Free Resources -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">&#128218;</span>
+            <span class="section-title">Free Learning Resources</span>
+            <span class="section-count">3 resources</span>
+        </div>
+        <div class="resource-grid">
+            <a href="https://skillbuilder.aws/" target="_blank" rel="noopener" class="resource-card">
+                <div class="resource-icon">&#9876;</div>
+                <div class="resource-info">
+                    <div class="resource-name">AWS Skill Builder</div>
+                    <div class="resource-url">skillbuilder.aws</div>
+                </div>
+                <span class="resource-arrow">&#8594;</span>
+            </a>
+            <a href="https://learn.microsoft.com/en-us/training/" target="_blank" rel="noopener" class="resource-card">
+                <div class="resource-icon">&#127891;</div>
+                <div class="resource-info">
+                    <div class="resource-name">Microsoft Learn</div>
+                    <div class="resource-url">learn.microsoft.com</div>
+                </div>
+                <span class="resource-arrow">&#8594;</span>
+            </a>
+            <a href="https://aws.amazon.com/free/" target="_blank" rel="noopener" class="resource-card">
+                <div class="resource-icon">&#128196;</div>
+                <div class="resource-info">
+                    <div class="resource-name">AWS Free Tier Labs</div>
+                    <div class="resource-url">aws.amazon.com/free</div>
+                </div>
+                <span class="resource-arrow">&#8594;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Section 4: Study Tips -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">&#128161;</span>
+            <span class="section-title">Study Tips for FDE Certification</span>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-number">1</div>
+                <div class="tip-content">
+                    <div class="tip-title">Start with AI-900 for Quick Win</div>
+                    <div class="tip-text">AI-900 is beginner-level and can be passed in 2-4 weeks with focused study on Microsoft Learn. Build confidence and get a certification under your belt before tackling the more demanding AWS Developer Associate exam.</div>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-number">2</div>
+                <div class="tip-content">
+                    <div class="tip-title">Build Real Projects on AWS</div>
+                    <div class="tip-text">Deploy actual applications using Lambda, API Gateway, DynamoDB. Hands-on experience matters more than memorizing services. Build a REST API, connect it to a database, and deploy it end-to-end to truly understand the platform.</div>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-number">3</div>
+                <div class="tip-content">
+                    <div class="tip-title">Use Free Tier Strategically</div>
+                    <div class="tip-text">AWS Free Tier gives 12 months of core services. Practice building and deploying real apps without cost. Use Lambda (1M free requests/month), DynamoDB (25GB free), and S3 (5GB free) to build portfolio projects that also prepare you for the exam.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Study Plan -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">&#128197;</span>
+            <span class="section-title">4-Week Quick Start Study Plan</span>
+        </div>
+        <div class="plan-timeline">
+            <div class="plan-week">
+                <div class="plan-dot"></div>
+                <div class="plan-label">Week 1 &mdash; AI-900 Foundations</div>
+                <div class="plan-title">Azure AI Concepts & Fundamentals</div>
+                <ul class="plan-tasks">
+                    <li>Study Azure AI concepts on Microsoft Learn AI-900 learning path</li>
+                    <li>Understand AI workloads and machine learning principles</li>
+                    <li>Explore Computer Vision, NLP basics, and conversational AI</li>
+                    <li>Complete hands-on labs in Microsoft Learn sandbox environment</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-dot"></div>
+                <div class="plan-label">Week 2 &mdash; AI-900 Exam Prep</div>
+                <div class="plan-title">Practice Tests & Pass AI-900</div>
+                <ul class="plan-tasks">
+                    <li>Take AI-900 practice tests on Microsoft Learn</li>
+                    <li>Review weak areas and revisit relevant modules</li>
+                    <li>Schedule and pass the AI-900 exam</li>
+                    <li>Set up an AWS Free Tier account and explore the console</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-dot"></div>
+                <div class="plan-label">Week 3 &mdash; AWS Developer Deep Dive</div>
+                <div class="plan-title">Core AWS Services & Sample Apps</div>
+                <ul class="plan-tasks">
+                    <li>Study core AWS services: Lambda, API Gateway, DynamoDB, S3, IAM</li>
+                    <li>Start building sample applications on AWS Free Tier</li>
+                    <li>Deploy a REST API using Lambda + API Gateway</li>
+                    <li>Read the AWS Developer Associate exam guide and identify key domains</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-dot"></div>
+                <div class="plan-label">Week 4 &mdash; AWS Developer Practice</div>
+                <div class="plan-title">Mock Exams, Portfolio & CI/CD</div>
+                <ul class="plan-tasks">
+                    <li>Complete full mock exams on AWS Skill Builder</li>
+                    <li>Deploy a portfolio project end-to-end (frontend + API + database)</li>
+                    <li>Review CI/CD concepts: CodePipeline, CodeBuild, CodeDeploy</li>
+                    <li>Schedule your AWS Developer Associate exam</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+    <strong>AI Academy 2026</strong> &mdash; Kyndryl &mdash; Certification Study Guide
+</footer>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+    // Theme Management
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('ai-academy-theme', theme);
+        document.getElementById('lightBtn').classList.toggle('active', theme === 'light');
+        document.getElementById('darkBtn').classList.toggle('active', theme === 'dark');
+    }
+
+    // Load saved theme
+    (function() {
+        const saved = localStorage.getItem('ai-academy-theme') || 'dark';
+        setTheme(saved);
+    })();
+
+    // Progress Tracking
+    function updateProgress() {
+        const checks = document.querySelectorAll('.cert-check');
+        const total = checks.length;
+        let done = 0;
+        checks.forEach(function(c) { if (c.checked) done++; });
+        const pct = Math.round((done / total) * 100);
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressText').textContent = done + ' of ' + total + ' certifications';
+        document.getElementById('progressPercent').textContent = pct + '%';
+
+        // Save state
+        const state = [];
+        checks.forEach(function(c) { state.push(c.checked); });
+        localStorage.setItem('cert-fde-progress', JSON.stringify(state));
+    }
+
+    // Load saved progress
+    (function() {
+        const saved = localStorage.getItem('cert-fde-progress');
+        if (saved) {
+            try {
+                const state = JSON.parse(saved);
+                const checks = document.querySelectorAll('.cert-check');
+                state.forEach(function(val, i) {
+                    if (checks[i]) checks[i].checked = val;
+                });
+                updateProgress();
+            } catch(e) {}
+        }
+    })();
+</script>
+
+
+    <!-- AI Mentor Widget — change data-role per student role: FDE, AI-SE, AI-DS, AI-DA, AI-PM, AI-FE, AI-SEC -->
+    <script>
+    (function () {
+        var VALID_ROLES = ['FDE', 'AI-SE', 'AI-DS', 'AI-DA', 'AI-PM', 'AI-FE', 'AI-SEC', 'AI-DX'];
+        var role = 'FDE';
+        try {
+            var pageRole = (localStorage.getItem('aa-role') || '').toUpperCase();
+            if (VALID_ROLES.indexOf(pageRole) !== -1) {
+                role = pageRole;
+                localStorage.setItem('mentor-widget-selected-role', role);
+            }
+        } catch (e) {}
+
+        var s = document.createElement('script');
+        s.src = '/js/mentor-widget.js';
+        s.setAttribute('data-role', role);
+        s.setAttribute('data-lesson', 'FDE Certification Prep');
+        s.setAttribute('data-day', '16');
+        document.body.appendChild(s);
+    })();
+    </script>
+</body>
+</html>

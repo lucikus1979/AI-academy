@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | Glossary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        .dashboard-back {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .dashboard-back:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.25rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+            scrollbar-width: none;
+        }
+
+        nav ul::-webkit-scrollbar { display: none; }
+
+        nav a.nav-ch {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a.nav-ch:hover, nav a.nav-ch.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 3rem;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .search-wrap {
+            max-width: 560px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3.25rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        section {
+            scroll-margin-top: 5rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Term Cards */
+        .term-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .term-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .term-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .term-aka {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .term-chevron {
+            color: var(--text-muted);
+            transition: transform 0.2s;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .term-card.expanded .term-chevron {
+            transform: rotate(90deg);
+        }
+
+        .term-short {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .term-detail {
+            display: none;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .term-card.expanded .term-detail {
+            display: block;
+        }
+
+        .term-card.hidden,
+        .abbr-table tbody tr.hidden,
+        section.hidden {
+            display: none;
+        }
+
+        /* Abbreviation Table */
+        .abbr-table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .abbr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        .abbr-table thead th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .abbr-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .abbr-table tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .abbr-table tbody td {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .abbr-table tbody td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-blue);
+            white-space: nowrap;
+        }
+
+        .abbr-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* No results */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
+            z-index: 900;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 0 1rem; }
+
+            nav ul { display: none; }
+
+            .hero {
+                padding: 6.5rem 1.25rem 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .content {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .term-card {
+                padding: 1rem 1.15rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.15rem;
+            }
+
+            .back-to-top {
+                bottom: 1.25rem;
+                right: 1.25rem;
+                width: 42px;
+                height: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="/index.html" class="dashboard-back">&larr; Dashboard</a>
+            <ul>
+                <li><a href="#ch-1" class="nav-ch active">Foundations</a></li>
+                <li><a href="#ch-2" class="nav-ch">Agents</a></li>
+                <li><a href="#ch-3" class="nav-ch">Prompts</a></li>
+                <li><a href="#ch-4" class="nav-ch">RAG</a></li>
+                <li><a href="#ch-5" class="nav-ch">Eval</a></li>
+                <li><a href="#ch-6" class="nav-ch">Security</a></li>
+                <li><a href="#ch-7" class="nav-ch">Governance</a></li>
+                <li><a href="#ch-8" class="nav-ch">KAF</a></li>
+                <li><a href="#ch-9" class="nav-ch">Arch</a></li>
+                <li><a href="#ch-10" class="nav-ch">Incident</a></li>
+                <li><a href="#ch-11" class="nav-ch">Business</a></li>
+                <li><a href="#ch-12" class="nav-ch">Abbr</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">&#128218; 120+ Terms</div>
+        <h1>AI Academy Glossary</h1>
+        <p class="subtitle">Every concept, framework, and abbreviation from the AI Academy curriculum &mdash; searchable and organized by chapter.</p>
+        <div class="search-wrap">
+            <span class="search-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </span>
+            <input type="text" class="search-input" id="glossary-search" placeholder="Search terms, definitions, abbreviations..." autocomplete="off" aria-label="Search glossary terms">
+        </div>
+    </header>
+
+    <main class="content">
+
+        <!-- No results message -->
+        <div class="no-results" id="no-results" role="status" aria-live="polite">No matching terms found. Try a different search.</div>
+
+        <!-- Chapter 1: AI Foundations -->
+        <section id="ch-1">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6)">1</span>
+                <h2>AI Foundations</h2>
+            </div>
+
+            <div class="term-card" data-term="LLM Large Language Model">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">LLM <span class="term-aka">(Large Language Model)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">AI trained on massive text datasets to predict and generate human language.</div>
+                <div class="term-detail">
+                    <p>Examples include GPT-5, Claude 4.5, Gemini 3.0, and Llama 4. LLMs form the core of modern AI systems and are the foundation for agents, chatbots, and content generation.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Token">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Token</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A unit of text (~4 characters or 0.75 words) that LLMs process.</div>
+                <div class="term-detail">
+                    <p>LLMs don't read words directly &mdash; they split text into tokens. Pricing, context limits, and speed are all measured in tokens. A 128K context window means ~96,000 words.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Context Window">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Context Window</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The maximum amount of text an LLM can process in a single interaction.</div>
+                <div class="term-detail">
+                    <p>Measured in tokens. Larger windows allow processing longer documents but increase cost and latency. Current models range from 8K to over 1M tokens.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Transformer">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Transformer</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The neural network architecture underlying all modern LLMs.</div>
+                <div class="term-detail">
+                    <p>Introduced in the 2017 paper "Attention Is All You Need." Uses self-attention mechanisms to process text in parallel rather than sequentially, enabling much larger models.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Attention">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Attention</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Mechanism allowing transformers to weigh the relevance of different parts of input text.</div>
+                <div class="term-detail">
+                    <p>Self-attention lets the model focus on relevant words regardless of distance in the text. Multi-head attention runs multiple attention computations in parallel.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Inference">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Inference</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Using a trained model to generate outputs, as opposed to training it.</div>
+                <div class="term-detail">
+                    <p>When you send a prompt to an LLM and get a response, that's inference. Inference costs (compute, latency) are a key factor in production deployments.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Pre-training">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Pre-training</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The initial phase of training an LLM on massive text datasets.</div>
+                <div class="term-detail">
+                    <p>Involves processing billions of text samples to learn language patterns, facts, and reasoning. Extremely expensive (millions of dollars in compute). Done once by the model provider.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Fine-tuning">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Fine-tuning</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Adapting a pre-trained model on specific data to specialize its behavior.</div>
+                <div class="term-detail">
+                    <p>Uses a smaller, curated dataset to adjust model weights. Common for domain-specific applications (medical, legal, financial). Much cheaper than pre-training.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="RLHF Reinforcement Learning from Human Feedback">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">RLHF <span class="term-aka">(Reinforcement Learning from Human Feedback)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Training technique that aligns model outputs with human preferences.</div>
+                <div class="term-detail">
+                    <p>Human raters rank model outputs, and the model is trained to prefer higher-ranked responses. Key technique behind making LLMs helpful, harmless, and honest.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Temperature">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Temperature</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Parameter controlling randomness of model outputs (0 = deterministic, 1+ = creative).</div>
+                <div class="term-detail">
+                    <p>Low temperature produces consistent, focused responses ideal for factual tasks. High temperature introduces variety, useful for creative applications. Most production systems use 0&ndash;0.3.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Streaming">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Streaming</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Receiving LLM output token-by-token as it's generated, rather than waiting for the full response.</div>
+                <div class="term-detail">
+                    <p>Provides faster perceived response times. Essential for chat interfaces. Requires handling partial responses in the UI.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Zero-shot">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Zero-shot</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Prompting a model to perform a task without providing any examples.</div>
+                <div class="term-detail">
+                    <p>Relies on the model's pre-training knowledge. Contrasts with few-shot (providing examples) and fine-tuning. Works well for common tasks but may struggle with domain-specific ones.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 2: AI Agents & Patterns -->
+        <section id="ch-2">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #8b5cf6, #ec4899)">2</span>
+                <h2>AI Agents &amp; Patterns</h2>
+            </div>
+
+            <div class="term-card" data-term="Agent">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Agent</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An LLM combined with tools and goal-directed behavior, capable of taking autonomous actions.</div>
+                <div class="term-detail">
+                    <p>Agents go beyond simple chat &mdash; they can call APIs, run code, search databases, and make decisions. The shift from "AI that talks" to "AI that acts."</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Autonomous Agent">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Autonomous Agent</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An agent that operates with minimal human oversight, making decisions independently.</div>
+                <div class="term-detail">
+                    <p>Can plan multi-step tasks, handle errors, and adapt to new situations. Requires robust guardrails and monitoring. Used in production for routine operations.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Multi-Agent System">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Multi-Agent System</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Architecture where multiple specialized agents collaborate to solve complex tasks.</div>
+                <div class="term-detail">
+                    <p>Each agent has a focused role (researcher, coder, reviewer). Enables division of labor and specialization. Coordination patterns include orchestration, choreography, and swarm.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Orchestration">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Orchestration</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A central controller directing and coordinating multiple agents.</div>
+                <div class="term-detail">
+                    <p>The orchestrator decides which agent handles which subtask, manages data flow, and aggregates results. Common in enterprise systems where predictable behavior is required.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Tool Use Function Calling">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Tool Use</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An agent's ability to call external functions like APIs, databases, or services.</div>
+                <div class="term-detail">
+                    <p>Tools extend what an LLM can do beyond text generation. Examples: web search, code execution, database queries, sending emails. Defined via function schemas.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Handoff">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Handoff</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">When one agent transfers control or context to another agent in a multi-agent system.</div>
+                <div class="term-detail">
+                    <p>Requires passing relevant context and state. Critical for complex workflows where different agents specialize in different domains.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="ReAct Reasoning Acting">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">ReAct <span class="term-aka">(Reasoning + Acting)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Pattern where agents alternate between thinking and taking action.</div>
+                <div class="term-detail">
+                    <p>The agent thinks about what to do, executes an action, observes the result, then reasons about next steps. Produces more reliable results than acting without reasoning.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Planning Agent">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Planning Agent</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An agent that creates a structured plan before executing, breaking complex tasks into steps.</div>
+                <div class="term-detail">
+                    <p>Plans can be revised based on intermediate results. Useful for multi-step tasks where order matters. Can include dependency tracking and parallel execution.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Reflection">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Reflection</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An agent evaluating its own output and iterating to improve quality.</div>
+                <div class="term-detail">
+                    <p>The agent reviews its work, identifies issues, and corrects them before presenting the final result. Improves accuracy but adds latency and cost.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Memory">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Memory</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An agent's ability to retain and recall information across conversations or sessions.</div>
+                <div class="term-detail">
+                    <p>Short-term memory holds current conversation context. Long-term memory persists across sessions using databases. Essential for personalization and continuity.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="MCP Model Context Protocol">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">MCP <span class="term-aka">(Model Context Protocol)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Open standard protocol for connecting AI models to external data sources and tools.</div>
+                <div class="term-detail">
+                    <p>Created by Anthropic. Provides a standardized way for agents to discover and use tools, replacing custom integrations. Analogous to USB for AI tools.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Function Calling">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Function Calling</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">LLM capability to output structured calls to predefined external functions.</div>
+                <div class="term-detail">
+                    <p>The model doesn't execute functions directly &mdash; it outputs a JSON specification of which function to call with what parameters. The application layer executes the actual call.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Agentic Workflow">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Agentic Workflow</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A process where AI agents autonomously perform multi-step tasks with decision-making.</div>
+                <div class="term-detail">
+                    <p>Contrasts with simple prompt-response patterns. Includes planning, tool use, error handling, and iteration. The foundation of enterprise AI automation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Prompt Engineering -->
+        <section id="ch-3">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #10b981, #06b6d4)">3</span>
+                <h2>Prompt Engineering</h2>
+            </div>
+
+            <div class="term-card" data-term="Prompt">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Prompt</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The input text given to an LLM to guide its response.</div>
+                <div class="term-detail">
+                    <p>Can range from a simple question to complex multi-part instructions. Prompt quality directly affects output quality. The primary interface between humans and LLMs.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="System Prompt">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">System Prompt</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Hidden instructions that define an LLM's role, behavior, and constraints.</div>
+                <div class="term-detail">
+                    <p>Set by the developer, not visible to the end user. Establishes personality, knowledge boundaries, output format, and safety rules. The "DNA" of an AI application.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Completion">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Completion</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The output text generated by an LLM in response to a prompt.</div>
+                <div class="term-detail">
+                    <p>The model "completes" the text sequence based on its training. Can be text, code, structured data, or function calls depending on the prompt and model capabilities.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Chain-of-Thought CoT">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Chain-of-Thought <span class="term-aka">(CoT)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Prompting technique that improves reasoning by asking the model to show its work step by step.</div>
+                <div class="term-detail">
+                    <p>Adding "think step by step" or "show your reasoning" dramatically improves accuracy on math, logic, and complex tasks. Now built into many models natively.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Constitutional AI">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Constitutional AI</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Anthropic's approach to AI alignment using a set of principles the model follows.</div>
+                <div class="term-detail">
+                    <p>Instead of relying solely on RLHF, the model is trained to evaluate its own outputs against a "constitution" of principles. Results in more consistent and principled behavior.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Hallucination">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Hallucination</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">When AI generates false, fabricated, or unsupported information with apparent confidence.</div>
+                <div class="term-detail">
+                    <p>A fundamental challenge with LLMs. Mitigated by grounding (RAG), temperature control, and explicit instructions to say "I don't know." Critical to detect in production.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Grounding">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Grounding</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Connecting an LLM to factual data sources to reduce hallucinations and improve accuracy.</div>
+                <div class="term-detail">
+                    <p>RAG is the most common grounding technique. Other methods include search augmentation, database lookups, and fact-checking chains. Essential for enterprise applications.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Prompt Injection">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Prompt Injection</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Attack where malicious input manipulates an LLM to ignore its instructions or reveal hidden prompts.</div>
+                <div class="term-detail">
+                    <p>Can cause the model to bypass safety rules, leak system prompts, or perform unintended actions. Requires input validation, output filtering, and defense-in-depth strategies.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Jailbreak">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Jailbreak</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Technique to bypass an LLM's safety guardrails and elicit prohibited outputs.</div>
+                <div class="term-detail">
+                    <p>Attackers craft prompts that trick the model into ignoring its training restrictions. Different from prompt injection (which targets the application layer). Continuously evolving cat-and-mouse game.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: RAG & Data -->
+        <section id="ch-4">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #06b6d4, #3b82f6)">4</span>
+                <h2>RAG &amp; Data</h2>
+            </div>
+
+            <div class="term-card" data-term="RAG Retrieval-Augmented Generation">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">RAG <span class="term-aka">(Retrieval-Augmented Generation)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Architecture that connects an LLM to external data sources to provide accurate, up-to-date answers.</div>
+                <div class="term-detail">
+                    <p>Three steps: (1) convert documents to embeddings, (2) retrieve relevant chunks based on query, (3) feed chunks to LLM as context. The standard pattern for enterprise AI knowledge systems.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Embedding">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Embedding</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A numerical vector representation of text that captures its semantic meaning.</div>
+                <div class="term-detail">
+                    <p>Similar texts produce similar vectors. Generated by specialized embedding models. Stored in vector databases for fast similarity search. Typical dimensions: 768 to 3072.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Vector Database">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Vector Database</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Database optimized for storing and searching embedding vectors at scale.</div>
+                <div class="term-detail">
+                    <p>Examples: Pinecone, Weaviate, Qdrant, pgvector. Uses approximate nearest neighbor (ANN) algorithms for fast similarity search. Core infrastructure for RAG systems.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Semantic Search">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Semantic Search</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Finding information based on meaning and intent rather than exact keyword matching.</div>
+                <div class="term-detail">
+                    <p>Uses embeddings to compare query meaning against document meanings. Returns conceptually relevant results even when different words are used.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Chunking">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Chunking</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Breaking documents into smaller, manageable pieces for RAG processing.</div>
+                <div class="term-detail">
+                    <p>Chunk size affects retrieval quality &mdash; too small loses context, too large dilutes relevance. Strategies include fixed-size, sentence-based, and semantic chunking. Typical size: 256&ndash;1024 tokens.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Context Window Management">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Context Window Management</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Strategies for fitting the most relevant information into an LLM's limited context.</div>
+                <div class="term-detail">
+                    <p>Includes prompt compression, dynamic context selection, summarization of long documents, and priority-based inclusion. Critical when context exceeds window limits.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Retrieval">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Retrieval</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The process of finding and fetching relevant documents or data chunks from a knowledge base.</div>
+                <div class="term-detail">
+                    <p>Uses semantic search, keyword search, or hybrid approaches. Retrieval quality directly determines RAG output quality. Measured by precision and recall metrics.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Knowledge Base">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Knowledge Base</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A structured collection of documents, data, and information that an AI system can search and reference.</div>
+                <div class="term-detail">
+                    <p>Can include PDFs, wikis, databases, APIs, and other data sources. Requires regular updates and quality maintenance. The "brain" behind RAG systems.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 5: Evaluation & Metrics -->
+        <section id="ch-5">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #f59e0b, #ef4444)">5</span>
+                <h2>Evaluation &amp; Metrics</h2>
+            </div>
+
+            <div class="term-card" data-term="RAGAS RAG Assessment Score">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">RAGAS <span class="term-aka">(RAG Assessment Score)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Framework for evaluating RAG pipeline quality using automated metrics.</div>
+                <div class="term-detail">
+                    <p>Measures faithfulness, answer relevancy, context precision, and context recall. Provides quantitative scores without manual review. Industry standard for RAG evaluation.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Faithfulness">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Faithfulness</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">RAGAS metric measuring whether the generated answer is supported by the retrieved context.</div>
+                <div class="term-detail">
+                    <p>Score 0&ndash;1. High faithfulness means the answer doesn't contain claims unsupported by the provided documents. Detects hallucinations in RAG outputs.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Answer Relevancy">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Answer Relevancy</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">RAGAS metric measuring how well the generated answer addresses the original question.</div>
+                <div class="term-detail">
+                    <p>Score 0&ndash;1. Penalizes incomplete answers and off-topic content. A high score means the response directly answers what was asked.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Context Precision">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Context Precision</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">RAGAS metric measuring whether retrieved chunks are relevant to the question.</div>
+                <div class="term-detail">
+                    <p>Score 0&ndash;1. High precision means the retrieval step found the right documents. Low precision indicates the search is returning irrelevant content.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Context Recall">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Context Recall</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">RAGAS metric measuring whether all necessary information was retrieved.</div>
+                <div class="term-detail">
+                    <p>Score 0&ndash;1. High recall means no important information was missed. Low recall indicates gaps in the knowledge base or retrieval configuration.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Golden Dataset">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Golden Dataset</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A curated set of question-answer pairs used as ground truth for evaluation.</div>
+                <div class="term-detail">
+                    <p>Created by domain experts. Contains expected answers for known questions. Used to benchmark RAG pipeline changes and catch regressions. Typically 50&ndash;200 pairs.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Baseline">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Baseline</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The initial performance measurement against which improvements are compared.</div>
+                <div class="term-detail">
+                    <p>Established before making changes. Includes metrics like accuracy, latency, and cost. Without a baseline, you can't prove whether changes actually improved the system.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Accuracy">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Accuracy</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The percentage of correct or acceptable outputs produced by an AI system.</div>
+                <div class="term-detail">
+                    <p>Measured against ground truth or human evaluation. Can be broken down by category, difficulty, or domain. The most intuitive but sometimes misleading metric.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Bias Fairness">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Bias / Fairness</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Whether an AI system treats different groups or inputs equitably.</div>
+                <div class="term-detail">
+                    <p>Bias can be in training data, model weights, or application logic. Testing includes checking outputs across demographics, languages, and edge cases. Regulatory requirement in many jurisdictions.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Quality Gate">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Quality Gate</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A checkpoint in the development pipeline where output must meet defined quality standards to proceed.</div>
+                <div class="term-detail">
+                    <p>Includes automated metric thresholds (e.g., RAGAS faithfulness &gt; 0.8) and manual review stages. Prevents low-quality models from reaching production.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 6: Security & Red Teaming -->
+        <section id="ch-6">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #ef4444, #f59e0b)">6</span>
+                <h2>Security &amp; Red Teaming</h2>
+            </div>
+
+            <div class="term-card" data-term="Red Teaming">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Red Teaming</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Systematically testing AI systems by attempting to make them fail, produce harmful outputs, or behave unexpectedly.</div>
+                <div class="term-detail">
+                    <p>Involves adversarial prompting, edge case testing, and social engineering attempts. Required before production deployment. Results feed into guardrail improvements.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Prompt Injection Attack Security">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Prompt Injection</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Attack where crafted input causes an LLM to deviate from its intended instructions.</div>
+                <div class="term-detail">
+                    <p>Direct injection inserts malicious instructions in user input. Indirect injection hides instructions in external data the LLM processes. Defense requires input sanitization and output validation.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="PII Detection Personally Identifiable Information">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">PII Detection <span class="term-aka">(Personally Identifiable Information)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Identifying and protecting personally identifiable information in AI inputs and outputs.</div>
+                <div class="term-detail">
+                    <p>Includes names, emails, phone numbers, addresses, ID numbers. Automated detection uses regex patterns and NER models. Required for GDPR compliance and data protection.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Guardrails Safety">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Guardrails</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Safety mechanisms that constrain AI behavior within acceptable boundaries.</div>
+                <div class="term-detail">
+                    <p>Input guardrails filter dangerous prompts. Output guardrails check responses for harmful content. Process guardrails limit agent actions. Can be rule-based or AI-powered.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Input Validation">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Input Validation</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Checking and sanitizing user inputs before they reach the AI model.</div>
+                <div class="term-detail">
+                    <p>Includes length limits, content filtering, format validation, and injection detection. First line of defense against adversarial attacks. Should never be the only defense.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Threat Modeling">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Threat Modeling</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Systematic process of identifying potential security threats and vulnerabilities in an AI system.</div>
+                <div class="term-detail">
+                    <p>Maps attack surfaces, identifies threat actors, evaluates risk levels, and prioritizes mitigations. Should cover data poisoning, model extraction, and prompt attacks.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Data Classification">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Data Classification</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Categorizing data by sensitivity level to determine appropriate handling and protection.</div>
+                <div class="term-detail">
+                    <p>Levels typically include Public, Internal, Confidential, and Restricted. Determines which data can be used for training, stored in vector databases, or processed by LLMs.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Adversarial Testing">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Adversarial Testing</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Deliberately crafting inputs designed to cause AI system failures or unexpected behavior.</div>
+                <div class="term-detail">
+                    <p>Goes beyond normal testing to explore edge cases, boundary conditions, and attack scenarios. Includes automated fuzzing and manual creative attacks.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="OWASP Top 10 for LLMs">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">OWASP Top 10 for LLMs</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Industry-standard list of the most critical security risks for LLM applications.</div>
+                <div class="term-detail">
+                    <p>Includes prompt injection, insecure output handling, training data poisoning, model denial of service, supply chain vulnerabilities, and more. Essential reference for AI security teams.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 7: Governance & Compliance -->
+        <section id="ch-7">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #8b5cf6, #3b82f6)">7</span>
+                <h2>Governance &amp; Compliance</h2>
+            </div>
+
+            <div class="term-card" data-term="EU AI Act European Union Artificial Intelligence Act">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">EU AI Act</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">European Union regulation classifying AI systems by risk level with corresponding compliance requirements.</div>
+                <div class="term-detail">
+                    <p>Four tiers: Unacceptable (banned), High-risk (strict requirements), Limited risk (transparency), Minimal risk (no rules). Effective 2025&ndash;2026. First comprehensive AI law globally.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Risk Classification">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Risk Classification</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Categorizing AI systems by potential impact level to determine governance requirements.</div>
+                <div class="term-detail">
+                    <p>Considers factors like autonomy, affected population, domain sensitivity, and reversibility of decisions. Higher risk = more documentation, testing, and human oversight required.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="FRIA Fundamental Rights Impact Assessment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">FRIA <span class="term-aka">(Fundamental Rights Impact Assessment)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Formal assessment of how an AI system may affect individuals' fundamental rights.</div>
+                <div class="term-detail">
+                    <p>Required for high-risk AI under EU AI Act. Evaluates impact on privacy, non-discrimination, freedom of expression, and human dignity. Must be completed before deployment.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="GDPR General Data Protection Regulation">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">GDPR <span class="term-aka">(General Data Protection Regulation)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">EU regulation governing the collection, processing, and storage of personal data.</div>
+                <div class="term-detail">
+                    <p>Requires lawful basis for processing, data minimization, right to erasure, and breach notification. Directly impacts what data can be used in AI training and RAG systems.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Audit Logging">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Audit Logging</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Recording all AI system actions, decisions, and data access for compliance review.</div>
+                <div class="term-detail">
+                    <p>Logs must be tamper-proof, timestamped, and retained per policy. Enables post-incident investigation, compliance audits, and performance monitoring.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Record-keeping">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Record-keeping</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Maintaining documented evidence of AI system development, testing, and deployment decisions.</div>
+                <div class="term-detail">
+                    <p>EU AI Act requires technical documentation, risk assessments, test results, and change logs. Must be available for regulatory inspection.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Transparency">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Transparency</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Making AI system capabilities, limitations, and decision-making processes understandable to users and stakeholders.</div>
+                <div class="term-detail">
+                    <p>Includes disclosing when AI is being used, explaining how decisions are made, and providing information about training data and known limitations.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Explainability">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Explainability</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The ability to describe how and why an AI system produced a specific output or decision.</div>
+                <div class="term-detail">
+                    <p>Ranges from simple feature importance to detailed reasoning traces. Required for high-risk applications. Chain-of-thought prompting helps but isn't sufficient for full explainability.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Human-in-the-Loop HITL">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Human-in-the-Loop <span class="term-aka">(HITL)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">System design where humans review, approve, or override AI decisions at critical points.</div>
+                <div class="term-detail">
+                    <p>Required for high-risk applications under EU AI Act. Defines escalation triggers, review workflows, and override authority. Balances automation efficiency with human judgment.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Escalation">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Escalation</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The process of routing an AI decision or situation to a human operator when predefined thresholds are exceeded.</div>
+                <div class="term-detail">
+                    <p>Triggers include low confidence scores, sensitive topics, high-value decisions, or explicit user requests. Must have clear SLAs for response time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 8: KAF Framework -->
+        <section id="ch-8">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #3b82f6, #10b981)">8</span>
+                <h2>KAF Framework</h2>
+            </div>
+
+            <div class="term-card" data-term="KAF Kyndryl Agentic AI Framework">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">KAF <span class="term-aka">(Kyndryl Agentic AI Framework)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Kyndryl's enterprise platform for building, deploying, and governing AI agent systems.</div>
+                <div class="term-detail">
+                    <p>Five-layer architecture covering data ingestion, agent building, AI core, policy enforcement, and human oversight. Designed for regulated industries requiring full auditability.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="L1 Data Ingestion Layer 1">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">L1 &mdash; Data Ingestion</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">KAF's first layer handling data collection, normalization, and preparation for AI processing.</div>
+                <div class="term-detail">
+                    <p>Includes connectors to enterprise data sources, ETL pipelines, data quality checks, and format standardization. Feeds clean data into the embedding and retrieval layers.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="L2 Agent Builder Layer 2">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">L2 &mdash; Agent Builder</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">KAF's second layer providing tools and interfaces for creating and configuring AI agents.</div>
+                <div class="term-detail">
+                    <p>Includes prompt templates, tool registries, workflow designers, and testing sandboxes. Enables both developers and business users to build agents within governance guardrails.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="L3 AI Core Layer 3">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">L3 &mdash; AI Core</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">KAF's third layer managing LLM interactions, orchestration, and core AI processing.</div>
+                <div class="term-detail">
+                    <p>Handles model selection, prompt routing, response generation, and multi-agent coordination. Abstracts away provider-specific APIs behind a unified interface.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="L4 Policy-as-Code Layer 4">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">L4 &mdash; Policy-as-Code</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">KAF's fourth layer enforcing governance rules programmatically rather than through manual processes.</div>
+                <div class="term-detail">
+                    <p>Policies are written as executable code that automatically checks compliance. Includes data classification rules, output filters, access controls, and audit requirements.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="L5 Human-in-the-Loop Layer 5">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">L5 &mdash; Human-in-the-Loop</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">KAF's fifth layer managing human oversight, review workflows, and escalation processes.</div>
+                <div class="term-detail">
+                    <p>Defines when human approval is needed, routes decisions to appropriate reviewers, and tracks approval history. Configurable per use case and risk level.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Agent Registry">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Agent Registry</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A centralized catalog of all AI agents in an organization, their capabilities, status, and ownership.</div>
+                <div class="term-detail">
+                    <p>Enables discovery, reuse, and governance of agents. Tracks versions, performance metrics, and compliance status. Prevents agent sprawl and duplication.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Connectors">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Connectors</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Pre-built integrations that link KAF to external enterprise systems and data sources.</div>
+                <div class="term-detail">
+                    <p>Examples include ServiceNow, SAP, Salesforce, databases, and cloud storage. Standardize data access patterns and enforce security policies at the integration layer.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 9: Architecture & DevOps -->
+        <section id="ch-9">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6)">9</span>
+                <h2>Architecture &amp; DevOps</h2>
+            </div>
+
+            <div class="term-card" data-term="CI/CD Continuous Integration Continuous Deployment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">CI/CD <span class="term-aka">(Continuous Integration / Continuous Deployment)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Automated pipeline that builds, tests, and deploys code changes continuously.</div>
+                <div class="term-detail">
+                    <p>CI merges and tests code frequently. CD automatically deploys approved changes to production. Essential for AI systems where model updates and code changes happen frequently.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Docker Container">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Docker</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Platform for packaging applications and their dependencies into portable containers.</div>
+                <div class="term-detail">
+                    <p>Ensures consistent behavior across development, testing, and production environments. Standard for deploying AI services. Images can include model weights, dependencies, and application code.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Microservices">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Microservices</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Architecture pattern where an application is built as a collection of small, independent services.</div>
+                <div class="term-detail">
+                    <p>Each service handles one function (e.g., embedding, retrieval, generation). Enables independent scaling, deployment, and technology choices. Communicates via APIs.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Health Check">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Health Check</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Automated endpoint that reports whether a service is running correctly and ready to handle requests.</div>
+                <div class="term-detail">
+                    <p>Returns status of dependencies (database, model, external APIs). Used by load balancers and orchestrators to route traffic and trigger alerts.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Blue-Green Deployment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Blue-Green Deployment</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Deployment strategy using two identical production environments to enable zero-downtime releases.</div>
+                <div class="term-detail">
+                    <p>"Blue" runs current version, "Green" runs new version. Traffic switches instantly after validation. Enables immediate rollback by switching back. Common for AI model updates.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Rollback">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Rollback</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Reverting a deployment to a previous known-good version when issues are detected.</div>
+                <div class="term-detail">
+                    <p>Must be fast (seconds, not minutes) and automated. Requires keeping previous versions available. Critical for AI systems where model updates can introduce subtle regressions.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Staging Environment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Staging</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A pre-production environment that mirrors production for final testing before release.</div>
+                <div class="term-detail">
+                    <p>Should use production-like data volumes, configurations, and infrastructure. AI systems should test with representative queries and edge cases in staging.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Load Balancing">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Load Balancing</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Distributing incoming requests across multiple service instances to optimize performance and reliability.</div>
+                <div class="term-detail">
+                    <p>Prevents any single instance from becoming overwhelmed. Strategies include round-robin, least-connections, and weighted distribution. Essential for AI inference endpoints.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Latency">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Latency</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The time delay between sending a request and receiving a response.</div>
+                <div class="term-detail">
+                    <p>For AI systems, includes network time, queue time, and inference time. Measured in milliseconds. User-facing applications typically target under 2 seconds. Streaming helps perceived latency.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Throughput">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Throughput</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The number of requests a system can process per unit of time.</div>
+                <div class="term-detail">
+                    <p>Measured in requests per second (RPS) or tokens per second. Affected by model size, hardware, and batching. Key metric for capacity planning and cost estimation.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Uptime SLA Service Level Agreement">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Uptime / SLA <span class="term-aka">(Service Level Agreement)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The percentage of time a service is operational, often guaranteed by a Service Level Agreement.</div>
+                <div class="term-detail">
+                    <p>99.9% uptime allows ~8.7 hours downtime per year. 99.99% allows ~52 minutes. SLAs define penalties for failing to meet targets. AI systems must account for model provider outages.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 10: Incident Response -->
+        <section id="ch-10">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #ef4444, #ec4899)">10</span>
+                <h2>Incident Response</h2>
+            </div>
+
+            <div class="term-card" data-term="Capability Incident">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Capability Incident</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An incident where an AI agent fails to perform its intended function correctly.</div>
+                <div class="term-detail">
+                    <p>Examples: model returns wrong answers, tool calls fail, latency exceeds thresholds. Root cause is typically model degradation, data quality issues, or infrastructure failures.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Coordination Incident">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Coordination Incident</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An incident where multiple agents or systems fail to work together properly.</div>
+                <div class="term-detail">
+                    <p>Examples: handoff failures, deadlocks, conflicting actions, data inconsistency between agents. Often caused by schema changes, timing issues, or missing error handling.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Drift Incident Model Drift">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Drift Incident</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An incident where AI system behavior gradually degrades over time without an obvious trigger.</div>
+                <div class="term-detail">
+                    <p>Caused by changing data distributions, evolving user patterns, or upstream model updates. Detected through continuous monitoring and metric tracking. Requires retraining or recalibration.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Root Cause Analysis RCA">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Root Cause Analysis <span class="term-aka">(RCA)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Systematic investigation to identify the fundamental reason an incident occurred.</div>
+                <div class="term-detail">
+                    <p>Uses techniques like "5 Whys," timeline reconstruction, and fault tree analysis. Distinguishes symptoms from causes. Must identify both technical and process failures.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Post-Incident Review PIR Post-Mortem Retrospective">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Post-Incident Review <span class="term-aka">(PIR)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A structured meeting held after an incident to analyze what happened and prevent recurrence.</div>
+                <div class="term-detail">
+                    <p>Blameless format focusing on system and process improvements. Documents timeline, impact, root cause, and action items. Also called "retrospective" or "post-mortem."</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Blast Radius">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Blast Radius</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The scope of impact when a failure or incident occurs in a system.</div>
+                <div class="term-detail">
+                    <p>Smaller blast radius = fewer users/systems affected. Design principles include isolation, circuit breakers, and feature flags to limit blast radius. Key factor in risk assessment.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Containment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Containment</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Immediate actions taken to stop an incident from spreading or causing further damage.</div>
+                <div class="term-detail">
+                    <p>Examples: disabling a malfunctioning agent, blocking traffic to an affected endpoint, reverting to a backup model. Speed is critical &mdash; contain first, investigate later.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Hotfix">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Hotfix</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">An urgent code change deployed directly to production to resolve a critical issue.</div>
+                <div class="term-detail">
+                    <p>Bypasses normal release cycles but should still go through minimal testing. Must be backported to the main development branch. Document the emergency process used.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Runbook">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Runbook</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A documented set of step-by-step procedures for handling specific operational scenarios.</div>
+                <div class="term-detail">
+                    <p>Covers routine operations (deployments, scaling) and incident response. Should be tested regularly and updated after incidents. Reduces dependency on individual expertise.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Playbook">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Playbook</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A strategic guide describing how to respond to a specific type of incident or scenario.</div>
+                <div class="term-detail">
+                    <p>Higher-level than a runbook &mdash; a playbook defines roles, communication plans, decision criteria, and escalation paths. Runbooks are the step-by-step procedures within a playbook. Organizations maintain playbooks for common incident types (model drift, data breach, outage).</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Anti-pattern">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Anti-pattern</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A common but counterproductive approach that initially seems helpful but causes problems.</div>
+                <div class="term-detail">
+                    <p>AI anti-patterns include: deploying without evaluation, skipping human review for high-risk outputs, using production data in development without masking, and building monolithic agent systems.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 11: Business & Project Management -->
+        <section id="ch-11">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #f59e0b, #10b981)">11</span>
+                <h2>Business &amp; Project Management</h2>
+            </div>
+
+            <div class="term-card" data-term="Discovery">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Discovery</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The initial project phase focused on understanding requirements, constraints, and feasibility before building.</div>
+                <div class="term-detail">
+                    <p>Includes stakeholder interviews, data assessment, technical evaluation, and risk analysis. Outputs a recommendation on whether and how to proceed. Typically 2&ndash;4 weeks.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Go/No-Go Gate">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Go/No-Go Gate</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A formal decision point where stakeholders decide whether a project should proceed to the next phase.</div>
+                <div class="term-detail">
+                    <p>Based on defined criteria including technical feasibility, business case, risk assessment, and resource availability. Documented with rationale. Prevents wasted investment.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Business Case ROI Return on Investment">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Business Case / ROI <span class="term-aka">(Return on Investment)</span></h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A financial justification showing the expected return on investment for an AI initiative.</div>
+                <div class="term-detail">
+                    <p>Compares costs (development, infrastructure, operations) against benefits (time saved, errors reduced, revenue increased). Must include both quantitative metrics and qualitative value.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Feasibility">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Feasibility</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Assessment of whether a proposed AI solution can realistically be built and deployed with available resources.</div>
+                <div class="term-detail">
+                    <p>Covers technical feasibility (can it be done?), operational feasibility (can it be maintained?), and economic feasibility (is it worth doing?). Part of the Discovery phase.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Stakeholder">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Stakeholder</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Any person or group with an interest in or influence over an AI project's outcome.</div>
+                <div class="term-detail">
+                    <p>Includes sponsors, end users, IT operations, legal/compliance, data owners, and affected communities. Stakeholder management is critical for AI adoption and change management.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Scope">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Scope</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">The defined boundaries of what an AI project will and will not deliver.</div>
+                <div class="term-detail">
+                    <p>Clearly documented in project charter. Includes features, data sources, user groups, and performance targets. Scope creep is a major risk in AI projects due to "it could also do..." thinking.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Sprint Retrospective Agile">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Sprint Retrospective</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">A team meeting at the end of a sprint to reflect on what worked, what didn't, and what to improve.</div>
+                <div class="term-detail">
+                    <p>Part of Agile methodology. Focuses on process improvement, not blame. Action items should be specific and tracked. Essential for continuous improvement in AI development.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="Managed Services">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">Managed Services</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Outsourcing the operation and maintenance of IT systems or AI solutions to a service provider.</div>
+                <div class="term-detail">
+                    <p>Provider handles monitoring, updates, scaling, and incident response per agreed SLAs. Kyndryl's core business model. Enables clients to focus on business value rather than operations.</p>
+                </div>
+            </div>
+
+            <div class="term-card" data-term="AI Innovation Lab Method Kyndryl">
+                <div class="term-header" role="button" tabindex="0">
+                    <h3 class="term-name">AI Innovation Lab Method</h3>
+                    <span class="term-chevron">&#9656;</span>
+                </div>
+                <div class="term-short">Kyndryl's structured approach for rapidly prototyping and validating AI use cases with clients.</div>
+                <div class="term-detail">
+                    <p>Combines Design Thinking with technical feasibility assessment. Typically 3&ndash;5 day intensive workshops producing a validated prototype and business case. Bridges the gap between idea and implementation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 12: Abbreviations -->
+        <section id="ch-12">
+            <div class="section-header">
+                <span class="number" style="background: linear-gradient(135deg, #3b82f6, #06b6d4)">12</span>
+                <h2>Abbreviations</h2>
+            </div>
+
+            <div class="abbr-table-wrap">
+                <table class="abbr-table">
+                    <thead>
+                        <tr><th>Abbreviation</th><th>Full Form</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr data-term="AI Artificial Intelligence"><td>AI</td><td>Artificial Intelligence</td></tr>
+                        <tr data-term="API Application Programming Interface"><td>API</td><td>Application Programming Interface</td></tr>
+                        <tr data-term="CI/CD Continuous Integration Continuous Deployment"><td>CI/CD</td><td>Continuous Integration / Continuous Deployment</td></tr>
+                        <tr data-term="CKA Client Knowledge Agent"><td>CKA</td><td>Client Knowledge Agent</td></tr>
+                        <tr data-term="EU AI Act European Union Artificial Intelligence Act"><td>EU AI Act</td><td>European Union Artificial Intelligence Act</td></tr>
+                        <tr data-term="FRIA Fundamental Rights Impact Assessment"><td>FRIA</td><td>Fundamental Rights Impact Assessment</td></tr>
+                        <tr data-term="GDPR General Data Protection Regulation"><td>GDPR</td><td>General Data Protection Regulation</td></tr>
+                        <tr data-term="HITL Human-in-the-Loop"><td>HITL</td><td>Human-in-the-Loop</td></tr>
+                        <tr data-term="KAF Kyndryl Agentic AI Framework"><td>KAF</td><td>Kyndryl Agentic AI Framework</td></tr>
+                        <tr data-term="KPI Key Performance Indicator"><td>KPI</td><td>Key Performance Indicator</td></tr>
+                        <tr data-term="LLM Large Language Model"><td>LLM</td><td>Large Language Model</td></tr>
+                        <tr data-term="LLMOps Large Language Model Operations"><td>LLMOps</td><td>Large Language Model Operations</td></tr>
+                        <tr data-term="MCP Model Context Protocol"><td>MCP</td><td>Model Context Protocol</td></tr>
+                        <tr data-term="ML Machine Learning"><td>ML</td><td>Machine Learning</td></tr>
+                        <tr data-term="MTTR Mean Time to Repair"><td>MTTR</td><td>Mean Time to Repair</td></tr>
+                        <tr data-term="MVP Minimum Viable Product"><td>MVP</td><td>Minimum Viable Product</td></tr>
+                        <tr data-term="NLP Natural Language Processing"><td>NLP</td><td>Natural Language Processing</td></tr>
+                        <tr data-term="OWASP Open Web Application Security Project"><td>OWASP</td><td>Open Web Application Security Project</td></tr>
+                        <tr data-term="PII Personally Identifiable Information"><td>PII</td><td>Personally Identifiable Information</td></tr>
+                        <tr data-term="PIR Post-Incident Review"><td>PIR</td><td>Post-Incident Review</td></tr>
+                        <tr data-term="POC Proof of Concept"><td>POC</td><td>Proof of Concept</td></tr>
+                        <tr data-term="RAG Retrieval-Augmented Generation"><td>RAG</td><td>Retrieval-Augmented Generation</td></tr>
+                        <tr data-term="RAGAS RAG Assessment Score"><td>RAGAS</td><td>RAG Assessment Score</td></tr>
+                        <tr data-term="RCA Root Cause Analysis"><td>RCA</td><td>Root Cause Analysis</td></tr>
+                        <tr data-term="RLHF Reinforcement Learning from Human Feedback"><td>RLHF</td><td>Reinforcement Learning from Human Feedback</td></tr>
+                        <tr data-term="ROI Return on Investment"><td>ROI</td><td>Return on Investment</td></tr>
+                        <tr data-term="RPO Recovery Point Objective"><td>RPO</td><td>Recovery Point Objective</td></tr>
+                        <tr data-term="RTO Recovery Time Objective"><td>RTO</td><td>Recovery Time Objective</td></tr>
+                        <tr data-term="SLA Service Level Agreement"><td>SLA</td><td>Service Level Agreement</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">&uarr;</button>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        const savedTheme = localStorage.getItem('academy-theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('academy-theme', theme);
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Term card expand/collapse (click + keyboard)
+        document.querySelectorAll('.term-header').forEach(header => {
+            function toggle() { header.parentElement.classList.toggle('expanded'); }
+            header.addEventListener('click', toggle);
+            header.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+            });
+        });
+
+        // Search / Filter
+        const searchInput = document.getElementById('glossary-search');
+        const noResults = document.getElementById('no-results');
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.term-card');
+            const rows = document.querySelectorAll('.abbr-table tbody tr');
+            const sections = document.querySelectorAll('main.content > section');
+            let totalVisible = 0;
+
+            cards.forEach(card => {
+                const term = (card.getAttribute('data-term') || '').toLowerCase();
+                const short = (card.querySelector('.term-short') || {}).textContent || '';
+                const match = term.includes(query) || short.toLowerCase().includes(query);
+                card.classList.toggle('hidden', !match);
+                if (match) totalVisible++;
+            });
+
+            rows.forEach(row => {
+                const term = (row.getAttribute('data-term') || '').toLowerCase();
+                const cells = row.textContent.toLowerCase();
+                const match = term.includes(query) || cells.includes(query);
+                row.classList.toggle('hidden', !match);
+                if (match) totalVisible++;
+            });
+
+            // Hide sections with zero visible children
+            sections.forEach(section => {
+                const visibleCards = section.querySelectorAll('.term-card:not(.hidden)');
+                const visibleRows = section.querySelectorAll('.abbr-table tbody tr:not(.hidden)');
+                section.classList.toggle('hidden', !visibleCards.length && !visibleRows.length);
+            });
+
+            noResults.classList.toggle('visible', totalVisible === 0 && query.length > 0);
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('nav a.nav-ch').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+                document.querySelectorAll('nav a.nav-ch').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Scroll spy — active nav link
+        const navLinks = document.querySelectorAll('nav a.nav-ch');
+        const sectionEls = document.querySelectorAll('main.content > section');
+
+        function updateActiveNav() {
+            let current = '';
+            sectionEls.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+            });
+        }
+
+        // Back to top
+        const backToTop = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            updateActiveNav();
+            backToTop.classList.toggle('visible', window.scrollY > 300);
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+    <script>
+    (function () {
+        var VALID_ROLES = ['FDE', 'AI-SE', 'AI-DS', 'AI-DA', 'AI-PM', 'AI-FE', 'AI-SEC', 'AI-DX'];
+        var role = 'FDE';
+        try {
+            var pageRole = (localStorage.getItem('aa-role') || '').toUpperCase();
+            if (VALID_ROLES.indexOf(pageRole) !== -1) {
+                role = pageRole;
+                localStorage.setItem('mentor-widget-selected-role', role);
+            }
+        } catch (e) {}
+
+        var s = document.createElement('script');
+        s.src = '/js/mentor-widget.js';
+        s.setAttribute('data-role', role);
+        s.setAttribute('data-lesson', 'Glossary');
+        s.setAttribute('data-day', '0');
+        document.body.appendChild(s);
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-DX Certification Guide - AI Academy 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════════
+           THEME VARIABLES
+           ══════════════════════════════════════════════ */
+        :root {
+            --radius: 14px;
+            --transition: 0.3s ease;
+            --header-h: 64px;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-card: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-hover: #242b35;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --border-subtle: rgba(255,255,255,0.06);
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --glass: rgba(26,31,38,0.8);
+            --glass-border: rgba(255,255,255,0.08);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --bg-hover: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-subtle: rgba(0,0,0,0.04);
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-purple: #7c3aed;
+            --accent-orange: #d97706;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --glass: rgba(255,255,255,0.85);
+            --glass-border: rgba(0,0,0,0.08);
+        }
+
+        /* ══════════════════════════════════════════════
+           BASE
+           ══════════════════════════════════════════════ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+        /* ══════════════════════════════════════════════
+           HEADER
+           ══════════════════════════════════════════════ */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: var(--glass);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            z-index: 200;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .back-link {
+            display: flex; align-items: center; gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            transition: all 0.2s;
+        }
+        .back-link:hover { background: rgba(59,130,246,0.2); }
+        .back-link svg { width: 16px; height: 16px; }
+
+        .logo {
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 700; font-size: 1.05rem;
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.7rem; font-weight: 800; letter-spacing: -0.5px;
+        }
+        .logo-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 0.75rem; }
+        .theme-toggle {
+            display: flex;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 3px;
+        }
+        .theme-btn {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .theme-btn.active { background: var(--accent-blue); color: #fff; }
+        .theme-btn svg { width: 16px; height: 16px; }
+
+        /* ══════════════════════════════════════════════
+           LAYOUT
+           ══════════════════════════════════════════════ */
+        .page { margin-top: var(--header-h); padding: 0 0 4rem; }
+        .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* ══════════════════════════════════════════════
+           HERO
+           ══════════════════════════════════════════════ */
+        .hero {
+            padding: 3rem 2rem 2.5rem;
+            text-align: center;
+            background: radial-gradient(ellipse at top, rgba(59,130,246,0.1) 0%, transparent 60%);
+        }
+        .hero-icon { font-size: 3.5rem; margin-bottom: 0.75rem; }
+        .hero h1 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .hero-role-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.35rem 1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(139,92,246,0.15);
+            border: 1px solid rgba(139,92,246,0.3);
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+        }
+
+        /* ══════════════════════════════════════════════
+           SECTIONS
+           ══════════════════════════════════════════════ */
+        .section { margin-bottom: 2.5rem; }
+        .section-header {
+            display: flex; align-items: center; gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .section-icon { font-size: 1.3rem; }
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        /* ══════════════════════════════════════════════
+           CERTIFICATION CARDS
+           ══════════════════════════════════════════════ */
+        .cert-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .cert-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+        .cert-card-number {
+            position: absolute;
+            top: 0; right: 0;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 800;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            border-bottom-left-radius: var(--radius);
+        }
+        .cert-card-top {
+            display: flex; align-items: flex-start; gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .cert-card-badge {
+            flex-shrink: 0;
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-priority {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: var(--accent-green);
+        }
+        .badge-recommended {
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            color: var(--accent-blue);
+        }
+        .badge-advanced {
+            background: rgba(139,92,246,0.15);
+            border: 1px solid rgba(139,92,246,0.3);
+            color: var(--accent-purple);
+        }
+        .cert-card-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .cert-card-provider {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .cert-meta {
+            display: flex; flex-wrap: wrap; gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .cert-meta-item {
+            display: flex; align-items: center; gap: 0.35rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+        .cert-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .cert-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--accent-blue);
+            color: #fff;
+            transition: all 0.2s;
+        }
+        .cert-link:hover { opacity: 0.9; transform: translateX(2px); }
+        .cert-link svg { width: 14px; height: 14px; }
+
+        /* Level badges */
+        .level-beginner { color: var(--accent-green); }
+        .level-intermediate { color: var(--accent-orange); }
+        .level-advanced { color: var(--accent-red); }
+
+        /* ══════════════════════════════════════════════
+           RESOURCE LIST
+           ══════════════════════════════════════════════ */
+        .resource-list { display: grid; gap: 0.75rem; }
+        .resource-item {
+            display: flex; align-items: center; gap: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            transition: all 0.2s;
+        }
+        .resource-item:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+        .resource-icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(6,182,212,0.12);
+            border: 1px solid rgba(6,182,212,0.2);
+            flex-shrink: 0;
+        }
+        .resource-info { flex: 1; min-width: 0; }
+        .resource-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .resource-platform {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .resource-link {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .resource-link:hover { background: var(--accent-cyan); color: #fff; border-color: var(--accent-cyan); }
+        .resource-link svg { width: 16px; height: 16px; }
+
+        /* ══════════════════════════════════════════════
+           TIPS
+           ══════════════════════════════════════════════ */
+        .tips-grid { display: grid; gap: 0.75rem; }
+        .tip-card {
+            display: flex; align-items: flex-start; gap: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+        .tip-card:hover { border-color: var(--accent-orange); }
+        .tip-number {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 800;
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.2);
+            color: var(--accent-orange);
+            flex-shrink: 0;
+        }
+        .tip-content {}
+        .tip-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .tip-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ══════════════════════════════════════════════
+           STUDY PLAN
+           ══════════════════════════════════════════════ */
+        .plan-timeline { position: relative; padding-left: 2rem; }
+        .plan-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            border-radius: 2px;
+        }
+        .plan-week {
+            position: relative;
+            margin-bottom: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+            transition: all 0.2s;
+        }
+        .plan-week:hover { border-color: var(--accent-blue); }
+        .plan-week::before {
+            content: '';
+            position: absolute;
+            left: -23px; top: 1.5rem;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            border: 3px solid var(--bg-primary);
+        }
+        .plan-week:nth-child(2)::before { background: var(--accent-cyan); }
+        .plan-week:nth-child(3)::before { background: var(--accent-purple); }
+        .plan-week:nth-child(4)::before { background: var(--accent-green); }
+
+        .plan-week-label {
+            display: inline-flex;
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            background: rgba(59,130,246,0.12);
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+        .plan-week:nth-child(2) .plan-week-label { background: rgba(6,182,212,0.12); color: var(--accent-cyan); }
+        .plan-week:nth-child(3) .plan-week-label { background: rgba(139,92,246,0.12); color: var(--accent-purple); }
+        .plan-week:nth-child(4) .plan-week-label { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+
+        .plan-week-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .plan-week-tasks {
+            list-style: none;
+        }
+        .plan-week-tasks li {
+            position: relative;
+            padding-left: 1.25rem;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.35rem;
+        }
+        .plan-week-tasks li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0.55rem;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        /* ══════════════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════════════ */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        /* ══════════════════════════════════════════════
+           PROGRESS INDICATOR
+           ══════════════════════════════════════════════ */
+        .progress-bar-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 3px;
+            margin: 1.5rem 0;
+        }
+        .progress-bar-inner {
+            display: flex; gap: 4px;
+        }
+        .progress-step {
+            flex: 1;
+            height: 6px;
+            border-radius: 100px;
+            background: var(--bg-tertiary);
+            transition: background 0.3s;
+        }
+        .progress-step.active { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); }
+        .progress-labels {
+            display: flex; justify-content: space-between;
+            padding: 0.4rem 0.25rem 0;
+        }
+        .progress-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .progress-label.active { color: var(--accent-blue); }
+
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+           ══════════════════════════════════════════════ */
+        @media (max-width: 640px) {
+            .header { padding: 0 1rem; }
+            .header .logo { display: none; }
+            .container { padding: 0 1rem; }
+            .hero { padding: 2rem 1rem 1.5rem; }
+            .cert-card-top { flex-direction: column; gap: 0.5rem; }
+            .cert-meta { gap: 0.5rem; }
+            .resource-item { flex-direction: column; text-align: center; gap: 0.75rem; }
+        }
+    
+        /* ── Utility classes ─────────────────────────────────────── */
+        .clr-primary { color: var(--text-primary); }
+        .clr-secondary { color: var(--text-secondary); }
+        .clr-muted { color: var(--text-muted); }
+        .clr-green { color: var(--accent-green); }
+        .clr-red { color: var(--accent-red); }
+        .clr-blue { color: var(--accent-blue); }
+        .clr-purple { color: var(--accent-purple); }
+        .clr-orange { color: var(--accent-orange); }
+        .clr-cyan { color: var(--accent-cyan); }
+        .mt-0 { margin-top: 0; }
+        .mt-05 { margin-top: 0.5rem; }
+        .mt-075 { margin-top: 0.75rem; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-15 { margin-top: 1.5rem; }
+        .mt-2 { margin-top: 2rem; }
+        .mb-0 { margin-bottom: 0; }
+        .mb-035 { margin-bottom: 0.35rem; }
+        .mb-05 { margin-bottom: 0.5rem; }
+        .mb-075 { margin-bottom: 0.75rem; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-15 { margin-bottom: 1.5rem; }
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+        .flex-center { display: flex; align-items: center; }
+        .fs-085 { font-size: 0.85rem; }
+        .section-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .hero-subtitle { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.05rem; }
+        .hero-subtitle-lg { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 500; }
+        .card-body-text { margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        .clr-primary-lg { color: var(--text-primary); font-size: 1.05rem; }
+        .resource-item { padding: .4rem 0; border-bottom: 1px dashed var(--border); color: var(--text-secondary); }
+        .py-03 { padding: 0.3rem 0; }
+        .bdr-green { border-color: var(--accent-green); }
+        .bdr-blue { border-color: var(--accent-blue); }
+        .bdr-purple { border-color: var(--accent-purple); }
+        .bt-green { border-top: 3px solid var(--accent-green); }
+        .bt-purple { border-top: 3px solid var(--accent-purple); }
+        .bg-orange { background: var(--accent-orange); }
+        .bg-green-subtle { background: rgba(16, 185, 129, 0.1); }
+
+    
+        /* ── Auto-extracted inline styles ──────────────────── */
+        .is-1 { cursor:default; transform:none; }
+        .is-2 { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+        .is-3 { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/index.html" class="back-link">&larr; Back to Dashboard</a>
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                <span class="logo-text">Academy 2026</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="theme-toggle">
+                <button class="theme-btn" data-theme-set="light" title="Light mode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <button class="theme-btn active" data-theme-set="dark" title="Dark mode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ════════════ PAGE ════════════ -->
+    <main class="page">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-role-badge">Certification Study Guide</div>
+            <div class="hero-icon">&#127912;</div>
+            <h1><span class="gradient">AI Digital Experience Designer</span></h1>
+            <p class="hero-subtitle">Designs user experiences for AI-powered products, creates interaction patterns, and ensures adoption through human-centered design.</p>
+        </section>
+
+        <div class="container">
+
+            <!-- PROGRESS INDICATOR -->
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-inner">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                </div>
+            </div>
+            <div class="progress-labels">
+                <span class="progress-label active">Your Anchor</span>
+                <span class="progress-label active">Entry Gate</span>
+            </div>
+
+            <!-- ════════════ SECTION 1: ROLE OVERVIEW ════════════ -->
+            <section class="section mt-2">
+                <div class="section-header">
+                    <span class="section-icon">&#128161;</span>
+                    <h2 class="section-title">Role Overview</h2>
+                </div>
+                <div class="cert-card is-1">
+                    <p class="is-2">
+                        The <strong class="clr-primary">AI Digital Experience Designer (AI-DX)</strong> sits at the intersection of artificial intelligence and human-centered design. In this role, you will craft intuitive interfaces and interaction patterns for AI-powered products, ensuring that complex AI capabilities are accessible and engaging for end users. Your focus is on bridging the gap between technical AI functionality and delightful user experiences, driving adoption across the organization.
+                    </p>
+                    <div class="is-3">
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            UX Design
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            AI Interaction
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Human-Centered Design
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Adoption Strategy
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════ SECTION 2: CERTIFICATION PATH ════════════ -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-icon">&#127942;</span>
+                    <h2 class="section-title">Recommended Certification Path</h2>
+                    <span class="section-count">2 certifications</span>
+                </div>
+
+                <!-- Cert 1 — Your Anchor -->
+                <div class="cert-card priority">
+                    <span class="cert-card-number">#1</span>
+                    <div class="cert-card-top">
+                        <span class="cert-card-badge badge-priority">Priority</span>
+                    </div>
+                    <h3 class="cert-card-name">Microsoft AZ-204: Azure Developer Associate</h3>
+                    <p class="cert-card-provider">Microsoft &mdash; Your Anchor</p>
+                    <div class="cert-meta">
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span class="level-intermediate">Intermediate</span>
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            ~2-3 months
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            $165
+                        </span>
+                    </div>
+                    <a href="https://learn.microsoft.com/en-us/certifications/azure-developer/" target="_blank" rel="noopener" class="cert-link">
+                        Learn More
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                    </a>
+                </div>
+
+                <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+                <div class="cert-card" style="opacity:0.85;">
+                    <div class="cert-card-top">
+                        <div class="cert-card-info-row">
+                            <div class="cert-number advanced">&#8644;</div>
+                            <div class="cert-info">
+                                <div class="cert-name">AWS Certified Developer - Associate</div>
+                                <div class="cert-provider">AWS</div>
+                            </div>
+                        </div>
+                        <span class="cert-badge advanced">Alternative</span>
+                    </div>
+                    <div class="cert-meta">
+                        <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Intermediate</span></div>
+                        <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$150</span></div>
+                        <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~2-3 months</span></div>
+                    </div>
+                    <a href="https://aws.amazon.com/certification/certified-developer-associate/" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+                </div>
+
+                <div class="cert-card" style="opacity:0.85;">
+                    <div class="cert-card-top">
+                        <div class="cert-card-info-row">
+                            <div class="cert-number advanced">&#8644;</div>
+                            <div class="cert-info">
+                                <div class="cert-name">Google Cloud Professional Developer</div>
+                                <div class="cert-provider">Google Cloud</div>
+                            </div>
+                        </div>
+                        <span class="cert-badge advanced">Alternative</span>
+                    </div>
+                    <div class="cert-meta">
+                        <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Intermediate</span></div>
+                        <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$200</span></div>
+                        <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~3 months</span></div>
+                    </div>
+                    <a href="https://cloud.google.com/learn/certification/cloud-developer" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+                </div>
+
+                <!-- Cert 2 — Entry Gate -->
+                <div class="cert-card recommended">
+                    <span class="cert-card-number">#2</span>
+                    <div class="cert-card-top">
+                        <span class="cert-card-badge badge-recommended">Recommended</span>
+                    </div>
+                    <h3 class="cert-card-name">Microsoft AI-900: Azure AI Fundamentals</h3>
+                    <p class="cert-card-provider">Microsoft &mdash; Entry Gate</p>
+                    <div class="cert-meta">
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span class="level-beginner">Beginner</span>
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            ~1 month
+                        </span>
+                        <span class="cert-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            $165
+                        </span>
+                    </div>
+                    <a href="https://learn.microsoft.com/en-us/certifications/azure-ai-fundamentals/" target="_blank" rel="noopener" class="cert-link">
+                        Learn More
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                    </a>
+                </div>
+
+                <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+                <div class="cert-card" style="opacity:0.85;">
+                    <div class="cert-card-top">
+                        <div class="cert-card-info-row">
+                            <div class="cert-number advanced">&#8644;</div>
+                            <div class="cert-info">
+                                <div class="cert-name">AWS Certified AI Practitioner</div>
+                                <div class="cert-provider">AWS</div>
+                            </div>
+                        </div>
+                        <span class="cert-badge advanced">Alternative</span>
+                    </div>
+                    <div class="cert-meta">
+                        <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner</span></div>
+                        <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$150</span></div>
+                        <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~1-2 months</span></div>
+                    </div>
+                    <a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+                </div>
+
+                <div class="cert-card" style="opacity:0.85;">
+                    <div class="cert-card-top">
+                        <div class="cert-card-info-row">
+                            <div class="cert-number advanced">&#8644;</div>
+                            <div class="cert-info">
+                                <div class="cert-name">Google Cloud Digital Leader</div>
+                                <div class="cert-provider">Google Cloud</div>
+                            </div>
+                        </div>
+                        <span class="cert-badge advanced">Alternative</span>
+                    </div>
+                    <div class="cert-meta">
+                        <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner</span></div>
+                        <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$99</span></div>
+                        <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~1 month</span></div>
+                    </div>
+                    <a href="https://cloud.google.com/learn/certification/cloud-digital-leader" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+                </div>
+
+            </section>
+
+            <!-- ════════════ SECTION 3: FREE RESOURCES ════════════ -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-icon">&#128218;</span>
+                    <h2 class="section-title">Free Learning Resources</h2>
+                    <span class="section-count">3 resources</span>
+                </div>
+
+                <div class="resource-list">
+                    <a href="https://learn.microsoft.com/" target="_blank" rel="noopener" class="resource-item">
+                        <div class="resource-icon">&#128196;</div>
+                        <div class="resource-info">
+                            <div class="resource-name">Microsoft Learn</div>
+                            <div class="resource-platform">learn.microsoft.com -- Free Azure developer and AI training paths</div>
+                        </div>
+                        <div class="resource-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                        </div>
+                    </a>
+                    <a href="https://learn.microsoft.com/en-us/samples/" target="_blank" rel="noopener" class="resource-item">
+                        <div class="resource-icon">&#128736;</div>
+                        <div class="resource-info">
+                            <div class="resource-name">Azure Code Samples</div>
+                            <div class="resource-platform">learn.microsoft.com/en-us/samples/ -- Ready-to-run Azure code examples</div>
+                        </div>
+                        <div class="resource-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                        </div>
+                    </a>
+                    <a href="https://docs.github.com/en/copilot" target="_blank" rel="noopener" class="resource-item">
+                        <div class="resource-icon">&#129302;</div>
+                        <div class="resource-info">
+                            <div class="resource-name">GitHub Copilot Docs</div>
+                            <div class="resource-platform">docs.github.com/en/copilot -- AI-powered developer experience</div>
+                        </div>
+                        <div class="resource-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- ════════════ SECTION 4: STUDY TIPS ════════════ -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-icon">&#128173;</span>
+                    <h2 class="section-title">Study Tips</h2>
+                </div>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-number">1</div>
+                        <div class="tip-content">
+                            <div class="tip-title">Start with AI-900 for Quick Win</div>
+                            <div class="tip-text">Beginner-level, passable in 2-4 weeks, provides foundation for understanding AI services in Azure. This quick win builds confidence and gives you the vocabulary to tackle the more demanding AZ-204.</div>
+                        </div>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-number">2</div>
+                        <div class="tip-content">
+                            <div class="tip-title">Build Azure Apps Hands-On</div>
+                            <div class="tip-text">AZ-204 tests practical skills: App Service, Functions, Cosmos DB, Blob Storage, API Management. Deploy real apps. The exam expects you to know how to implement solutions, not just describe them.</div>
+                        </div>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-number">3</div>
+                        <div class="tip-content">
+                            <div class="tip-title">Integrate AI into Developer Workflows</div>
+                            <div class="tip-text">Combine AZ-204 knowledge with AI-900 concepts to build AI-enhanced applications and developer tools. This intersection is where the AI-DX role creates the most value -- bridging cloud development with intelligent experiences.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════ SECTION 5: STUDY PLAN ════════════ -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-icon">&#128197;</span>
+                    <h2 class="section-title">4-Week Study Plan</h2>
+                </div>
+                <div class="plan-timeline">
+                    <div class="plan-week">
+                        <div class="plan-week-label">Week 1</div>
+                        <h3 class="plan-week-title">AI-900 Foundations</h3>
+                        <ul class="plan-week-tasks">
+                            <li>Azure AI services overview and core concepts</li>
+                            <li>Machine Learning fundamentals and workloads</li>
+                            <li>Cognitive Services: Vision, Speech, Language, Decision</li>
+                            <li>Responsible AI principles and practices</li>
+                        </ul>
+                    </div>
+                    <div class="plan-week">
+                        <div class="plan-week-label">Week 2</div>
+                        <h3 class="plan-week-title">AI-900 Exam + AZ-204 Start</h3>
+                        <ul class="plan-week-tasks">
+                            <li>Complete AI-900 practice exams and pass the certification</li>
+                            <li>Begin AZ-204: Azure App Service deployment and configuration</li>
+                            <li>Azure Functions -- serverless compute patterns</li>
+                            <li>Cosmos DB -- data storage and querying for cloud apps</li>
+                        </ul>
+                    </div>
+                    <div class="plan-week">
+                        <div class="plan-week-label">Week 3</div>
+                        <h3 class="plan-week-title">AZ-204 Deep Dive</h3>
+                        <ul class="plan-week-tasks">
+                            <li>API Management -- securing and publishing APIs</li>
+                            <li>Blob Storage -- working with unstructured data</li>
+                            <li>Event Grid and message-based solutions</li>
+                            <li>Azure AD authentication, caching strategies, and CDN</li>
+                        </ul>
+                    </div>
+                    <div class="plan-week">
+                        <div class="plan-week-label">Week 4</div>
+                        <h3 class="plan-week-title">AZ-204 Practice</h3>
+                        <ul class="plan-week-tasks">
+                            <li>Full AZ-204 mock exams -- identify and close knowledge gaps</li>
+                            <li>Deploy a complete Azure application end-to-end</li>
+                            <li>Review monitoring, logging, and troubleshooting patterns</li>
+                            <li>Schedule and take the AZ-204 certification exam</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="footer">
+        AI Academy 2026 &mdash; Kyndryl &mdash; Certification Study Guide
+    </footer>
+
+    <!-- ════════════ JAVASCRIPT ════════════ -->
+    <script>
+        // Theme toggle
+        const html = document.documentElement;
+        const themeBtns = document.querySelectorAll('.theme-btn');
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('cert-theme', theme);
+            themeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.themeSet === theme);
+            });
+        }
+
+        themeBtns.forEach(btn => {
+            btn.addEventListener('click', () => setTheme(btn.dataset.themeSet));
+        });
+
+        // Load saved theme
+        const saved = localStorage.getItem('cert-theme');
+        if (saved) setTheme(saved);
+    </script>
+
+
+    <!-- AI Mentor Widget — change data-role per student role: FDE, AI-SE, AI-DS, AI-DA, AI-PM, AI-FE, AI-SEC, AI-DX -->
+    <script src="/js/mentor-widget.js" data-role="AI-DX" data-lesson="AI-DX Certification Prep" data-day="16"></script>
+</body>
+</html>

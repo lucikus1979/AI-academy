@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Product Manager — Certification Study Guide | AI Academy 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════════
+           THEME VARIABLES
+           ══════════════════════════════════════════════ */
+        :root { --radius: 14px; --transition: 0.3s ease; }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f1419; --bg-secondary: #1a1f26; --bg-card: #1a1f26;
+            --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+            --border: #2d3748;
+            --accent-blue: #3b82f6; --accent-green: #10b981; --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b; --accent-red: #ef4444; --accent-cyan: #06b6d4;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --glass: rgba(26,31,38,0.85); --glass-border: rgba(255,255,255,0.08);
+            --bg-tertiary: #242b35; --bg-hover: #242b35;
+        }
+        [data-theme="light"] {
+            --bg-primary: #ffffff; --bg-secondary: #f8fafc; --bg-card: #ffffff;
+            --text-primary: #0f172a; --text-secondary: #475569; --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --accent-blue: #2563eb; --accent-green: #059669; --accent-purple: #7c3aed;
+            --accent-orange: #d97706; --accent-red: #dc2626; --accent-cyan: #0891b2;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --glass: rgba(255,255,255,0.85); --glass-border: rgba(0,0,0,0.08);
+            --bg-tertiary: #f1f5f9; --bg-hover: #f1f5f9;
+        }
+
+        /* ══════════════════════════════════════════════
+           BASE
+           ══════════════════════════════════════════════ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.6;
+        }
+        a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+        a:hover { text-decoration: underline; }
+
+        /* ══════════════════════════════════════════════
+           HEADER
+           ══════════════════════════════════════════════ */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--glass); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); 
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+            padding: 0.4rem 0.9rem; border-radius: 8px; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .back-link:hover { background: rgba(59,130,246,0.2); text-decoration: none; }
+        .header-logo {
+            font-weight: 700; font-size: 1rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .header-right { display: flex; align-items: center; gap: 0.5rem; }
+        .theme-toggle {
+            display: flex; background: var(--bg-tertiary);
+            border: 1px solid var(--border); border-radius: 100px; padding: 3px;
+        }
+        .theme-btn {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none; background: none; color: var(--text-muted);
+            font-size: 1rem; transition: all 0.2s; font-family: inherit;
+        }
+        .theme-btn.active { background: var(--accent-blue); color: #fff; }
+
+        /* ══════════════════════════════════════════════
+           LAYOUT
+           ══════════════════════════════════════════════ */
+        .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+        /* ══════════════════════════════════════════════
+           HERO
+           ══════════════════════════════════════════════ */
+        .hero {
+            text-align: center; padding: 3rem 1rem 2rem;
+            background: radial-gradient(ellipse at top, rgba(59,130,246,0.08) 0%, transparent 60%);
+        }
+        .hero-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; display: block; }
+        .hero h1 {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .hero p { color: var(--text-secondary); font-size: 1.05rem; max-width: 640px; margin: 0 auto; }
+
+        /* ══════════════════════════════════════════════
+           SECTION
+           ══════════════════════════════════════════════ */
+        .section { margin-bottom: 2.5rem; }
+        .section-title {
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 0.6rem;
+            padding-bottom: 0.6rem; border-bottom: 2px solid var(--border);
+        }
+        .section-title .icon { font-size: 1.3rem; }
+
+        /* ══════════════════════════════════════════════
+           CERTIFICATION CARDS
+           ══════════════════════════════════════════════ */
+        .cert-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.5rem;
+            margin-bottom: 1rem; transition: all 0.2s;
+            position: relative; overflow: hidden;
+        }
+        .cert-card:hover { border-color: var(--accent-blue); box-shadow: var(--shadow); }
+        .cert-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .cert-card-title { font-size: 1.1rem; font-weight: 700; }
+        .cert-card-provider { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .cert-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.25rem 0.65rem; border-radius: 100px;
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .badge-priority { background: rgba(16,185,129,0.15); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-recommended { background: rgba(59,130,246,0.12); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.25); }
+        .badge-advanced { background: rgba(139,92,246,0.12); color: var(--accent-purple); border: 1px solid rgba(139,92,246,0.25); }
+        .badge-level { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border); }
+        .badge-cost { background: rgba(245,158,11,0.12); color: var(--accent-orange); border: 1px solid rgba(245,158,11,0.25); }
+        .badge-time { background: rgba(6,182,212,0.12); color: var(--accent-cyan); border: 1px solid rgba(6,182,212,0.25); }
+        .cert-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.85rem; font-weight: 600;
+            padding: 0.45rem 1rem; border-radius: 8px;
+            background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+            transition: all 0.2s; margin-top: 0.5rem;
+        }
+        .cert-link:hover { background: rgba(59,130,246,0.2); text-decoration: none; }
+
+        /* ══════════════════════════════════════════════
+           RESOURCE LIST
+           ══════════════════════════════════════════════ */
+        .resource-list { list-style: none; }
+        .resource-item {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 1rem 1.25rem; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            margin-bottom: 0.6rem; transition: all 0.2s;
+        }
+        .resource-item:hover { border-color: var(--accent-blue); box-shadow: var(--shadow); }
+        .resource-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .resource-info { flex: 1; min-width: 0; }
+        .resource-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.15rem; }
+        .resource-title a:hover { text-decoration: underline; }
+        .resource-platform { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ══════════════════════════════════════════════
+           TIPS
+           ══════════════════════════════════════════════ */
+        .tip-card {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 1.15rem 1.25rem; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            margin-bottom: 0.6rem;
+        }
+        .tip-number {
+            width: 32px; height: 32px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700;
+        }
+        .tip-text { font-size: 0.92rem; color: var(--text-secondary); }
+        .tip-text strong { color: var(--text-primary); }
+
+        /* ══════════════════════════════════════════════
+           STUDY PLAN
+           ══════════════════════════════════════════════ */
+        .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .plan-week {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.25rem; position: relative;
+            transition: all 0.2s;
+        }
+        .plan-week:hover { border-color: var(--accent-blue); box-shadow: var(--shadow); }
+        .plan-week-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--accent-blue); margin-bottom: 0.5rem;
+        }
+        .plan-week h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .plan-week ul { list-style: none; }
+        .plan-week li {
+            font-size: 0.82rem; color: var(--text-secondary);
+            padding: 0.2rem 0; padding-left: 1.1rem; position: relative;
+        }
+        .plan-week li::before {
+            content: ''; position: absolute; left: 0; top: 0.55rem;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        /* ══════════════════════════════════════════════
+           PROGRESS BAR
+           ══════════════════════════════════════════════ */
+        .progress-track {
+            width: 100%; height: 6px; background: var(--bg-tertiary);
+            border-radius: 100px; overflow: hidden; margin-top: 0.75rem;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 100px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            transition: width 0.6s ease;
+        }
+
+        /* ══════════════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════════════ */
+        .footer {
+            text-align: center; padding: 2rem 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.82rem;
+        }
+
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+           ══════════════════════════════════════════════ */
+        @media (max-width: 640px) {
+            .header { padding: 0 1rem; }
+            .header-logo { display: none; }
+            .container { padding: 1.5rem 1rem 3rem; }
+            .cert-card-header { flex-direction: column; }
+            .plan-grid { grid-template-columns: 1fr; }
+        }
+    
+        .link-blue { color: var(--accent-blue); text-decoration: none; }
+        .clr-danger { color: var(--accent-danger); }
+        .clr-green-bold { color: var(--accent-green); font-weight: 600; }
+        .clr-emerald { color: #10b981; }
+        .bt-blue { border-top: 3px solid var(--accent-blue); }
+        .bt-orange { border-top: 3px solid var(--accent-orange); }
+        .bg-red { background: var(--accent-red); }
+        .bg-blue { background: var(--accent-blue); }
+        .bg-purple { background: var(--accent-purple); }
+        .bg-green { background: var(--accent-green); }
+        .bg-gradient-2 { background: var(--gradient-2); }
+        .pl-15 { padding-left: 1.5rem; }
+        .list-secondary { padding-left: 1.25rem; color: var(--text-secondary); line-height: 2; }
+        .resource-intro { font-size: .82rem; color: var(--text-secondary); margin-bottom: .75rem; }
+        .card-meta { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .font-mono-sm { font-family: var(--font-mono); font-size: 0.85em; }
+        .pad-05-secondary { padding: 0.5rem; color: var(--text-secondary); }
+        .section-title { color: var(--text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+        .progress-bar-fill { width: 0; background: linear-gradient(90deg, #10b981, #06b6d4); }
+        .w-0 { width: 0%; }
+
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="header">
+    <div class="header-left">
+        <a href="/index.html" class="back-link">&larr; Back to Dashboard</a>
+        <span class="header-logo">AI Academy 2026</span>
+    </div>
+    <div class="header-right">
+        <div class="theme-toggle">
+            <button class="theme-btn" data-theme-set="light" title="Light mode" aria-label="Switch to light mode">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <button class="theme-btn active" data-theme-set="dark" title="Dark mode" aria-label="Switch to dark mode">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+    <span class="hero-emoji">&#128188;</span>
+    <h1>AI Product Manager</h1>
+    <p>Drives AI product vision, strategy, and roadmap from discovery to market fit. This role owns the "what" and "why" — defining user problems, prioritizing features, measuring product-market fit, and aligning cross-functional teams around outcomes within the Kyndryl AI Academy.</p>
+</div>
+
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<div class="container">
+
+    <!-- SECTION: Certification Path -->
+    <div class="section">
+        <h2 class="section-title"><span class="icon">&#127942;</span> Recommended Certification Path</h2>
+
+        <!-- Cert 1 — Entry Gate -->
+        <div class="cert-card">
+            <div class="cert-card-header">
+                <div>
+                    <div class="cert-card-title">Microsoft AI-900: Azure AI Fundamentals</div>
+                    <div class="cert-card-provider">Microsoft</div>
+                </div>
+                <span class="badge badge-recommended">Recommended</span>
+            </div>
+            <div class="cert-meta">
+                <span class="badge badge-level">Beginner</span>
+                <span class="badge badge-time">~1 month</span>
+                <span class="badge badge-cost">$165</span>
+            </div>
+            <p class="card-meta">Entry Gate certification covering AI concepts, machine learning principles, and Azure AI services. Gives AI Product Managers the vocabulary to speak confidently with engineering teams about computer vision, NLP, and responsible AI.</p>
+            <a href="https://learn.microsoft.com/en-us/certifications/azure-ai-fundamentals/" target="_blank" rel="noopener" class="cert-link">
+                View Certification
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <div class="progress-track"><div class="progress-fill w-0"></div></div>
+        </div>
+
+        <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">Google Cloud Digital Leader</div>
+                        <div class="cert-provider">Google Cloud</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$99</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~1 month</span></div>
+            </div>
+            <a href="https://cloud.google.com/learn/certification/cloud-digital-leader" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+
+        <!-- Cert 2 — Entry Gate -->
+        <div class="cert-card">
+            <div class="cert-card-header">
+                <div>
+                    <div class="cert-card-title">AWS Certified AI Practitioner</div>
+                    <div class="cert-card-provider">Amazon Web Services</div>
+                </div>
+                <span class="badge badge-recommended">Recommended</span>
+            </div>
+            <div class="cert-meta">
+                <span class="badge badge-level">Beginner</span>
+                <span class="badge badge-time">~1&ndash;2 months</span>
+                <span class="badge badge-cost">$150</span>
+            </div>
+            <p class="card-meta">Entry Gate certification validating AI/ML concepts, generative AI fundamentals, and responsible AI practices on AWS. Combined with AI-900, gives product managers vendor-neutral credibility across the two dominant cloud ecosystems.</p>
+            <a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener" class="cert-link">
+                View Certification
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <div class="progress-track"><div class="progress-fill w-0"></div></div>
+        </div>
+
+        <div style="text-align:center;padding:0.5rem 0;font-size:0.78rem;color:var(--text-muted);font-weight:500;">or choose an alternative</div>
+
+        <div class="cert-card" style="opacity:0.85;">
+            <div class="cert-card-top">
+                <div class="cert-card-info-row">
+                    <div class="cert-number advanced">&#8644;</div>
+                    <div class="cert-info">
+                        <div class="cert-name">CompTIA AI+</div>
+                        <div class="cert-provider">CompTIA</div>
+                    </div>
+                </div>
+                <span class="cert-badge advanced">Alternative</span>
+            </div>
+            <div class="cert-meta">
+                <div class="cert-meta-item"><span class="label">Level:</span><span class="value">Beginner-Intermediate</span></div>
+                <div class="cert-meta-item"><span class="label">Cost:</span><span class="value">$358</span></div>
+                <div class="cert-meta-item"><span class="label">Study Time:</span><span class="value">~2 months</span></div>
+            </div>
+            <a href="https://www.comptia.org/certifications/ai" target="_blank" rel="noopener" class="cert-link">View Certification &#8594;</a>
+        </div>
+    </div>
+
+    <!-- SECTION: Free Learning Resources -->
+    <div class="section">
+        <h2 class="section-title"><span class="icon">&#128218;</span> Free Learning Resources <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);margin-left:0.5rem;">3 resources</span></h2>
+        <ul class="resource-list">
+            <li class="resource-item">
+                <span class="resource-icon">&#128214;</span>
+                <div class="resource-info">
+                    <div class="resource-title"><a href="https://learn.microsoft.com/" target="_blank" rel="noopener">Microsoft Learn</a></div>
+                    <div class="resource-platform">learn.microsoft.com &mdash; Self-paced AI-900 learning paths, modules, and hands-on labs</div>
+                </div>
+            </li>
+            <li class="resource-item">
+                <span class="resource-icon">&#128187;</span>
+                <div class="resource-info">
+                    <div class="resource-title"><a href="https://skillbuilder.aws/" target="_blank" rel="noopener">AWS Skill Builder</a></div>
+                    <div class="resource-platform">skillbuilder.aws &mdash; Free AI Practitioner prep courses and digital training</div>
+                </div>
+            </li>
+            <li class="resource-item">
+                <span class="resource-icon">&#9729;&#65039;</span>
+                <div class="resource-info">
+                    <div class="resource-title"><a href="https://cloudskillsboost.google/" target="_blank" rel="noopener">Google Cloud Skills Boost</a></div>
+                    <div class="resource-platform">cloudskillsboost.google &mdash; Free AI/ML courses for broadening your cloud AI knowledge</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- SECTION: Study Tips -->
+    <div class="section">
+        <h2 class="section-title"><span class="icon">&#128161;</span> Study Tips</h2>
+
+        <div class="tip-card">
+            <div class="tip-number">1</div>
+            <div class="tip-text"><strong>Focus on Concepts, Not Code.</strong> AI-PM doesn't need to code. Understand what AI can and can't do, costs, timelines, and risks. Your job is to make informed product decisions, not to build the models yourself.</div>
+        </div>
+        <div class="tip-card">
+            <div class="tip-number">2</div>
+            <div class="tip-text"><strong>Learn Both Cloud Ecosystems.</strong> Having both Microsoft and AWS AI fundamentals gives you vendor-neutral credibility in client conversations. You can compare Azure AI Services vs. SageMaker without bias.</div>
+        </div>
+        <div class="tip-card">
+            <div class="tip-number">3</div>
+            <div class="tip-text"><strong>Translate Technical to Business.</strong> Practice explaining AI concepts (tokens, hallucinations, RAG, fine-tuning) in business language a CFO would understand. This is the superpower that separates great AI PMs from average ones.</div>
+        </div>
+    </div>
+
+    <!-- SECTION: 4-Week Study Plan -->
+    <div class="section">
+        <h2 class="section-title"><span class="icon">&#128197;</span> 4-Week Study Sprint</h2>
+        <div class="plan-grid">
+            <div class="plan-week">
+                <div class="plan-week-label">Week 1</div>
+                <h4>AI-900 Foundations</h4>
+                <ul>
+                    <li>Azure AI services overview</li>
+                    <li>Machine learning principles</li>
+                    <li>Responsible AI framework</li>
+                    <li>Computer Vision and NLP basics</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-week-label">Week 2</div>
+                <h4>AI-900 Exam Prep</h4>
+                <ul>
+                    <li>Practice tests on Microsoft Learn</li>
+                    <li>Review weak areas and knowledge gaps</li>
+                    <li>Schedule AI-900 exam</li>
+                    <li>Pass AI-900 certification</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-week-label">Week 3</div>
+                <h4>AWS AI Practitioner</h4>
+                <ul>
+                    <li>AWS AI/ML services landscape</li>
+                    <li>SageMaker concepts and workflows</li>
+                    <li>Generative AI fundamentals on AWS</li>
+                    <li>Responsible AI practices (AWS perspective)</li>
+                </ul>
+            </div>
+            <div class="plan-week">
+                <div class="plan-week-label">Week 4</div>
+                <h4>AWS AI Practitioner Exam</h4>
+                <ul>
+                    <li>Mock exams on AWS Skill Builder</li>
+                    <li>Compare Azure vs AWS AI offerings</li>
+                    <li>Schedule AWS AI Practitioner exam</li>
+                    <li>Pass AWS certification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+    AI Academy 2026 &mdash; Kyndryl &mdash; Certification Study Guide
+</footer>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+(function() {
+    // Theme toggle
+    const html = document.documentElement;
+    const themeBtns = document.querySelectorAll('.theme-btn');
+
+    function setTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        localStorage.setItem('cert-theme', theme);
+        themeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-theme-set') === theme);
+        });
+    }
+
+    // Load saved theme
+    const saved = localStorage.getItem('cert-theme');
+    if (saved) setTheme(saved);
+
+    themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => setTheme(btn.getAttribute('data-theme-set')));
+    });
+
+    // Progress bar interactivity (click to toggle progress for demo)
+    document.querySelectorAll('.cert-card').forEach(card => {
+        const fill = card.querySelector('.progress-fill');
+        if (!fill) return;
+        const key = 'progress-pm-' + card.querySelector('.cert-card-title').textContent.trim().replace(/\s+/g, '-').toLowerCase();
+        const savedProgress = localStorage.getItem(key);
+        if (savedProgress) fill.style.width = savedProgress;
+
+        fill.parentElement.style.cursor = 'pointer';
+        fill.parentElement.title = 'Click to cycle progress: 0% → 25% → 50% → 75% → 100%';
+        fill.parentElement.addEventListener('click', () => {
+            const current = parseInt(fill.style.width) || 0;
+            const steps = [0, 25, 50, 75, 100];
+            const nextIdx = (steps.indexOf(current) + 1) % steps.length;
+            const next = steps[nextIdx] + '%';
+            fill.style.width = next;
+            localStorage.setItem(key, next);
+        });
+    });
+})();
+</script>
+
+    <!-- AI Mentor Widget — change data-role per student role: FDE, AI-SE, AI-DS, AI-DA, AI-PM, AI-FE, AI-SEC -->
+    <script src="/js/mentor-widget.js" data-role="AI-PM" data-lesson="AI-PM Certification Prep" data-day="16"></script>
+</body>
+</html>
