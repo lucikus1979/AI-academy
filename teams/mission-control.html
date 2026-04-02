@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control — Instructor Overview</title>
+<script src="/js/auth-guard.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES & RESET
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --mc-void: #060a14; --mc-panel: #0d1525; --mc-border: #1a2744;
+  --mc-text: #e2e8f0; --mc-text-dim: #8899b4;
+  --mc-green: #00ff88; --mc-orange: #ff9f1c; --mc-red: #ff3b5c;
+  --mc-cyan: #3b9dff; --mc-purple: #a855f7;
+  --mc-font: 'Plus Jakarta Sans', sans-serif;
+}
+[data-theme="light"] {
+  --mc-void: #f0f4f8; --mc-panel: #ffffff; --mc-border: #d1d9e6;
+  --mc-text: #1a202c; --mc-text-dim: #4a5568;
+  --mc-green: #059669; --mc-orange: #d97706; --mc-red: #dc2626;
+  --mc-cyan: #2563eb; --mc-purple: #7c3aed;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--mc-font);
+  background: var(--mc-void);
+  color: var(--mc-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESS DENIED
+   ═══════════════════════════════════════════════════════════════ */
+#access-denied {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--mc-void);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center; padding: 24px;
+}
+#access-denied.visible { display: flex; }
+#access-denied h1 { font-size: 28px; font-weight: 700; color: var(--mc-red); }
+#access-denied p { color: var(--mc-text-dim); max-width: 400px; }
+#access-denied a {
+  color: var(--mc-cyan); text-decoration: none; font-weight: 600;
+  border: 1px solid var(--mc-cyan); padding: 8px 20px; border-radius: 8px;
+  margin-top: 8px; transition: all 0.2s;
+}
+#access-denied a:hover { background: var(--mc-cyan); color: var(--mc-void); }
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV BAR
+   ═══════════════════════════════════════════════════════════════ */
+.mc-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px;
+  background: var(--mc-panel);
+  border-bottom: 1px solid var(--mc-border);
+  position: sticky; top: 0; z-index: 100;
+}
+.mc-nav-title {
+  font-size: 16px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--mc-text);
+}
+.mc-nav-title span { color: var(--mc-cyan); }
+.mc-nav-right { display: flex; align-items: center; gap: 16px; }
+.mc-nav-right a {
+  color: var(--mc-text-dim); text-decoration: none; font-size: 13px;
+  font-weight: 600; transition: color 0.2s;
+}
+.mc-nav-right a:hover { color: var(--mc-cyan); }
+#theme-toggle {
+  background: none; border: 1px solid var(--mc-border); border-radius: 8px;
+  padding: 6px 10px; cursor: pointer; font-size: 16px; color: var(--mc-text);
+  transition: all 0.2s; line-height: 1;
+}
+#theme-toggle:hover { border-color: var(--mc-cyan); }
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════════════════════════ */
+.mc-main {
+  max-width: 1200px; margin: 0 auto; padding: 32px 24px 48px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM GRID (2x2)
+   ═══════════════════════════════════════════════════════════════ */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+@media (max-width: 800px) {
+  .team-grid { grid-template-columns: 1fr; }
+}
+
+.team-card {
+  background: var(--mc-panel);
+  border: 1px solid var(--mc-border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.team-card:hover { transform: translateY(-2px); }
+.team-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.team-card[data-team="alpha"]::before { background: var(--mc-cyan); }
+.team-card[data-team="bravo"]::before { background: var(--mc-red); }
+.team-card[data-team="charlie"]::before { background: var(--mc-green); }
+.team-card[data-team="delta"]::before { background: var(--mc-purple); }
+
+/* Card header */
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.team-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.team-badge .dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.team-card[data-team="alpha"] .team-badge .dot { background: var(--mc-cyan); box-shadow: 0 0 8px var(--mc-cyan); }
+.team-card[data-team="bravo"] .team-badge .dot { background: var(--mc-red); box-shadow: 0 0 8px var(--mc-red); }
+.team-card[data-team="charlie"] .team-badge .dot { background: var(--mc-green); box-shadow: 0 0 8px var(--mc-green); }
+.team-card[data-team="delta"] .team-badge .dot { background: var(--mc-purple); box-shadow: 0 0 8px var(--mc-purple); }
+
+.summary-badge {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.summary-badge.confirmed { background: rgba(0,255,136,0.15); color: var(--mc-green); }
+.summary-badge.pending { background: rgba(255,159,28,0.15); color: var(--mc-orange); }
+
+/* Fuel gauge */
+.fuel-section { margin-bottom: 16px; }
+.fuel-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--mc-text-dim); margin-bottom: 6px;
+}
+.fuel-label .xp-val { color: var(--mc-text); font-size: 13px; }
+.fuel-track {
+  width: 100%; height: 8px; background: var(--mc-border);
+  border-radius: 4px; overflow: hidden;
+}
+.fuel-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.6s ease;
+  background: linear-gradient(90deg, var(--mc-cyan), var(--mc-green));
+}
+.team-card[data-team="bravo"] .fuel-fill { background: linear-gradient(90deg, var(--mc-red), var(--mc-orange)); }
+.team-card[data-team="charlie"] .fuel-fill { background: linear-gradient(90deg, var(--mc-green), var(--mc-cyan)); }
+.team-card[data-team="delta"] .fuel-fill { background: linear-gradient(90deg, var(--mc-purple), var(--mc-cyan)); }
+
+/* Milestones */
+.milestones-row {
+  display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.milestone-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); color: var(--mc-text-dim);
+  transition: all 0.2s;
+}
+.milestone-icon.unlocked {
+  background: rgba(0,255,136,0.1); border-color: var(--mc-green);
+  color: var(--mc-green);
+}
+.milestone-icon.locked { opacity: 0.4; }
+
+/* Status row */
+.status-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.status-dot-group {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 600;
+}
+.status-dot-group .sdot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.status-dot-group .sdot.g { background: var(--mc-green); }
+.status-dot-group .sdot.y { background: var(--mc-orange); }
+.status-dot-group .sdot.r { background: var(--mc-red); }
+
+/* Detail lines */
+.detail-lines {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 16px;
+}
+.detail-line {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px;
+}
+.detail-line .dl-label { color: var(--mc-text-dim); }
+.detail-line .dl-value { font-weight: 600; color: var(--mc-text); }
+
+/* Card link */
+.card-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--mc-cyan);
+  text-decoration: none; transition: all 0.2s;
+}
+.card-link:hover { gap: 10px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   AGGREGATE STATS
+   ═══════════════════════════════════════════════════════════════ */
+.agg-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+@media (max-width: 600px) { .agg-stats { grid-template-columns: 1fr; } }
+.agg-card {
+  background: var(--mc-panel); border: 1px solid var(--mc-border);
+  border-radius: 12px; padding: 20px; text-align: center;
+}
+.agg-card .agg-num {
+  font-size: 32px; font-weight: 700; color: var(--mc-cyan);
+  line-height: 1.1;
+}
+.agg-card .agg-label {
+  font-size: 12px; color: var(--mc-text-dim); text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 600; margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADING SPINNER
+   ═══════════════════════════════════════════════════════════════ */
+.loading-overlay {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 80px 24px; gap: 16px;
+}
+.spinner {
+  width: 36px; height: 36px; border: 3px solid var(--mc-border);
+  border-top-color: var(--mc-cyan); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--mc-text-dim); }
+
+/* ═══════════════════════════════════════════════════════════════
+   PULSE ANIMATION FOR LIVE DOT
+   ═══════════════════════════════════════════════════════════════ */
+.live-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--mc-green); margin-right: 6px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+</style>
+</head>
+<body>
+
+<!-- Access Denied Screen -->
+<div id="access-denied">
+  <h1>Access Denied</h1>
+  <p>Mission Control is restricted to instructors only. Please log in with a lector account.</p>
+  <a href="/login.html">Back to Login</a>
+</div>
+
+<!-- Nav Bar -->
+<nav class="mc-nav">
+  <div class="mc-nav-title"><span>Mission Control</span> &mdash; Instructor View</div>
+  <div class="mc-nav-right">
+    <button id="theme-toggle" title="Toggle theme">&#9790;</button>
+    <a href="/days/day20.html">Back to Day 20</a>
+  </div>
+</nav>
+
+<!-- Main Content (hidden until auth check) -->
+<main class="mc-main" id="main-content" style="display:none;">
+
+  <!-- Loading state -->
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Establishing uplink to all teams&hellip;</div>
+  </div>
+
+  <!-- Team Grid -->
+  <div class="team-grid" id="team-grid" style="display:none;"></div>
+
+  <!-- Aggregate Stats -->
+  <div class="agg-stats" id="agg-stats" style="display:none;">
+    <div class="agg-card">
+      <div class="agg-num" id="agg-students">0</div>
+      <div class="agg-label">Total Students Registered</div>
+    </div>
+    <div class="agg-card">
+      <div class="agg-num" id="agg-deps">0</div>
+      <div class="agg-label">Total Dependencies Mapped</div>
+    </div>
+    <div class="agg-card">
+      <div class="agg-num" id="agg-confirmed">0 / 4</div>
+      <div class="agg-label">Summaries Confirmed</div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ── Constants ────────────────────────────────────────────────
+  var SUPABASE_URL = 'https://hiofwpndkuzrsfvnuyet.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_pGXJ2OfBXz5HJqzISmQdBg_23Hx64PI';
+  var TEAMS = ['alpha', 'bravo', 'charlie', 'delta'];
+  var TEAM_COLORS = { alpha: 'var(--mc-cyan)', bravo: 'var(--mc-red)', charlie: 'var(--mc-green)', delta: 'var(--mc-purple)' };
+  var MAX_XP = 355;
+  var TOTAL_DEPS = 42;
+  var TOTAL_ROLES = 7;
+  var MILESTONE_ICONS = [
+    { key: 'roles_assigned', icon: '\u{1F464}', label: 'Roles Assigned' },
+    { key: 'deps_mapped', icon: '\u{1F517}', label: 'Dependencies Mapped' },
+    { key: 'risks_logged', icon: '\u26A0', label: 'Risks Logged' },
+    { key: 'review_done', icon: '\u{1F50D}', label: 'Peer Review Done' },
+    { key: 'summary_confirmed', icon: '\u{1F4CB}', label: 'Summary Confirmed' },
+    { key: 'mission_complete', icon: '\u{1F680}', label: 'Mission Complete' }
+  ];
+
+  var sb;
+  var teamData = {};
+  var refreshTimer = null;
+
+  // ── Theme Toggle ─────────────────────────────────────────────
+  var savedTheme = localStorage.getItem('mc-theme') || 'dark';
+  if (savedTheme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+
+  var themeBtn = document.getElementById('theme-toggle');
+  function updateThemeIcon() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    themeBtn.innerHTML = isLight ? '&#9788;' : '&#9790;';
+  }
+  updateThemeIcon();
+
+  themeBtn.addEventListener('click', function() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('mc-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('mc-theme', 'light');
+    }
+    updateThemeIcon();
+  });
+
+  // ── Auth Check ───────────────────────────────────────────────
+  function waitForAuth() {
+    return new Promise(function(resolve) {
+      var attempts = 0;
+      var check = setInterval(function() {
+        attempts++;
+        if (window.__academyUserRoles) {
+          clearInterval(check);
+          resolve(window.__academyUserRoles);
+        } else if (attempts > 50) {
+          clearInterval(check);
+          resolve(null);
+        }
+      }, 100);
+    });
+  }
+
+  waitForAuth().then(function(roles) {
+    if (!roles || !Array.isArray(roles) || roles.indexOf('lector') === -1) {
+      document.getElementById('access-denied').classList.add('visible');
+      return;
+    }
+    initDashboard();
+  });
+
+  // ── Init Dashboard ───────────────────────────────────────────
+  function initDashboard() {
+    document.getElementById('main-content').style.display = '';
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    loadAllTeams().then(function() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('team-grid').style.display = '';
+      document.getElementById('agg-stats').style.display = '';
+      subscribeRealtime();
+    });
+
+    refreshTimer = setInterval(function() { loadAllTeams(); }, 30000);
+  }
+
+  // ── Load All Teams ───────────────────────────────────────────
+  function loadAllTeams() {
+    var promises = TEAMS.map(function(team) { return loadTeamData(team); });
+    return Promise.all(promises).then(function() {
+      renderGrid();
+      renderAggregateStats();
+    });
+  }
+
+  // ── Load Single Team Data ────────────────────────────────────
+  function loadTeamData(team) {
+    return Promise.all([
+      sb.from('role_status').select('*').eq('team', team),
+      sb.from('dependencies').select('id', { count: 'exact', head: true }).eq('team', team),
+      sb.from('team_summary').select('*').eq('team', team).maybeSingle(),
+      sb.from('milestones').select('*').eq('team', team),
+      sb.from('peer_reviews').select('id', { count: 'exact', head: true }).eq('from_team', team),
+      sb.from('team_members').select('id', { count: 'exact', head: true }).eq('team', team)
+    ]).then(function(results) {
+      var statuses = results[0].data || [];
+      var depsCount = results[1].count || 0;
+      var summary = results[2].data || null;
+      var milestones = results[3].data || [];
+      var reviewsCount = results[4].count || 0;
+      var membersCount = results[5].count || 0;
+
+      var greenCount = 0, yellowCount = 0, redCount = 0;
+      statuses.forEach(function(s) {
+        var st = (s.status || '').toUpperCase();
+        if (st === 'GREEN') greenCount++;
+        else if (st === 'YELLOW') yellowCount++;
+        else if (st === 'RED') redCount++;
+      });
+
+      var xp = (statuses.length * 10) + (depsCount * 5) + ((summary && summary.confirmed ? 1 : 0) * 20) + (reviewsCount * 15);
+      if (xp > MAX_XP) xp = MAX_XP;
+
+      var milestonesMap = {};
+      milestones.forEach(function(m) {
+        milestonesMap[m.key || m.milestone_key || m.name] = m.unlocked || m.achieved || false;
+      });
+
+      teamData[team] = {
+        statuses: statuses,
+        depsCount: depsCount,
+        summary: summary,
+        milestones: milestonesMap,
+        reviewsCount: reviewsCount,
+        membersCount: membersCount,
+        greenCount: greenCount,
+        yellowCount: yellowCount,
+        redCount: redCount,
+        xp: xp,
+        rolesFilled: statuses.length
+      };
+    });
+  }
+
+  // ── Render Grid ──────────────────────────────────────────────
+  function renderGrid() {
+    var grid = document.getElementById('team-grid');
+    grid.innerHTML = '';
+
+    TEAMS.forEach(function(team) {
+      var d = teamData[team];
+      if (!d) return;
+
+      var pct = Math.round((d.xp / MAX_XP) * 100);
+      var summaryConfirmed = d.summary && d.summary.confirmed;
+
+      // Build milestones HTML
+      var milestonesHtml = '';
+      MILESTONE_ICONS.forEach(function(m) {
+        var unlocked = d.milestones[m.key] === true;
+        milestonesHtml += '<div class="milestone-icon ' + (unlocked ? 'unlocked' : 'locked') + '" title="' + m.label + (unlocked ? ' (Unlocked)' : ' (Locked)') + '">' + m.icon + '</div>';
+      });
+
+      var card = document.createElement('div');
+      card.className = 'team-card';
+      card.setAttribute('data-team', team);
+      card.innerHTML =
+        '<div class="card-header">' +
+          '<div class="team-badge"><span class="dot"></span>Team ' + capitalize(team) + '</div>' +
+          '<span class="summary-badge ' + (summaryConfirmed ? 'confirmed' : 'pending') + '">' +
+            (summaryConfirmed ? 'Confirmed' : 'Pending') +
+          '</span>' +
+        '</div>' +
+        '<div class="fuel-section">' +
+          '<div class="fuel-label"><span>Mission Fuel</span><span class="xp-val">' + d.xp + ' / ' + MAX_XP + ' XP (' + pct + '%)</span></div>' +
+          '<div class="fuel-track"><div class="fuel-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="milestones-row">' + milestonesHtml + '</div>' +
+        '<div class="status-row">' +
+          '<span class="status-dot-group"><span class="sdot g"></span>' + d.greenCount + 'G</span>' +
+          '<span class="status-dot-group"><span class="sdot y"></span>' + d.yellowCount + 'Y</span>' +
+          '<span class="status-dot-group"><span class="sdot r"></span>' + d.redCount + 'R</span>' +
+        '</div>' +
+        '<div class="detail-lines">' +
+          '<div class="detail-line"><span class="dl-label">Roles filled</span><span class="dl-value">' + d.rolesFilled + ' / ' + TOTAL_ROLES + ' roles reporting</span></div>' +
+          '<div class="detail-line"><span class="dl-label">Dependencies</span><span class="dl-value">' + d.depsCount + ' / ' + TOTAL_DEPS + ' mapped</span></div>' +
+          '<div class="detail-line"><span class="dl-label">Peer reviews</span><span class="dl-value">' + d.reviewsCount + ' submitted</span></div>' +
+        '</div>' +
+        '<a class="card-link" href="/teams/team.html?team=' + team + '">Open Team Dashboard &rarr;</a>';
+
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Render Aggregate Stats ───────────────────────────────────
+  function renderAggregateStats() {
+    var totalStudents = 0;
+    var totalDeps = 0;
+    var confirmedCount = 0;
+
+    TEAMS.forEach(function(team) {
+      var d = teamData[team];
+      if (!d) return;
+      totalStudents += d.membersCount;
+      totalDeps += d.depsCount;
+      if (d.summary && d.summary.confirmed) confirmedCount++;
+    });
+
+    document.getElementById('agg-students').textContent = totalStudents;
+    document.getElementById('agg-deps').textContent = totalDeps;
+    document.getElementById('agg-confirmed').textContent = confirmedCount + ' / 4';
+  }
+
+  // ── Realtime Subscription ────────────────────────────────────
+  function subscribeRealtime() {
+    sb.channel('mc-role-status')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'role_status' }, function(payload) {
+        var changedTeam = payload.new ? payload.new.team : (payload.old ? payload.old.team : null);
+        if (changedTeam && TEAMS.indexOf(changedTeam) !== -1) {
+          loadTeamData(changedTeam).then(function() {
+            renderGrid();
+            renderAggregateStats();
+          });
+        }
+      })
+      .subscribe();
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control — Team Board</title>
+<script src="/js/auth-guard.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES & RESET
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --mc-void: #060a14;
+  --mc-panel: #0d1525;
+  --mc-border: #1a2744;
+  --mc-text: #e2e8f0;
+  --mc-text-dim: #8899b4;
+  --mc-green: #00ff88;
+  --mc-orange: #ff9f1c;
+  --mc-red: #ff3b5c;
+  --mc-cyan: #3b9dff;
+  --mc-purple: #a855f7;
+  --mc-font: 'Plus Jakarta Sans', sans-serif;
+}
+[data-theme="light"] {
+  --mc-void: #f0f4f8;
+  --mc-panel: #ffffff;
+  --mc-border: #d1d9e6;
+  --mc-text: #1a202c;
+  --mc-text-dim: #4a5568;
+  --mc-green: #059669;
+  --mc-orange: #d97706;
+  --mc-red: #dc2626;
+  --mc-cyan: #2563eb;
+  --mc-purple: #7c3aed;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--mc-font);
+  background: var(--mc-void);
+  color: var(--mc-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM SELECT OVERLAY
+   ═══════════════════════════════════════════════════════════════ */
+#team-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--mc-void);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 32px; padding: 24px;
+}
+#team-overlay.hidden { display: none; }
+
+.overlay-title {
+  font-size: 28px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--mc-text);
+}
+.overlay-subtitle { color: var(--mc-text-dim); font-size: 15px; margin-top: -16px; }
+
+.team-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 900px; width: 100%; }
+
+.team-card {
+  background: var(--mc-panel); border: 2px solid var(--mc-border); border-radius: 16px;
+  padding: 32px 24px; text-align: center; cursor: pointer; transition: all 0.25s;
+  position: relative; overflow: hidden;
+}
+.team-card:hover { transform: translateY(-4px); }
+.team-card.selected { border-width: 3px; }
+.team-card[data-team="alpha"]:hover, .team-card[data-team="alpha"].selected { border-color: #3b9dff; box-shadow: 0 0 30px rgba(59,157,255,0.2); }
+.team-card[data-team="bravo"]:hover, .team-card[data-team="bravo"].selected { border-color: #ff3b5c; box-shadow: 0 0 30px rgba(255,59,92,0.2); }
+.team-card[data-team="charlie"]:hover, .team-card[data-team="charlie"].selected { border-color: #00ff88; box-shadow: 0 0 30px rgba(0,255,136,0.2); }
+.team-card[data-team="delta"]:hover, .team-card[data-team="delta"].selected { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.2); }
+
+.team-card-icon { font-size: 48px; margin-bottom: 12px; }
+.team-card-name { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+.team-card-label { font-size: 12px; color: var(--mc-text-dim); text-transform: uppercase; margin-top: 4px; letter-spacing: 1px; }
+
+/* Step 2: role select */
+#role-step { display: none; flex-direction: column; align-items: center; gap: 16px; max-width: 400px; width: 100%; }
+#role-step.visible { display: flex; }
+
+#role-step select, #role-step button {
+  width: 100%; padding: 14px 18px; border-radius: 10px; font-family: var(--mc-font);
+  font-size: 15px; font-weight: 600; border: 2px solid var(--mc-border); background: var(--mc-panel);
+  color: var(--mc-text); cursor: pointer; transition: all 0.2s;
+}
+#role-step select:focus { outline: none; border-color: var(--mc-cyan); }
+#join-btn {
+  background: linear-gradient(135deg, var(--mc-cyan), var(--mc-purple));
+  border: none; color: #fff; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+}
+#join-btn:hover { opacity: 0.9; }
+#join-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Assignment animation */
+.assign-spinner {
+  width: 48px; height: 48px; margin: 0 auto;
+  border: 4px solid var(--mc-border);
+  border-top-color: var(--mc-cyan);
+  border-radius: 50%;
+  animation: assignSpin 0.8s linear infinite;
+}
+@keyframes assignSpin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV BAR
+   ═══════════════════════════════════════════════════════════════ */
+#navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px; background: var(--mc-panel); border-bottom: 1px solid var(--mc-border);
+  position: sticky; top: 0; z-index: 1000;
+}
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.team-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px;
+  border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; border: 2px solid;
+}
+.nav-title { font-size: 16px; font-weight: 600; color: var(--mc-text-dim); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.role-badge {
+  font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700;
+  padding: 4px 10px; border-radius: 6px; background: var(--mc-border); color: var(--mc-text);
+  letter-spacing: 1px;
+}
+#theme-toggle {
+  background: none; border: 1px solid var(--mc-border); border-radius: 8px;
+  padding: 6px 10px; cursor: pointer; font-size: 18px; color: var(--mc-text);
+  transition: all 0.2s;
+}
+#theme-toggle:hover { border-color: var(--mc-cyan); }
+#leave-team-btn {
+  background: none; border: 1px solid var(--mc-border); border-radius: 8px;
+  padding: 6px 12px; cursor: pointer; font-size: 12px; font-weight: 600;
+  color: var(--mc-text-dim); font-family: var(--mc-font); transition: all 0.2s;
+}
+#leave-team-btn:hover { border-color: var(--mc-red); color: var(--mc-red); }
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════════════════════════ */
+#dashboard { display: none; }
+#dashboard.visible { display: block; }
+
+.section {
+  max-width: 1200px; margin: 0 auto; padding: 32px 24px;
+}
+.section-header {
+  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--mc-text-dim); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.section-header::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FUEL GAUGE + MILESTONES
+   ═══════════════════════════════════════════════════════════════ */
+.fuel-section { background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 12px; padding: 24px; }
+.fuel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.fuel-label { font-size: 13px; font-weight: 600; color: var(--mc-text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.fuel-xp { font-family: 'Courier New', monospace; font-size: 18px; font-weight: 700; color: var(--mc-green); }
+.fuel-bar-track {
+  width: 100%; height: 16px; background: var(--mc-border); border-radius: 8px; overflow: hidden;
+  position: relative;
+}
+.fuel-bar-fill {
+  height: 100%; border-radius: 8px; transition: width 0.6s ease;
+  background: linear-gradient(90deg, var(--mc-red), var(--mc-orange), var(--mc-green));
+}
+
+.milestones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.milestone {
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border: 1px solid var(--mc-border); border-radius: 8px; font-size: 12px; font-weight: 600;
+  color: var(--mc-text-dim); opacity: 0.4; filter: grayscale(1); transition: all 0.3s;
+}
+.milestone.unlocked {
+  opacity: 1; filter: none; border-color: var(--mc-green); color: var(--mc-green);
+  animation: msPulse 2s infinite;
+}
+@keyframes msPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.15); }
+  50% { box-shadow: 0 0 12px 2px rgba(0,255,136,0.15); }
+}
+.milestone-icon { font-size: 18px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   ROLE STATUS CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.role-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+.role-card {
+  background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 12px;
+  padding: 20px; position: relative; transition: border-color 0.3s;
+}
+.role-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.led {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  animation: ledBlink 2s infinite;
+}
+@keyframes ledBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.led-green { background: var(--mc-green); box-shadow: 0 0 6px var(--mc-green); }
+.led-yellow { background: var(--mc-orange); box-shadow: 0 0 6px var(--mc-orange); }
+.led-red { background: var(--mc-red); box-shadow: 0 0 6px var(--mc-red); }
+.led-off { background: #333; box-shadow: none; animation: none; }
+
+.role-name { font-family: 'Courier New', monospace; font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+.role-owner { font-size: 11px; color: var(--mc-text-dim); margin-left: auto; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.role-field { margin-bottom: 12px; }
+.role-field label {
+  display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--mc-text-dim); margin-bottom: 4px;
+}
+.role-field textarea, .role-field input[type="text"], .role-field input[type="number"] {
+  width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); color: var(--mc-text); font-family: var(--mc-font);
+  font-size: 13px; resize: vertical; transition: border-color 0.2s;
+}
+.role-field textarea { min-height: 56px; }
+.role-field textarea:focus, .role-field input:focus { outline: none; border-color: var(--mc-cyan); }
+
+.role-field-readonly {
+  padding: 8px 10px; border-radius: 6px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); font-size: 13px; color: var(--mc-text); min-height: 32px;
+  white-space: pre-wrap; word-break: break-word;
+}
+
+.status-radios { display: flex; gap: 8px; margin-bottom: 12px; }
+.status-radio {
+  flex: 1; text-align: center; padding: 6px 0; border-radius: 6px; font-size: 12px;
+  font-weight: 700; cursor: pointer; border: 2px solid var(--mc-border); transition: all 0.2s;
+  background: transparent; color: var(--mc-text-dim); font-family: var(--mc-font);
+}
+.status-radio.active-GREEN { border-color: var(--mc-green); color: var(--mc-green); background: rgba(0,255,136,0.08); }
+.status-radio.active-YELLOW { border-color: var(--mc-orange); color: var(--mc-orange); background: rgba(255,159,28,0.08); }
+.status-radio.active-RED { border-color: var(--mc-red); color: var(--mc-red); background: rgba(255,59,92,0.08); }
+
+.confidence-slider { width: 100%; accent-color: var(--mc-cyan); }
+.confidence-val { font-family: 'Courier New', monospace; font-size: 12px; color: var(--mc-cyan); }
+
+.save-role-btn {
+  width: 100%; padding: 10px; border-radius: 8px; border: none; font-family: var(--mc-font);
+  font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--mc-cyan), var(--mc-purple)); color: #fff;
+  transition: opacity 0.2s; text-transform: uppercase;
+}
+.save-role-btn:hover { opacity: 0.9; }
+.save-role-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════════════════════════
+   DEPENDENCY MAP
+   ═══════════════════════════════════════════════════════════════ */
+.dep-table-wrap { overflow-x: auto; }
+.dep-table {
+  border-collapse: collapse; width: 100%; min-width: 600px;
+  font-family: 'Courier New', monospace; font-size: 12px;
+}
+.dep-table th, .dep-table td {
+  border: 1px solid var(--mc-border); padding: 8px 6px; text-align: center;
+  min-width: 70px; height: 44px;
+}
+.dep-table th {
+  background: var(--mc-panel); font-weight: 700; color: var(--mc-text-dim);
+  letter-spacing: 1px; font-size: 11px;
+}
+.dep-table td { background: var(--mc-void); cursor: pointer; transition: background 0.2s; }
+.dep-table td:hover:not(.dep-diag) { background: rgba(59,157,255,0.08); }
+.dep-diag { background: var(--mc-border) !important; cursor: default !important; }
+.dep-dot {
+  display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--mc-cyan); box-shadow: 0 0 6px var(--mc-cyan);
+}
+.dep-counter { margin-top: 12px; font-size: 13px; color: var(--mc-text-dim); }
+
+/* ═══════════════════════════════════════════════════════════════
+   DEPENDENCY MODAL
+   ═══════════════════════════════════════════════════════════════ */
+#dep-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.6); align-items: center; justify-content: center;
+}
+#dep-modal-overlay.visible { display: flex; }
+#dep-modal {
+  background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 12px;
+  padding: 28px; width: 100%; max-width: 440px; margin: 20px;
+}
+#dep-modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+#dep-modal .dep-modal-sub { font-size: 12px; color: var(--mc-text-dim); margin-bottom: 16px; }
+#dep-modal textarea {
+  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); color: var(--mc-text); font-family: var(--mc-font);
+  font-size: 13px; resize: none; height: 80px;
+}
+#dep-modal textarea:focus { outline: none; border-color: var(--mc-cyan); }
+.dep-modal-chars { text-align: right; font-size: 11px; color: var(--mc-text-dim); margin-top: 4px; }
+.dep-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.dep-modal-cancel {
+  padding: 9px 18px; border-radius: 8px; border: 1px solid var(--mc-border); background: transparent;
+  color: var(--mc-text-dim); font-size: 13px; font-family: var(--mc-font); cursor: pointer;
+}
+.dep-modal-save {
+  padding: 9px 18px; border-radius: 8px; border: none;
+  background: linear-gradient(135deg, var(--mc-cyan), var(--mc-purple));
+  color: #fff; font-size: 13px; font-weight: 600; font-family: var(--mc-font); cursor: pointer;
+}
+.dep-modal-delete {
+  padding: 9px 18px; border-radius: 8px; border: 1px solid var(--mc-red); background: transparent;
+  color: var(--mc-red); font-size: 13px; font-family: var(--mc-font); cursor: pointer; margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM SUMMARY
+   ═══════════════════════════════════════════════════════════════ */
+.summary-panel { background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 12px; padding: 24px; }
+.summary-panel textarea {
+  width: 100%; min-height: 160px; padding: 12px; border-radius: 8px;
+  border: 1px solid var(--mc-border); background: var(--mc-void); color: var(--mc-text);
+  font-family: var(--mc-font); font-size: 13px; resize: vertical; margin-bottom: 12px;
+}
+.summary-panel textarea:focus { outline: none; border-color: var(--mc-cyan); }
+.summary-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.summary-btn {
+  padding: 10px 20px; border-radius: 8px; border: none; font-family: var(--mc-font);
+  font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s;
+}
+.summary-btn-gen { background: var(--mc-cyan); color: #000; }
+.summary-btn-confirm { background: linear-gradient(135deg, var(--mc-green), #059669); color: #000; }
+.summary-btn:hover { opacity: 0.9; }
+.summary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.summary-confirmed {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+  background: rgba(0,255,136,0.1); border: 1px solid var(--mc-green); border-radius: 8px;
+  font-size: 12px; color: var(--mc-green);
+}
+.summary-readonly {
+  padding: 16px; border-radius: 8px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); font-size: 13px; color: var(--mc-text); white-space: pre-wrap;
+  min-height: 80px; word-break: break-word;
+}
+.summary-waiting { color: var(--mc-text-dim); font-style: italic; font-size: 13px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TRANSMISSION LOG
+   ═══════════════════════════════════════════════════════════════ */
+.transmission-section {
+  border: 2px dashed var(--mc-border); border-radius: 12px; padding: 24px;
+  background: var(--mc-void);
+}
+.transmission-section .role-card { border-style: dashed; }
+.transmission-section .dep-table td { cursor: default; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PEER REVIEW
+   ═══════════════════════════════════════════════════════════════ */
+.review-panel { background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 12px; padding: 24px; }
+.review-field { margin-bottom: 20px; }
+.review-field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.review-field textarea {
+  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--mc-border);
+  background: var(--mc-void); color: var(--mc-text); font-family: var(--mc-font);
+  font-size: 13px; resize: vertical; min-height: 64px;
+}
+.review-field textarea:focus { outline: none; border-color: var(--mc-cyan); }
+.review-toggle { display: flex; gap: 8px; margin-bottom: 8px; }
+.review-toggle button {
+  flex: 1; padding: 8px; border-radius: 6px; border: 2px solid var(--mc-border); background: transparent;
+  color: var(--mc-text-dim); font-family: var(--mc-font); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.review-toggle button.active-yes { border-color: var(--mc-green); color: var(--mc-green); background: rgba(0,255,136,0.08); }
+.review-toggle button.active-no { border-color: var(--mc-red); color: var(--mc-red); background: rgba(255,59,92,0.08); }
+.review-submit {
+  padding: 10px 24px; border-radius: 8px; border: none;
+  background: linear-gradient(135deg, var(--mc-orange), var(--mc-red)); color: #fff;
+  font-family: var(--mc-font); font-size: 13px; font-weight: 700; cursor: pointer;
+  letter-spacing: 1px; text-transform: uppercase; transition: opacity 0.2s;
+}
+.review-submit:hover { opacity: 0.9; }
+.review-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.review-done { color: var(--mc-green); font-size: 13px; font-weight: 600; margin-top: 12px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  background: var(--mc-panel); border: 1px solid var(--mc-green); color: var(--mc-green);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); transform: translateY(80px); opacity: 0;
+  transition: all 0.3s ease;
+}
+.toast.visible { transform: translateY(0); opacity: 1; }
+.toast.error { border-color: var(--mc-red); color: var(--mc-red); }
+
+footer {
+  text-align: center; padding: 32px 24px; color: var(--mc-text-dim); font-size: 12px;
+  border-top: 1px solid var(--mc-border); margin-top: 40px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TEAM SELECT OVERLAY
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="team-overlay" class="hidden">
+  <div class="overlay-title">Mission Control</div>
+  <div class="overlay-subtitle">Select your job role — you will be auto-assigned to the best team</div>
+  <div id="role-step" class="visible">
+    <select id="role-select">
+      <option value="">-- Select Your Role --</option>
+      <option value="FDE">FDE — Full-stack Dev Engineer</option>
+      <option value="AI-SE">AI-SE — AI Software Engineer</option>
+      <option value="AI-DS">AI-DS — AI Data Scientist</option>
+      <option value="AI-DA">AI-DA — AI Data Analyst</option>
+      <option value="AI-PM">AI-PM — AI Project Manager</option>
+      <option value="AI-FE">AI-FE — AI Frontend Engineer</option>
+      <option value="AI-SEC">AI-SEC — AI Security Engineer</option>
+    </select>
+    <button id="join-btn" disabled onclick="joinMission()">Join Mission</button>
+  </div>
+  <div id="assign-result" style="display:none; text-align:center;">
+    <div id="assign-spinner" class="assign-spinner"></div>
+    <div id="assign-text" style="font-size:15px; color:var(--mc-text-dim); margin-top:12px;">Assigning team...</div>
+    <div id="assign-team-reveal" style="display:none; margin-top:24px;">
+      <div style="font-size:14px; color:var(--mc-text-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">You have been assigned to</div>
+      <div id="assign-team-name" style="font-size:36px; font-weight:700; letter-spacing:2px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAV BAR
+     ═══════════════════════════════════════════════════════════════ -->
+<nav id="navbar" style="display:none">
+  <div class="nav-left">
+    <span class="team-badge" id="nav-team-badge"></span>
+    <span class="nav-title">Mission Station</span>
+  </div>
+  <div class="nav-right">
+    <span class="role-badge" id="nav-role-badge"></span>
+    <a href="/teams/report.html" style="font:600 0.7rem var(--mc-font);color:var(--mc-cyan);text-decoration:none;padding:4px 10px;border:1px solid var(--mc-cyan);border-radius:6px;">Report</a>
+    <button id="leave-team-btn" onclick="leaveTeam()">Leave Team</button>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#9790;</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DASHBOARD
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- FUEL GAUGE + MILESTONES -->
+  <div class="section">
+    <div class="section-header" style="--dot-color:var(--mc-green)"><span style="background:var(--mc-green);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Mission Fuel Gauge</div>
+    <div class="fuel-section">
+      <div class="fuel-header">
+        <span class="fuel-label">Team Progress</span>
+        <span class="fuel-xp" id="fuel-xp">0 / 355 XP</span>
+      </div>
+      <div class="fuel-bar-track">
+        <div class="fuel-bar-fill" id="fuel-bar" style="width:0%"></div>
+      </div>
+      <div class="milestones" id="milestones-container"></div>
+    </div>
+  </div>
+
+  <!-- ROLE STATUS CARDS -->
+  <div class="section">
+    <div class="section-header"><span style="background:var(--mc-cyan);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Role Status Console</div>
+    <div class="role-grid" id="role-grid"></div>
+  </div>
+
+  <!-- DEPENDENCY MAP -->
+  <div class="section">
+    <div class="section-header"><span style="background:var(--mc-orange);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Dependency Map</div>
+    <div class="dep-table-wrap">
+      <table class="dep-table" id="dep-table"></table>
+    </div>
+    <div class="dep-counter" id="dep-counter">0 / 42 dependencies mapped</div>
+  </div>
+
+  <!-- TEAM SUMMARY -->
+  <div class="section">
+    <div class="section-header"><span style="background:var(--mc-purple);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Team Summary</div>
+    <div class="summary-panel" id="summary-panel"></div>
+  </div>
+
+  <!-- TRANSMISSION LOG -->
+  <div class="section">
+    <div class="section-header" id="transmission-header"><span style="background:var(--mc-red);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Incoming Transmission</div>
+    <div class="transmission-section" id="transmission-section">
+      <div class="role-grid" id="tx-role-grid"></div>
+      <div class="dep-table-wrap" style="margin-top:20px">
+        <table class="dep-table" id="tx-dep-table"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PEER REVIEW -->
+  <div class="section">
+    <div class="section-header"><span style="background:var(--mc-orange);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Peer Review — Outgoing Transmission</div>
+    <div class="review-panel" id="review-panel"></div>
+  </div>
+
+</div>
+
+<!-- DEPENDENCY MODAL -->
+<div id="dep-modal-overlay">
+  <div id="dep-modal">
+    <h3 id="dep-modal-title">Add Dependency</h3>
+    <div class="dep-modal-sub" id="dep-modal-sub"></div>
+    <textarea id="dep-modal-text" maxlength="140" placeholder="Describe the dependency (max 140 chars)..."></textarea>
+    <div class="dep-modal-chars"><span id="dep-modal-chars">0</span>/140</div>
+    <div class="dep-modal-actions">
+      <button class="dep-modal-delete" id="dep-modal-delete" style="display:none" onclick="deleteDependency()">Delete</button>
+      <button class="dep-modal-cancel" onclick="closeDepModal()">Cancel</button>
+      <button class="dep-modal-save" onclick="saveDepFromModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<footer>Mission Control &mdash; AI Academy Team Board &mdash; &copy; 2026</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL STATE
+   ═══════════════════════════════════════════════════════════════ */
+let sb, currentTeam, currentRole, userEmail;
+const TEAMS = ['alpha', 'bravo', 'charlie', 'delta'];
+const ROLES = ['FDE','AI-SE','AI-DS','AI-DA','AI-PM','AI-FE','AI-SEC'];
+const WIDGET_VALID_ROLES = ['FDE','AI-SE','AI-DS','AI-DA','AI-PM','AI-FE','AI-SEC','AI-DX'];
+const REVIEW_MAP = { alpha:'bravo', bravo:'charlie', charlie:'delta', delta:'alpha' };
+const TEAM_COLORS = { alpha:'#3b9dff', bravo:'#ff3b5c', charlie:'#00ff88', delta:'#a855f7' };
+const TEAM_NAMES = { alpha: 'ALPHA', bravo: 'BRAVO', charlie: 'CHARLIE', delta: 'DELTA' };
+let mentorWidgetMounted = false;
+
+// Data caches
+let roleStatuses = {};   // keyed by role
+let dependencies = {};    // keyed by 'fromRole-toRole'
+let teamSummaryData = null;
+let milestonesData = {};  // keyed by milestone_key
+let txRoleStatuses = {};
+let txDependencies = {};
+let peerReviewSubmitted = false;
+let realtimeChannels = [];
+
+// Dep modal state
+let depModalFrom = null, depModalTo = null, depModalEditing = false;
+
+/* ═══════════════════════════════════════════════════════════════
+   MILESTONE DEFINITIONS
+   ═══════════════════════════════════════════════════════════════ */
+const MILESTONES = [
+  { key: 'systems_online',     label: 'Systems Online',      icon: '\u{1F680}', desc: 'All 7 roles filled' },
+  { key: 'telemetry_active',   label: 'Telemetry Active',    icon: '\u{1F6F0}', desc: '3+ RAGAS scores' },
+  { key: 'dependencies_mapped',label: 'Dependencies Mapped', icon: '\u{1F5FA}', desc: '10+ cells mapped' },
+  { key: 'mission_brief',      label: 'Mission Brief Filed', icon: '\u{1F4C4}', desc: 'Summary confirmed' },
+  { key: 'peer_reviewed',      label: 'Peer Reviewed',       icon: '\u{1F52D}', desc: 'Review submitted' },
+  { key: 'launch_ready',       label: 'Launch Ready',        icon: '\u{2B50}',  desc: 'All above done' },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   XP CALCULATION
+   ═══════════════════════════════════════════════════════════════ */
+const XP_MAX = 355;
+function calculateXP() {
+  let xp = 0;
+  // Each role status saved: 25 XP (7 * 25 = 175)
+  Object.values(roleStatuses).forEach(rs => { if (rs.updated_by) xp += 25; });
+  // Each RAGAS score: 10 XP (7 * 10 = 70)
+  Object.values(roleStatuses).forEach(rs => { if (rs.ragas_score !== null && rs.ragas_score !== undefined && rs.ragas_score !== '') xp += 10; });
+  // Each dependency: 2 XP (42 * 2 = 84 max, but cap at 42 entries)
+  xp += Object.keys(dependencies).length * 2;
+  // Summary confirmed: 20 XP
+  if (teamSummaryData && teamSummaryData.confirmed_by) xp += 20;
+  // Peer review submitted: 6 XP
+  if (peerReviewSubmitted) xp += 6;
+  return Math.min(xp, XP_MAX);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME TOGGLE
+   ═══════════════════════════════════════════════════════════════ */
+function applyTheme() {
+  const theme = localStorage.getItem('mc_theme') || 'dark';
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = theme === 'light' ? '\u2600' : '\u263E';
+}
+function toggleTheme() {
+  const current = localStorage.getItem('mc_theme') || 'dark';
+  localStorage.setItem('mc_theme', current === 'dark' ? 'light' : 'dark');
+  applyTheme();
+}
+applyTheme();
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST HELPER
+   ═══════════════════════════════════════════════════════════════ */
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  requestAnimationFrame(() => t.classList.add('visible'));
+  setTimeout(() => t.classList.remove('visible'), 3000);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM SELECT OVERLAY
+   ═══════════════════════════════════════════════════════════════ */
+document.getElementById('role-select').addEventListener('change', function() {
+  document.getElementById('join-btn').disabled = !this.value;
+});
+
+async function findBestTeam(role) {
+  // Load current team_members from DB
+  const { data: members, error } = await sb.from('team_members').select('team, role');
+  if (error) throw error;
+
+  // Build per-team stats
+  const stats = {};
+  TEAMS.forEach(t => { stats[t] = { count: 0, roles: [] }; });
+  (members || []).forEach(m => {
+    if (stats[m.team]) {
+      stats[m.team].count++;
+      stats[m.team].roles.push(m.role);
+    }
+  });
+
+  // Priority 1: teams that DON'T have this role yet
+  const teamsWithoutRole = TEAMS.filter(t => !stats[t].roles.includes(role));
+  const candidates = teamsWithoutRole.length > 0 ? teamsWithoutRole : TEAMS;
+
+  // Priority 2: among candidates, pick the one with fewest members
+  const minCount = Math.min(...candidates.map(t => stats[t].count));
+  const smallest = candidates.filter(t => stats[t].count === minCount);
+
+  // Tie-break: random
+  return smallest[Math.floor(Math.random() * smallest.length)];
+}
+
+async function joinMission() {
+  const role = document.getElementById('role-select').value;
+  if (!role) return;
+
+  const btn = document.getElementById('join-btn');
+  btn.disabled = true;
+
+  // Show assignment animation
+  document.getElementById('role-step').style.display = 'none';
+  document.querySelector('.overlay-subtitle').style.display = 'none';
+  const resultEl = document.getElementById('assign-result');
+  resultEl.style.display = 'block';
+
+  try {
+    const assignedTeam = await findBestTeam(role);
+
+    // Upsert into team_members
+    const { error } = await sb.from('team_members').upsert({
+      user_email: userEmail,
+      team: assignedTeam,
+      role: role,
+      joined_at: new Date().toISOString()
+    }, { onConflict: 'user_email' });
+
+    if (error) throw error;
+
+    currentTeam = assignedTeam;
+    currentRole = role;
+    localStorage.setItem('mc_team', currentTeam);
+    localStorage.setItem('mc_role', currentRole);
+    localStorage.setItem('mentor-widget-selected-role', currentRole);
+
+    // Reveal assigned team after short delay
+    await new Promise(r => setTimeout(r, 1200));
+    document.getElementById('assign-spinner').style.display = 'none';
+    document.getElementById('assign-text').style.display = 'none';
+    const reveal = document.getElementById('assign-team-reveal');
+    const teamName = document.getElementById('assign-team-name');
+    teamName.textContent = 'Team ' + TEAM_NAMES[assignedTeam];
+    teamName.style.color = TEAM_COLORS[assignedTeam];
+    reveal.style.display = 'block';
+
+    // Transition to dashboard after reveal
+    await new Promise(r => setTimeout(r, 1800));
+    document.getElementById('team-overlay').classList.add('hidden');
+    showDashboard();
+  } catch (e) {
+    console.error('Join error:', e);
+    showToast('Failed to join: ' + (e.message || 'Unknown error'), true);
+    // Reset UI
+    resultEl.style.display = 'none';
+    document.getElementById('role-step').style.display = '';
+    document.querySelector('.overlay-subtitle').style.display = '';
+    document.getElementById('assign-spinner').style.display = '';
+    document.getElementById('assign-text').style.display = '';
+    btn.disabled = false;
+  }
+}
+
+function leaveTeam() {
+  if (!confirm('Leave your current team? You can rejoin anytime.')) return;
+  localStorage.removeItem('mc_team');
+  localStorage.removeItem('mc_role');
+  // Cleanup realtime
+  realtimeChannels.forEach(ch => sb.removeChannel(ch));
+  realtimeChannels = [];
+  currentTeam = null;
+  currentRole = null;
+  document.getElementById('dashboard').classList.remove('visible');
+  document.getElementById('navbar').style.display = 'none';
+  // Reset overlay to role selection
+  document.getElementById('assign-result').style.display = 'none';
+  document.getElementById('assign-spinner').style.display = '';
+  document.getElementById('assign-text').style.display = '';
+  document.getElementById('assign-team-reveal').style.display = 'none';
+  document.getElementById('role-step').style.display = '';
+  document.querySelector('.overlay-subtitle').style.display = '';
+  document.getElementById('role-select').value = '';
+  document.getElementById('join-btn').disabled = true;
+  document.getElementById('team-overlay').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT FLOW
+   ═══════════════════════════════════════════════════════════════ */
+function waitForAuth() {
+  return new Promise(resolve => {
+    if (window.__academyAuthToken) return resolve();
+    const iv = setInterval(() => {
+      if (window.__academyAuthToken) { clearInterval(iv); resolve(); }
+    }, 100);
+    // Timeout after 15s
+    setTimeout(() => { clearInterval(iv); resolve(); }, 15000);
+  });
+}
+
+function getTeamFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const queryTeam = params.get('team')?.toLowerCase();
+  if (queryTeam && TEAM_COLORS[queryTeam]) return queryTeam;
+
+  const parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+  if (parts.length >= 2 && parts[0] === 'teams') {
+    const pathTeam = parts[1].replace('.html', '');
+    if (TEAM_COLORS[pathTeam]) return pathTeam;
+  }
+  return null;
+}
+
+async function init() {
+  await waitForAuth();
+
+  const SUPABASE_URL = 'https://hiofwpndkuzrsfvnuyet.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_pGXJ2OfBXz5HJqzISmQdBg_23Hx64PI';
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    userEmail = user?.email || 'unknown';
+  } catch (e) {
+    userEmail = 'unknown';
+  }
+
+  // Check URL param/path (`?team=alpha` or `/teams/alpha`)
+  const urlTeam = getTeamFromUrl();
+  if (urlTeam && TEAM_COLORS[urlTeam]) {
+    currentTeam = urlTeam;
+    // Need role from localStorage or default
+    currentRole = localStorage.getItem('mc_role') || null;
+    if (!currentRole) {
+      // Check team_members table
+      const { data } = await sb.from('team_members').select('role').eq('user_email', userEmail).maybeSingle();
+      currentRole = data?.role || null;
+    }
+    if (currentRole) {
+      localStorage.setItem('mc_team', currentTeam);
+      localStorage.setItem('mc_role', currentRole);
+    }
+  }
+
+  // Check localStorage
+  if (!currentTeam) {
+    currentTeam = localStorage.getItem('mc_team');
+    currentRole = localStorage.getItem('mc_role');
+  }
+
+  // If we still don't have both, check DB
+  if (!currentTeam || !currentRole) {
+    try {
+      const { data } = await sb.from('team_members').select('team, role').eq('user_email', userEmail).maybeSingle();
+      if (data) {
+        currentTeam = data.team;
+        currentRole = data.role;
+        localStorage.setItem('mc_team', currentTeam);
+        localStorage.setItem('mc_role', currentRole);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  if (currentTeam && currentRole) {
+    document.getElementById('team-overlay').classList.add('hidden');
+    showDashboard();
+  } else {
+    document.getElementById('team-overlay').classList.remove('hidden');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHOW DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+async function showDashboard() {
+  // Nav bar
+  const navbar = document.getElementById('navbar');
+  navbar.style.display = '';
+
+  const teamBadge = document.getElementById('nav-team-badge');
+  const color = TEAM_COLORS[currentTeam] || '#888';
+  teamBadge.style.borderColor = color;
+  teamBadge.style.color = color;
+  teamBadge.innerHTML = `&#9679; ${currentTeam.toUpperCase()}`;
+
+  document.getElementById('nav-role-badge').textContent = currentRole;
+
+  // Show dashboard
+  document.getElementById('dashboard').classList.add('visible');
+
+  // Transmission header
+  const assignedTeam = REVIEW_MAP[currentTeam];
+  document.getElementById('transmission-header').innerHTML =
+    `<span style="background:var(--mc-red);width:8px;height:8px;border-radius:50%;display:inline-block"></span> Incoming Transmission from Team ${assignedTeam.toUpperCase()}`;
+
+  // Load everything
+  await Promise.all([
+    loadRoleStatuses(),
+    loadDependencies(),
+    loadTeamSummary(),
+    loadMilestones(),
+    loadTransmissionLog(),
+    checkPeerReviewStatus(),
+  ]);
+
+  updateFuelGauge();
+  renderMilestones();
+  renderReviewPanel();
+  setupRealtimeSubscriptions();
+  mountTeamMentorWidget();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD ROLE STATUSES
+   ═══════════════════════════════════════════════════════════════ */
+async function loadRoleStatuses() {
+  try {
+    const { data, error } = await sb.from('role_status').select('*').eq('team', currentTeam);
+    if (error) throw error;
+    roleStatuses = {};
+    (data || []).forEach(r => { roleStatuses[r.role] = r; });
+  } catch (e) {
+    console.error('Load role statuses:', e);
+  }
+  renderRoleCards();
+}
+
+function renderRoleCards() {
+  const grid = document.getElementById('role-grid');
+  grid.innerHTML = '';
+
+  ROLES.forEach(role => {
+    const rs = roleStatuses[role] || {};
+    const isOwner = currentRole === role;
+    const status = rs.status || '';
+    const ledClass = status === 'GREEN' ? 'led-green' : status === 'YELLOW' ? 'led-yellow' : status === 'RED' ? 'led-red' : 'led-off';
+
+    const card = document.createElement('div');
+    card.className = 'role-card';
+    card.id = `role-card-${role}`;
+
+    if (isOwner) {
+      card.innerHTML = `
+        <div class="role-card-header">
+          <span class="led ${ledClass}"></span>
+          <span class="role-name">${role}</span>
+          <span class="role-owner">${rs.updated_by || userEmail}</span>
+        </div>
+        <div class="status-radios">
+          <button class="status-radio ${status === 'GREEN' ? 'active-GREEN' : ''}" onclick="setStatus('${role}','GREEN',this)">GREEN</button>
+          <button class="status-radio ${status === 'YELLOW' ? 'active-YELLOW' : ''}" onclick="setStatus('${role}','YELLOW',this)">YELLOW</button>
+          <button class="status-radio ${status === 'RED' ? 'active-RED' : ''}" onclick="setStatus('${role}','RED',this)">RED</button>
+        </div>
+        <div class="role-field">
+          <label>What I HAVE</label>
+          <textarea id="has-${role}" placeholder="What deliverables do you have ready?">${rs.has_items || ''}</textarea>
+        </div>
+        <div class="role-field">
+          <label>What I NEED</label>
+          <textarea id="needs-${role}" placeholder="What do you need from other roles?">${rs.needs_items || ''}</textarea>
+        </div>
+        <div class="role-field">
+          <label>RAGAS Score (0.00 - 1.00)</label>
+          <input type="number" id="ragas-${role}" min="0" max="1" step="0.01" value="${rs.ragas_score !== null && rs.ragas_score !== undefined ? rs.ragas_score : ''}" placeholder="0.00">
+        </div>
+        <div class="role-field">
+          <label>Top Blocker</label>
+          <input type="text" id="blocker-${role}" value="${rs.top_blocker || ''}" placeholder="Main blocker right now...">
+        </div>
+        <div class="role-field">
+          <label>Confidence <span class="confidence-val" id="conf-val-${role}">${rs.confidence || 3}</span>/5</label>
+          <input type="range" class="confidence-slider" id="conf-${role}" min="1" max="5" value="${rs.confidence || 3}" oninput="document.getElementById('conf-val-${role}').textContent=this.value">
+        </div>
+        <button class="save-role-btn" id="save-btn-${role}" onclick="saveRoleStatus('${role}')">Save Status</button>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="role-card-header">
+          <span class="led ${ledClass}"></span>
+          <span class="role-name">${role}</span>
+          <span class="role-owner">${rs.updated_by || '—'}</span>
+        </div>
+        <div style="margin-bottom:8px">
+          <span class="status-radio ${status === 'GREEN' ? 'active-GREEN' : ''}" style="display:inline-block;padding:4px 12px;cursor:default">${status || '—'}</span>
+        </div>
+        <div class="role-field">
+          <label>What I HAVE</label>
+          <div class="role-field-readonly">${escHtml(rs.has_items || '—')}</div>
+        </div>
+        <div class="role-field">
+          <label>What I NEED</label>
+          <div class="role-field-readonly">${escHtml(rs.needs_items || '—')}</div>
+        </div>
+        <div class="role-field">
+          <label>RAGAS Score</label>
+          <div class="role-field-readonly">${rs.ragas_score !== null && rs.ragas_score !== undefined && rs.ragas_score !== '' ? rs.ragas_score : '—'}</div>
+        </div>
+        <div class="role-field">
+          <label>Top Blocker</label>
+          <div class="role-field-readonly">${escHtml(rs.top_blocker || '—')}</div>
+        </div>
+        <div class="role-field">
+          <label>Confidence</label>
+          <div class="role-field-readonly">${rs.confidence || '—'}/5</div>
+        </div>
+      `;
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+// Status radio helper
+let selectedStatuses = {};
+function setStatus(role, status, btn) {
+  selectedStatuses[role] = status;
+  const radios = btn.parentElement.querySelectorAll('.status-radio');
+  radios.forEach(r => r.className = 'status-radio');
+  btn.classList.add('active-' + status);
+  // Update LED
+  const led = btn.closest('.role-card').querySelector('.led');
+  led.className = 'led ' + (status === 'GREEN' ? 'led-green' : status === 'YELLOW' ? 'led-yellow' : 'led-red');
+}
+
+async function saveRoleStatus(role) {
+  const btn = document.getElementById(`save-btn-${role}`);
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  const status = selectedStatuses[role] || roleStatuses[role]?.status || 'GREEN';
+  const has_items = document.getElementById(`has-${role}`)?.value || '';
+  const needs_items = document.getElementById(`needs-${role}`)?.value || '';
+  const ragas_raw = document.getElementById(`ragas-${role}`)?.value;
+  const ragas_score = ragas_raw !== '' ? parseFloat(ragas_raw) : null;
+  const top_blocker = document.getElementById(`blocker-${role}`)?.value || '';
+  const confidence = parseInt(document.getElementById(`conf-${role}`)?.value || '3');
+
+  try {
+    const { error } = await sb.from('role_status').upsert({
+      team: currentTeam,
+      role: role,
+      status: status,
+      has_items: has_items,
+      needs_items: needs_items,
+      ragas_score: ragas_score,
+      top_blocker: top_blocker,
+      confidence: confidence,
+      updated_by: userEmail,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'team,role' });
+
+    if (error) throw error;
+
+    roleStatuses[role] = { ...roleStatuses[role], status, has_items, needs_items, ragas_score, top_blocker, confidence, updated_by: userEmail };
+    showToast(`${role} status saved`);
+    await checkAndUpdateMilestones();
+    updateFuelGauge();
+  } catch (e) {
+    console.error('Save role status:', e);
+    showToast('Save failed: ' + (e.message || 'Error'), true);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save Status';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DEPENDENCY MAP
+   ═══════════════════════════════════════════════════════════════ */
+async function loadDependencies() {
+  try {
+    const { data, error } = await sb.from('dependencies').select('*').eq('team', currentTeam);
+    if (error) throw error;
+    dependencies = {};
+    (data || []).forEach(d => { dependencies[`${d.from_role}-${d.to_role}`] = d; });
+  } catch (e) {
+    console.error('Load dependencies:', e);
+  }
+  renderDepTable();
+}
+
+function renderDepTable() {
+  const table = document.getElementById('dep-table');
+  let html = '<thead><tr><th></th>';
+  ROLES.forEach(r => { html += `<th>${r}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  ROLES.forEach((fromRole, i) => {
+    html += `<tr><th>${fromRole}</th>`;
+    ROLES.forEach((toRole, j) => {
+      if (i === j) {
+        html += '<td class="dep-diag"></td>';
+      } else {
+        const key = `${fromRole}-${toRole}`;
+        const dep = dependencies[key];
+        const dot = dep ? `<span class="dep-dot" title="${escHtml(dep.description || '')}"></span>` : '';
+        html += `<td onclick="openDepModal('${fromRole}','${toRole}')" title="${dep ? escHtml(dep.description) : 'Click to add'}">${dot}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  const count = Object.keys(dependencies).length;
+  document.getElementById('dep-counter').textContent = `${count} / 42 dependencies mapped`;
+}
+
+function openDepModal(from, to) {
+  depModalFrom = from;
+  depModalTo = to;
+  const key = `${from}-${to}`;
+  const existing = dependencies[key];
+  depModalEditing = !!existing;
+
+  document.getElementById('dep-modal-title').textContent = existing ? 'Edit Dependency' : 'Add Dependency';
+  document.getElementById('dep-modal-sub').textContent = `${from} \u2192 ${to}`;
+  document.getElementById('dep-modal-text').value = existing?.description || '';
+  document.getElementById('dep-modal-chars').textContent = (existing?.description || '').length;
+  document.getElementById('dep-modal-delete').style.display = existing ? '' : 'none';
+  document.getElementById('dep-modal-overlay').classList.add('visible');
+  document.getElementById('dep-modal-text').focus();
+}
+
+document.getElementById('dep-modal-text').addEventListener('input', function() {
+  document.getElementById('dep-modal-chars').textContent = this.value.length;
+});
+
+function closeDepModal() {
+  document.getElementById('dep-modal-overlay').classList.remove('visible');
+  depModalFrom = null;
+  depModalTo = null;
+}
+
+document.getElementById('dep-modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeDepModal();
+});
+
+async function saveDepFromModal() {
+  if (!depModalFrom || !depModalTo) return;
+  const desc = document.getElementById('dep-modal-text').value.trim();
+  if (!desc) { showToast('Description required', true); return; }
+
+  try {
+    const { error } = await sb.from('dependencies').upsert({
+      team: currentTeam,
+      from_role: depModalFrom,
+      to_role: depModalTo,
+      description: desc,
+      created_by: userEmail,
+      created_at: new Date().toISOString()
+    }, { onConflict: 'team,from_role,to_role' });
+
+    if (error) throw error;
+
+    dependencies[`${depModalFrom}-${depModalTo}`] = { from_role: depModalFrom, to_role: depModalTo, description: desc, created_by: userEmail };
+    renderDepTable();
+    closeDepModal();
+    showToast('Dependency saved');
+    await checkAndUpdateMilestones();
+    updateFuelGauge();
+  } catch (e) {
+    console.error('Save dependency:', e);
+    showToast('Save failed: ' + (e.message || 'Error'), true);
+  }
+}
+
+async function deleteDependency() {
+  if (!depModalFrom || !depModalTo) return;
+  try {
+    const { error } = await sb.from('dependencies').delete()
+      .eq('team', currentTeam).eq('from_role', depModalFrom).eq('to_role', depModalTo);
+    if (error) throw error;
+
+    delete dependencies[`${depModalFrom}-${depModalTo}`];
+    renderDepTable();
+    closeDepModal();
+    showToast('Dependency removed');
+    updateFuelGauge();
+  } catch (e) {
+    showToast('Delete failed: ' + (e.message || 'Error'), true);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM SUMMARY
+   ═══════════════════════════════════════════════════════════════ */
+async function loadTeamSummary() {
+  try {
+    const { data, error } = await sb.from('team_summary').select('*').eq('team', currentTeam).maybeSingle();
+    if (error) throw error;
+    teamSummaryData = data;
+  } catch (e) {
+    console.error('Load summary:', e);
+  }
+  renderSummaryPanel();
+}
+
+function renderSummaryPanel() {
+  const panel = document.getElementById('summary-panel');
+  const isAIPM = currentRole === 'AI-PM';
+
+  if (teamSummaryData && teamSummaryData.confirmed_by) {
+    // Confirmed summary
+    let html = `<div class="summary-confirmed" style="margin-bottom:16px">Confirmed by ${escHtml(teamSummaryData.confirmed_by)} at ${new Date(teamSummaryData.confirmed_at).toLocaleString()}</div>`;
+    html += `<div class="summary-readonly">${escHtml(teamSummaryData.summary_text || '')}</div>`;
+    html += `<div class="summary-actions" style="margin-top:12px">
+      <button class="summary-btn summary-btn-gen" onclick="generateSummary()">Re-Generate</button>
+      <button class="summary-btn summary-btn-confirm" onclick="confirmSummary()">Confirm & Submit</button>
+    </div>`;
+    panel.innerHTML = html;
+  } else {
+    panel.innerHTML = `
+      <button class="summary-btn summary-btn-gen" onclick="generateSummary()" style="margin-bottom:12px">Generate Summary</button>
+      <textarea id="summary-text" placeholder="Click Generate to build from role data, then edit and confirm...">${teamSummaryData?.summary_text || ''}</textarea>
+      <div class="summary-actions">
+        <button class="summary-btn summary-btn-confirm" onclick="confirmSummary()">Confirm & Submit</button>
+      </div>
+    `;
+  }
+}
+
+function generateSummary() {
+  const lines = [];
+  lines.push(`=== TEAM ${currentTeam.toUpperCase()} — MISSION SUMMARY ===\n`);
+
+  // Role statuses
+  lines.push('--- ROLE STATUS OVERVIEW ---');
+  ROLES.forEach(role => {
+    const rs = roleStatuses[role] || {};
+    const s = rs.status || 'N/A';
+    lines.push(`[${role}] Status: ${s} | Confidence: ${rs.confidence || '?'}/5 | RAGAS: ${rs.ragas_score !== null && rs.ragas_score !== undefined && rs.ragas_score !== '' ? rs.ragas_score : 'N/A'}`);
+    if (rs.has_items) lines.push(`  HAVE: ${rs.has_items}`);
+    if (rs.needs_items) lines.push(`  NEED: ${rs.needs_items}`);
+    if (rs.top_blocker) lines.push(`  BLOCKER: ${rs.top_blocker}`);
+  });
+
+  // Dependencies summary
+  const depCount = Object.keys(dependencies).length;
+  lines.push(`\n--- DEPENDENCIES (${depCount}/42 mapped) ---`);
+  Object.entries(dependencies).forEach(([key, dep]) => {
+    lines.push(`  ${dep.from_role} -> ${dep.to_role}: ${dep.description}`);
+  });
+
+  // Top blockers
+  lines.push('\n--- TOP BLOCKERS ---');
+  ROLES.forEach(role => {
+    const rs = roleStatuses[role];
+    if (rs?.top_blocker) lines.push(`  [${role}] ${rs.top_blocker}`);
+  });
+
+  // Team confidence
+  const confs = Object.values(roleStatuses).filter(r => r.confidence).map(r => r.confidence);
+  const avgConf = confs.length ? (confs.reduce((a, b) => a + b, 0) / confs.length).toFixed(1) : 'N/A';
+  lines.push(`\n--- TEAM CONFIDENCE: ${avgConf}/5 ---`);
+
+  const text = lines.join('\n');
+  const ta = document.getElementById('summary-text');
+  if (ta) ta.value = text;
+}
+
+async function confirmSummary() {
+  const ta = document.getElementById('summary-text');
+  const summaryText = ta ? ta.value.trim() : (teamSummaryData?.summary_text || '');
+  if (!summaryText) { showToast('Summary is empty', true); return; }
+
+  // Calc team confidence
+  const confs = Object.values(roleStatuses).filter(r => r.confidence).map(r => r.confidence);
+  const avgConf = confs.length ? parseFloat((confs.reduce((a, b) => a + b, 0) / confs.length).toFixed(2)) : null;
+
+  // Top dependencies
+  const topDeps = Object.values(dependencies).slice(0, 5).map(d => `${d.from_role}->${d.to_role}`).join(', ');
+
+  try {
+    const { error } = await sb.from('team_summary').upsert({
+      team: currentTeam,
+      summary_text: summaryText,
+      top_dependencies: topDeps,
+      team_confidence: avgConf,
+      confirmed_by: userEmail,
+      confirmed_at: new Date().toISOString()
+    }, { onConflict: 'team' });
+
+    if (error) throw error;
+
+    teamSummaryData = { summary_text: summaryText, confirmed_by: userEmail, confirmed_at: new Date().toISOString(), top_dependencies: topDeps, team_confidence: avgConf };
+    renderSummaryPanel();
+    showToast('Summary confirmed');
+    await checkAndUpdateMilestones();
+    updateFuelGauge();
+  } catch (e) {
+    showToast('Confirm failed: ' + (e.message || 'Error'), true);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MILESTONES
+   ═══════════════════════════════════════════════════════════════ */
+async function loadMilestones() {
+  try {
+    const { data, error } = await sb.from('milestones').select('*').eq('team', currentTeam);
+    if (error) throw error;
+    milestonesData = {};
+    (data || []).forEach(m => { milestonesData[m.milestone_key] = m; });
+  } catch (e) {
+    console.error('Load milestones:', e);
+  }
+}
+
+function evaluateMilestones() {
+  const results = {};
+
+  // Systems Online: all 7 roles have an owner
+  const filledRoles = Object.values(roleStatuses).filter(r => r.updated_by).length;
+  results.systems_online = filledRoles >= 7;
+
+  // Telemetry Active: 3+ RAGAS scores
+  const ragasCount = Object.values(roleStatuses).filter(r => r.ragas_score !== null && r.ragas_score !== undefined && r.ragas_score !== '').length;
+  results.telemetry_active = ragasCount >= 3;
+
+  // Dependencies Mapped: 10+ cells
+  results.dependencies_mapped = Object.keys(dependencies).length >= 10;
+
+  // Mission Brief Filed: summary confirmed
+  results.mission_brief = !!(teamSummaryData && teamSummaryData.confirmed_by);
+
+  // Peer Reviewed: review submitted
+  results.peer_reviewed = peerReviewSubmitted;
+
+  // Launch Ready: all above
+  results.launch_ready = results.systems_online && results.telemetry_active && results.dependencies_mapped && results.mission_brief && results.peer_reviewed;
+
+  return results;
+}
+
+function renderMilestones() {
+  const container = document.getElementById('milestones-container');
+  const evaluated = evaluateMilestones();
+  container.innerHTML = '';
+
+  MILESTONES.forEach(ms => {
+    const unlocked = evaluated[ms.key] || !!milestonesData[ms.key];
+    const div = document.createElement('div');
+    div.className = 'milestone' + (unlocked ? ' unlocked' : '');
+    div.innerHTML = `<span class="milestone-icon">${ms.icon}</span> ${ms.label}`;
+    div.title = ms.desc;
+    container.appendChild(div);
+  });
+}
+
+async function checkAndUpdateMilestones() {
+  const evaluated = evaluateMilestones();
+  for (const ms of MILESTONES) {
+    if (evaluated[ms.key] && !milestonesData[ms.key]) {
+      try {
+        const { error } = await sb.from('milestones').upsert({
+          team: currentTeam,
+          milestone_key: ms.key,
+          unlocked_at: new Date().toISOString()
+        }, { onConflict: 'team,milestone_key' });
+        if (!error) {
+          milestonesData[ms.key] = { milestone_key: ms.key };
+        }
+      } catch (e) { /* ignore */ }
+    }
+  }
+  renderMilestones();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FUEL GAUGE
+   ═══════════════════════════════════════════════════════════════ */
+function updateFuelGauge() {
+  const xp = calculateXP();
+  const pct = Math.min(100, Math.round((xp / XP_MAX) * 100));
+  document.getElementById('fuel-xp').textContent = `${xp} / ${XP_MAX} XP`;
+  document.getElementById('fuel-bar').style.width = pct + '%';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TRANSMISSION LOG (read-only view of assigned team)
+   ═══════════════════════════════════════════════════════════════ */
+async function loadTransmissionLog() {
+  const assignedTeam = REVIEW_MAP[currentTeam];
+  if (!assignedTeam) return;
+
+  // Load role statuses of assigned team
+  try {
+    const { data } = await sb.from('role_status').select('*').eq('team', assignedTeam);
+    txRoleStatuses = {};
+    (data || []).forEach(r => { txRoleStatuses[r.role] = r; });
+  } catch (e) { console.error('TX roles:', e); }
+
+  // Load dependencies of assigned team
+  try {
+    const { data } = await sb.from('dependencies').select('*').eq('team', assignedTeam);
+    txDependencies = {};
+    (data || []).forEach(d => { txDependencies[`${d.from_role}-${d.to_role}`] = d; });
+  } catch (e) { console.error('TX deps:', e); }
+
+  renderTransmission();
+}
+
+function renderTransmission() {
+  // Role cards (read-only)
+  const grid = document.getElementById('tx-role-grid');
+  grid.innerHTML = '';
+  ROLES.forEach(role => {
+    const rs = txRoleStatuses[role] || {};
+    const status = rs.status || '';
+    const ledClass = status === 'GREEN' ? 'led-green' : status === 'YELLOW' ? 'led-yellow' : status === 'RED' ? 'led-red' : 'led-off';
+
+    const card = document.createElement('div');
+    card.className = 'role-card';
+    card.innerHTML = `
+      <div class="role-card-header">
+        <span class="led ${ledClass}"></span>
+        <span class="role-name">${role}</span>
+        <span class="role-owner">${rs.updated_by || '—'}</span>
+      </div>
+      <div style="margin-bottom:8px">
+        <span class="status-radio ${status === 'GREEN' ? 'active-GREEN' : status === 'YELLOW' ? 'active-YELLOW' : status === 'RED' ? 'active-RED' : ''}" style="display:inline-block;padding:4px 12px;cursor:default">${status || '—'}</span>
+      </div>
+      <div class="role-field"><label>What I HAVE</label><div class="role-field-readonly">${escHtml(rs.has_items || '—')}</div></div>
+      <div class="role-field"><label>What I NEED</label><div class="role-field-readonly">${escHtml(rs.needs_items || '—')}</div></div>
+      <div class="role-field"><label>RAGAS Score</label><div class="role-field-readonly">${rs.ragas_score !== null && rs.ragas_score !== undefined && rs.ragas_score !== '' ? rs.ragas_score : '—'}</div></div>
+      <div class="role-field"><label>Top Blocker</label><div class="role-field-readonly">${escHtml(rs.top_blocker || '—')}</div></div>
+      <div class="role-field"><label>Confidence</label><div class="role-field-readonly">${rs.confidence || '—'}/5</div></div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Dep table (read-only)
+  const table = document.getElementById('tx-dep-table');
+  let html = '<thead><tr><th></th>';
+  ROLES.forEach(r => { html += `<th>${r}</th>`; });
+  html += '</tr></thead><tbody>';
+  ROLES.forEach((fromRole, i) => {
+    html += `<tr><th>${fromRole}</th>`;
+    ROLES.forEach((toRole, j) => {
+      if (i === j) {
+        html += '<td class="dep-diag"></td>';
+      } else {
+        const dep = txDependencies[`${fromRole}-${toRole}`];
+        const dot = dep ? `<span class="dep-dot" title="${escHtml(dep.description || '')}"></span>` : '';
+        html += `<td style="cursor:default" title="${dep ? escHtml(dep.description) : ''}">${dot}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PEER REVIEW
+   ═══════════════════════════════════════════════════════════════ */
+async function checkPeerReviewStatus() {
+  const assignedTeam = REVIEW_MAP[currentTeam];
+  try {
+    const { data } = await sb.from('peer_reviews').select('id')
+      .eq('from_team', currentTeam).eq('to_team', assignedTeam).eq('reviewer_email', userEmail)
+      .maybeSingle();
+    peerReviewSubmitted = !!data;
+  } catch (e) { /* ignore */ }
+}
+
+function renderReviewPanel() {
+  const panel = document.getElementById('review-panel');
+  const assignedTeam = REVIEW_MAP[currentTeam];
+
+  if (peerReviewSubmitted) {
+    panel.innerHTML = `<div class="review-done">Review transmitted to Team ${assignedTeam.toUpperCase()}. Thank you, operator.</div>`;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="review-field">
+      <label>1. Are their GREEN statuses honest?</label>
+      <div class="review-toggle">
+        <button id="green-yes" onclick="setReviewToggle('yes',this)">Yes</button>
+        <button id="green-no" onclick="setReviewToggle('no',this)">No</button>
+      </div>
+      <textarea id="review-green-comment" placeholder="Comment on their status honesty..."></textarea>
+    </div>
+    <div class="review-field">
+      <label>2. Missing cross-role dependencies?</label>
+      <textarea id="review-missing-deps" placeholder="What dependencies did you spot that they missed?"></textarea>
+    </div>
+    <div class="review-field">
+      <label>3. What should they do FIRST Monday?</label>
+      <textarea id="review-monday" placeholder="Top priority recommendation..."></textarea>
+    </div>
+    <button class="review-submit" id="review-submit-btn" onclick="submitReview()">Transmit Review</button>
+  `;
+}
+
+let reviewGreenHonest = null;
+function setReviewToggle(val, btn) {
+  reviewGreenHonest = val === 'yes';
+  const sibling = btn.parentElement.querySelectorAll('button');
+  sibling.forEach(b => b.className = '');
+  btn.className = val === 'yes' ? 'active-yes' : 'active-no';
+}
+
+async function submitReview() {
+  const greenComment = document.getElementById('review-green-comment')?.value || '';
+  const missingDeps = document.getElementById('review-missing-deps')?.value || '';
+  const mondayPriority = document.getElementById('review-monday')?.value || '';
+
+  if (reviewGreenHonest === null) { alert('Please click Yes or No for question 1 (GREEN status honesty)'); return; }
+  if (!mondayPriority.trim()) { alert('Please fill in question 3 (Monday priority)'); return; }
+
+  const btn = document.getElementById('review-submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Transmitting...'; }
+
+  const assignedTeam = REVIEW_MAP[currentTeam];
+
+  try {
+    const { error } = await sb.from('peer_reviews').insert({
+      from_team: currentTeam,
+      to_team: assignedTeam,
+      reviewer_email: userEmail,
+      green_honest: reviewGreenHonest,
+      green_comment: greenComment,
+      missing_deps: missingDeps,
+      monday_priority: mondayPriority,
+      created_at: new Date().toISOString()
+    });
+
+    if (error) throw error;
+
+    peerReviewSubmitted = true;
+    renderReviewPanel();
+    showToast('Review transmitted');
+    await checkAndUpdateMilestones();
+    updateFuelGauge();
+  } catch (e) {
+    console.error('Submit review error:', e);
+    alert('Submit failed: ' + (e.message || e.details || JSON.stringify(e)));
+    if (btn) { btn.disabled = false; btn.textContent = 'Transmit Review'; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REALTIME SUBSCRIPTIONS
+   ═══════════════════════════════════════════════════════════════ */
+function setupRealtimeSubscriptions() {
+  // Clean up existing
+  realtimeChannels.forEach(ch => sb.removeChannel(ch));
+  realtimeChannels = [];
+
+  // Role status changes for current team
+  const ch1 = sb.channel(`role_status_${currentTeam}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'role_status', filter: `team=eq.${currentTeam}` }, payload => {
+      const row = payload.new;
+      if (row && row.role) {
+        roleStatuses[row.role] = row;
+        // Only re-render if not the owner (to avoid overwriting in-progress edits)
+        if (row.role !== currentRole) {
+          renderRoleCards();
+        }
+        updateFuelGauge();
+        renderMilestones();
+      }
+    })
+    .subscribe();
+  realtimeChannels.push(ch1);
+
+  // Dependencies for current team
+  const ch2 = sb.channel(`dependencies_${currentTeam}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'dependencies', filter: `team=eq.${currentTeam}` }, payload => {
+      if (payload.eventType === 'DELETE') {
+        const old = payload.old;
+        if (old) delete dependencies[`${old.from_role}-${old.to_role}`];
+      } else {
+        const row = payload.new;
+        if (row) dependencies[`${row.from_role}-${row.to_role}`] = row;
+      }
+      renderDepTable();
+      updateFuelGauge();
+      renderMilestones();
+    })
+    .subscribe();
+  realtimeChannels.push(ch2);
+
+  // Team summary
+  const ch3 = sb.channel(`team_summary_${currentTeam}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_summary', filter: `team=eq.${currentTeam}` }, payload => {
+      teamSummaryData = payload.new;
+      renderSummaryPanel();
+      updateFuelGauge();
+      renderMilestones();
+    })
+    .subscribe();
+  realtimeChannels.push(ch3);
+
+  // Milestones
+  const ch4 = sb.channel(`milestones_${currentTeam}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'milestones', filter: `team=eq.${currentTeam}` }, payload => {
+      const row = payload.new;
+      if (row && row.milestone_key) milestonesData[row.milestone_key] = row;
+      renderMilestones();
+    })
+    .subscribe();
+  realtimeChannels.push(ch4);
+
+  // Transmission log: assigned team's role status
+  const assignedTeam = REVIEW_MAP[currentTeam];
+  if (assignedTeam) {
+    const ch5 = sb.channel(`tx_role_${assignedTeam}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'role_status', filter: `team=eq.${assignedTeam}` }, payload => {
+        const row = payload.new;
+        if (row && row.role) txRoleStatuses[row.role] = row;
+        renderTransmission();
+      })
+      .subscribe();
+    realtimeChannels.push(ch5);
+
+    const ch6 = sb.channel(`tx_deps_${assignedTeam}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dependencies', filter: `team=eq.${assignedTeam}` }, payload => {
+        if (payload.eventType === 'DELETE') {
+          const old = payload.old;
+          if (old) delete txDependencies[`${old.from_role}-${old.to_role}`];
+        } else {
+          const row = payload.new;
+          if (row) txDependencies[`${row.from_role}-${row.to_role}`] = row;
+        }
+        renderTransmission();
+      })
+      .subscribe();
+    realtimeChannels.push(ch6);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AI TUTOR WIDGET CONTEXT + MOUNT
+   ═══════════════════════════════════════════════════════════════ */
+function compactText(text, maxLen) {
+  if (typeof text !== 'string') return '';
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return '';
+  if (normalized.length <= maxLen) return normalized;
+  return normalized.slice(0, Math.max(0, maxLen - 1)) + '\u2026';
+}
+
+function buildTeamMentorContext() {
+  if (!currentTeam || !currentRole) return '';
+
+  const myStatus = roleStatuses[currentRole] || {};
+  const statusCounts = { GREEN: 0, YELLOW: 0, RED: 0, EMPTY: 0 };
+  ROLES.forEach(role => {
+    const s = (roleStatuses[role]?.status || '').toUpperCase();
+    if (s === 'GREEN' || s === 'YELLOW' || s === 'RED') statusCounts[s] += 1;
+    else statusCounts.EMPTY += 1;
+  });
+
+  const allDeps = Object.values(dependencies);
+  const outgoingDeps = allDeps
+    .filter(dep => dep.from_role === currentRole)
+    .slice(0, 5)
+    .map(dep => dep.to_role + ': ' + compactText(dep.description || '', 90));
+  const incomingDeps = allDeps
+    .filter(dep => dep.to_role === currentRole)
+    .slice(0, 5)
+    .map(dep => dep.from_role + ': ' + compactText(dep.description || '', 90));
+
+  const blockers = ROLES
+    .map(role => ({ role: role, blocker: roleStatuses[role]?.top_blocker || '' }))
+    .filter(row => row.blocker)
+    .slice(0, 6)
+    .map(row => '[' + row.role + '] ' + compactText(row.blocker, 90));
+
+  const ragasCount = Object.values(roleStatuses)
+    .filter(r => r.ragas_score !== null && r.ragas_score !== undefined && r.ragas_score !== '')
+    .length;
+
+  const confs = Object.values(roleStatuses).filter(r => r.confidence).map(r => Number(r.confidence));
+  const avgConf = confs.length ? (confs.reduce((a, b) => a + b, 0) / confs.length).toFixed(1) : 'N/A';
+
+  const milestoneState = evaluateMilestones();
+  const milestoneText = Object.keys(milestoneState)
+    .map(k => k + '=' + (milestoneState[k] ? 'YES' : 'NO'))
+    .join(', ');
+
+  const lines = [];
+  lines.push('Mission Station context (Day 20):');
+  lines.push('Team: ' + currentTeam.toUpperCase());
+  lines.push('My role: ' + currentRole);
+  lines.push('Role coverage: GREEN ' + statusCounts.GREEN + ', YELLOW ' + statusCounts.YELLOW + ', RED ' + statusCounts.RED + ', EMPTY ' + statusCounts.EMPTY);
+  lines.push('RAGAS entered: ' + ragasCount + '/7');
+  lines.push('Dependencies mapped: ' + allDeps.length + '/42');
+  lines.push('Average confidence: ' + avgConf + '/5');
+  lines.push('Milestones: ' + milestoneText);
+  lines.push('');
+  lines.push('My status card:');
+  lines.push('- Status: ' + (myStatus.status || 'N/A'));
+  lines.push('- RAGAS: ' + (myStatus.ragas_score !== null && myStatus.ragas_score !== undefined && myStatus.ragas_score !== '' ? myStatus.ragas_score : 'N/A'));
+  lines.push('- Confidence: ' + (myStatus.confidence || 'N/A') + '/5');
+  lines.push('- HAVE: ' + (compactText(myStatus.has_items || '', 180) || 'N/A'));
+  lines.push('- NEED: ' + (compactText(myStatus.needs_items || '', 180) || 'N/A'));
+  lines.push('- BLOCKER: ' + (compactText(myStatus.top_blocker || '', 180) || 'N/A'));
+  lines.push('');
+  lines.push('My outgoing dependencies:');
+  lines.push(outgoingDeps.length ? outgoingDeps.map(item => '- ' + item).join('\n') : '- None mapped');
+  lines.push('');
+  lines.push('My incoming dependencies:');
+  lines.push(incomingDeps.length ? incomingDeps.map(item => '- ' + item).join('\n') : '- None mapped');
+  lines.push('');
+  lines.push('Top team blockers:');
+  lines.push(blockers.length ? blockers.map(item => '- ' + item).join('\n') : '- None reported');
+  lines.push('');
+  lines.push('Mission brief (team summary):');
+  lines.push(compactText((teamSummaryData && teamSummaryData.summary_text) || '', 500) || 'Not confirmed yet.');
+
+  return lines.join('\n').slice(0, 2500);
+}
+
+window.__mentorWidgetContextProvider = function () {
+  return buildTeamMentorContext();
+};
+
+function resolveWidgetRole(role) {
+  const normalized = (role || '').toUpperCase().trim();
+  return WIDGET_VALID_ROLES.includes(normalized) ? normalized : 'FDE';
+}
+
+function mountTeamMentorWidget() {
+  if (mentorWidgetMounted || !currentTeam || !currentRole) return;
+
+  const widgetRole = resolveWidgetRole(currentRole);
+  try { localStorage.setItem('mentor-widget-selected-role', widgetRole); } catch (e) { /* ignore */ }
+
+  const s = document.createElement('script');
+  s.src = '/js/mentor-widget.js';
+  s.onerror = function () {
+    if (s.dataset.fallbackLoaded === '1') return;
+    s.dataset.fallbackLoaded = '1';
+    s.src = '../js/mentor-widget.js';
+  };
+  s.setAttribute('data-role', widgetRole);
+  s.setAttribute('data-lesson', 'Mission Station - Team ' + currentTeam.toUpperCase());
+  s.setAttribute('data-day', '20');
+  s.setAttribute('data-page-mode', 'team-mission');
+  document.body.appendChild(s);
+  mentorWidgetMounted = true;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════════════════════════════ */
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════ */
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Report — All Teams</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --mc-void: #060a14; --mc-deep: #0a0e1a; --mc-panel: #0f1520; --mc-panel-light: #141c2b;
+    --mc-border: #1e2d45; --mc-green: #00ff88; --mc-blue: #3b9dff; --mc-cyan: #00e5ff;
+    --mc-orange: #ff9500; --mc-red: #ff3b30; --mc-yellow: #ffd60a; --mc-purple: #a78bfa;
+    --mc-text: #e8edf5; --mc-text-dim: #8899b0; --mc-text-muted: #4a5d7a;
+    --mc-font: 'JetBrains Mono', monospace; --mc-font-body: 'Plus Jakarta Sans', sans-serif;
+}
+[data-theme="light"] {
+    --mc-void: #f0f4f8; --mc-deep: #f8fafc; --mc-panel: #ffffff; --mc-panel-light: #f1f5f9;
+    --mc-border: #d0d9e6; --mc-green: #059669; --mc-blue: #2563eb; --mc-cyan: #0891b2;
+    --mc-orange: #d97706; --mc-red: #dc2626; --mc-yellow: #ca8a04; --mc-purple: #7c3aed;
+    --mc-text: #0f172a; --mc-text-dim: #475569; --mc-text-muted: #94a3b8;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--mc-font-body); background: var(--mc-void); color: var(--mc-text); line-height:1.6; }
+.main { max-width:1200px; margin:0 auto; padding:2rem; }
+
+/* Header */
+.report-header { text-align:center; padding:3rem 0 2rem; border-bottom:1px solid var(--mc-border); margin-bottom:2rem; }
+.report-badge { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.3); padding:0.3rem 1rem; border-radius:100px; font:700 0.7rem var(--mc-font); color:var(--mc-green); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:1rem; }
+.report-badge .pulse { width:8px; height:8px; background:var(--mc-green); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.report-header h1 { font:800 clamp(2rem,4vw,3rem) var(--mc-font-body); background:linear-gradient(135deg,var(--mc-green),var(--mc-cyan),var(--mc-blue)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.5rem; }
+.report-header p { color:var(--mc-text-dim); font-size:1rem; }
+.report-timestamp { font:500 0.75rem var(--mc-font); color:var(--mc-text-muted); margin-top:0.75rem; }
+
+/* Overview Cards */
+.overview-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+@media(max-width:768px) { .overview-grid { grid-template-columns:repeat(2,1fr); } }
+.overview-card { background:var(--mc-panel); border:1px solid var(--mc-border); border-radius:10px; padding:1.25rem; text-align:center; position:relative; overflow:hidden; }
+.overview-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.overview-card.alpha::before { background:var(--mc-green); }
+.overview-card.bravo::before { background:var(--mc-blue); }
+.overview-card.charlie::before { background:var(--mc-purple); }
+.overview-card.delta::before { background:var(--mc-orange); }
+.card-team { font:800 0.7rem var(--mc-font); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem; }
+.alpha .card-team { color:var(--mc-green); }
+.bravo .card-team { color:var(--mc-blue); }
+.charlie .card-team { color:var(--mc-purple); }
+.delta .card-team { color:var(--mc-orange); }
+.card-confidence { font:800 2.5rem var(--mc-font); line-height:1; margin:0.25rem 0; }
+.card-confidence-label { font:600 0.65rem var(--mc-font); color:var(--mc-text-muted); text-transform:uppercase; letter-spacing:0.08em; }
+.card-stats { display:flex; justify-content:center; gap:1rem; margin-top:0.75rem; font:500 0.72rem var(--mc-font); color:var(--mc-text-dim); }
+.card-stats span { display:flex; align-items:center; gap:0.3rem; }
+
+/* Milestones */
+.milestones-row { display:flex; justify-content:center; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap; }
+.ms-dot { width:10px; height:10px; border-radius:50%; background:var(--mc-border); }
+.ms-dot.unlocked { background:var(--mc-green); box-shadow:0 0 6px var(--mc-green); }
+
+/* Team Section */
+.team-section { margin-bottom:2.5rem; }
+.team-title { display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid var(--mc-border); }
+.team-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+.team-title h2 { font:700 1.4rem var(--mc-font-body); }
+
+/* Role Grid */
+.role-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:0.75rem; margin-bottom:1.25rem; }
+.role-card { background:var(--mc-panel); border:1px solid var(--mc-border); border-radius:8px; padding:1rem; position:relative; overflow:hidden; }
+.role-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+.role-card.GREEN::before { background:var(--mc-green); }
+.role-card.YELLOW::before { background:var(--mc-orange); }
+.role-card.RED::before { background:var(--mc-red); }
+.role-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+.role-name { font:700 0.8rem var(--mc-font); }
+.role-status-badge { font:700 0.65rem var(--mc-font); padding:0.15rem 0.5rem; border-radius:4px; text-transform:uppercase; }
+.role-status-badge.GREEN { background:rgba(0,255,136,0.12); color:var(--mc-green); }
+.role-status-badge.YELLOW { background:rgba(255,149,0,0.12); color:var(--mc-orange); }
+.role-status-badge.RED { background:rgba(255,59,48,0.12); color:var(--mc-red); }
+.role-meta { font-size:0.78rem; color:var(--mc-text-dim); line-height:1.5; }
+.role-meta strong { color:var(--mc-text); }
+.role-field { margin-top:0.4rem; }
+.role-field-label { font:600 0.65rem var(--mc-font); color:var(--mc-text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+.role-field-value { font-size:0.78rem; color:var(--mc-text-dim); max-height:80px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+.ragas-badge { font:700 0.75rem var(--mc-font); padding:0.1rem 0.4rem; border-radius:4px; }
+.ragas-good { background:rgba(0,255,136,0.1); color:var(--mc-green); }
+.ragas-mid { background:rgba(255,149,0,0.1); color:var(--mc-orange); }
+.ragas-low { background:rgba(255,59,48,0.1); color:var(--mc-red); }
+
+/* Summary & Reviews */
+.sub-panel { background:var(--mc-panel); border:1px solid var(--mc-border); border-radius:8px; padding:1rem; margin-bottom:1rem; }
+.sub-panel-title { font:700 0.7rem var(--mc-font); color:var(--mc-cyan); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem; }
+.summary-text { font-size:0.82rem; color:var(--mc-text-dim); white-space:pre-wrap; max-height:200px; overflow-y:auto; line-height:1.6; }
+.review-item { border-bottom:1px solid var(--mc-border); padding:0.5rem 0; font-size:0.8rem; }
+.review-item:last-child { border-bottom:none; }
+.review-from { font:600 0.7rem var(--mc-font); color:var(--mc-blue); }
+.review-field { color:var(--mc-text-dim); margin-top:0.2rem; }
+
+/* Deps */
+.dep-list { font-size:0.8rem; color:var(--mc-text-dim); }
+.dep-item { display:flex; gap:0.5rem; padding:0.25rem 0; }
+.dep-arrow { color:var(--mc-cyan); font:600 0.75rem var(--mc-font); flex-shrink:0; }
+
+/* Scoring Summary */
+.scoring-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:0.75rem; margin:1.5rem 0; }
+.score-card { background:var(--mc-panel); border:1px solid var(--mc-border); border-radius:8px; padding:1rem; text-align:center; }
+.score-label { font:600 0.65rem var(--mc-font); color:var(--mc-text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.25rem; }
+.score-value { font:800 1.8rem var(--mc-font); }
+
+/* Footer */
+.report-footer { text-align:center; padding:2rem 0; border-top:1px solid var(--mc-border); margin-top:2rem; font:500 0.75rem var(--mc-font); color:var(--mc-text-muted); }
+
+/* Theme toggle */
+.theme-btn { position:fixed; top:1rem; right:1rem; z-index:100; background:var(--mc-panel); border:1px solid var(--mc-border); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; }
+
+/* Loading */
+.loading { text-align:center; padding:4rem; font:500 0.85rem var(--mc-font); color:var(--mc-text-muted); }
+.loading-spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--mc-border); border-top-color:var(--mc-green); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:0.5rem; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Back link */
+.back-link { display:inline-flex; align-items:center; gap:0.4rem; font:600 0.75rem var(--mc-font); color:var(--mc-blue); text-decoration:none; margin-bottom:1rem; }
+.back-link:hover { color:var(--mc-cyan); }
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9788;</button>
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-btn').textContent = isDark ? '\u263E' : '\u2604';
+  localStorage.setItem('theme', html.dataset.theme);
+}
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved) { document.documentElement.dataset.theme = saved; }
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('theme-btn').textContent = document.documentElement.dataset.theme === 'dark' ? '\u2604' : '\u263E';
+  });
+})();
+</script>
+
+<div class="main">
+    <a href="/teams/team.html" class="back-link">&larr; Back to Mission Station</a>
+
+    <div class="report-header">
+        <div class="report-badge"><span class="pulse"></span> Mission Report &middot; Day 20</div>
+        <h1>All Teams Status Report</h1>
+        <p>Agentic Operability Gate &mdash; End of Build Phase</p>
+        <div class="report-timestamp" id="timestamp"></div>
+    </div>
+
+    <div id="content"><div class="loading"><div class="loading-spinner"></div><br>Loading mission data...</div></div>
+</div>
+
+<div class="report-footer">Mission Control Report &middot; AI Academy 2026 &middot; Kyndryl &middot; Day 20 &middot; Auto-generated from live data</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://hiofwpndkuzrsfvnuyet.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_pGXJ2OfBXz5HJqzISmQdBg_23Hx64PI';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const TEAMS = ['alpha','bravo','charlie','delta'];
+const TEAM_NAMES = { alpha:'Alpha', bravo:'Bravo', charlie:'Charlie', delta:'Delta' };
+const TEAM_COLORS = { alpha:'var(--mc-green)', bravo:'var(--mc-blue)', charlie:'var(--mc-purple)', delta:'var(--mc-orange)' };
+const ROLES = ['FDE','AI-SE','AI-DS','AI-DA','AI-PM','AI-FE','AI-SEC'];
+const REVIEW_MAP = { alpha:'bravo', bravo:'charlie', charlie:'delta', delta:'alpha' };
+const MS_KEYS = ['systems_online','telemetry_active','dependencies_mapped','mission_brief','peer_reviewed','launch_ready'];
+const MS_LABELS = { systems_online:'Systems Online', telemetry_active:'Telemetry', dependencies_mapped:'Deps Mapped', mission_brief:'Brief Filed', peer_reviewed:'Peer Review', launch_ready:'Launch Ready' };
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function ragasClass(v) { if (v >= 0.7) return 'ragas-good'; if (v >= 0.5) return 'ragas-mid'; return 'ragas-low'; }
+function truncate(s, max) { if (!s) return ''; return s.length > max ? s.substring(0, max) + '...' : s; }
+
+async function loadReport() {
+    const [
+        { data: members },
+        { data: statuses },
+        { data: deps },
+        { data: summaries },
+        { data: milestones },
+        { data: reviews }
+    ] = await Promise.all([
+        sb.from('team_members').select('*'),
+        sb.from('role_status').select('*').in('team', TEAMS),
+        sb.from('dependencies').select('*').in('team', TEAMS),
+        sb.from('team_summary').select('*').in('team', TEAMS),
+        sb.from('milestones').select('*').in('team', TEAMS),
+        sb.from('peer_reviews').select('*')
+    ]);
+
+    // Index data
+    const byTeam = {};
+    TEAMS.forEach(t => {
+        byTeam[t] = {
+            members: (members||[]).filter(m => m.team === t),
+            statuses: {},
+            deps: (deps||[]).filter(d => d.team === t),
+            summary: (summaries||[]).find(s => s.team === t),
+            milestones: (milestones||[]).filter(m => m.team === t).map(m => m.milestone_key),
+            reviewsGiven: (reviews||[]).filter(r => r.from_team === t),
+            reviewsReceived: (reviews||[]).filter(r => r.to_team === t)
+        };
+        (statuses||[]).filter(s => s.team === t).forEach(s => { byTeam[t].statuses[s.role] = s; });
+    });
+
+    document.getElementById('timestamp').textContent = 'Generated: ' + new Date().toLocaleString('en-GB', { dateStyle:'full', timeStyle:'short' });
+
+    let html = '';
+
+    // === OVERVIEW CARDS ===
+    html += '<div class="overview-grid">';
+    TEAMS.forEach(t => {
+        const d = byTeam[t];
+        const greenCount = Object.values(d.statuses).filter(s => s.status === 'GREEN').length;
+        const yellowCount = Object.values(d.statuses).filter(s => s.status === 'YELLOW').length;
+        const redCount = Object.values(d.statuses).filter(s => s.status === 'RED').length;
+        const conf = d.summary?.team_confidence || 'N/A';
+        const confColor = conf >= 3.5 ? 'var(--mc-green)' : conf >= 2.5 ? 'var(--mc-orange)' : conf !== 'N/A' ? 'var(--mc-red)' : 'var(--mc-text-muted)';
+
+        html += `<div class="overview-card ${t}">
+            <div class="card-team">Team ${TEAM_NAMES[t]}</div>
+            <div class="card-confidence" style="color:${confColor}">${conf !== 'N/A' ? parseFloat(conf).toFixed(1) : 'N/A'}</div>
+            <div class="card-confidence-label">Confidence /5</div>
+            <div class="card-stats">
+                <span style="color:var(--mc-green)">${greenCount}G</span>
+                <span style="color:var(--mc-orange)">${yellowCount}Y</span>
+                <span style="color:var(--mc-red)">${redCount}R</span>
+                <span>${d.members.length} crew</span>
+            </div>
+            <div class="milestones-row">
+                ${MS_KEYS.map(k => `<div class="ms-dot ${d.milestones.includes(k)?'unlocked':''}" title="${MS_LABELS[k]}"></div>`).join('')}
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // === AGGREGATE SCORING ===
+    const allStatuses = Object.values(byTeam).flatMap(d => Object.values(d.statuses));
+    const ragasScores = allStatuses.filter(s => s.ragas_score != null).map(s => parseFloat(s.ragas_score));
+    const avgRagas = ragasScores.length ? (ragasScores.reduce((a,b)=>a+b,0)/ragasScores.length).toFixed(2) : 'N/A';
+    const totalDeps = Object.values(byTeam).reduce((s,d) => s + d.deps.length, 0);
+    const totalReviews = (reviews||[]).length;
+    const totalMembers = (members||[]).filter(m => TEAMS.includes(m.team)).length;
+
+    html += '<div class="scoring-grid">';
+    html += `<div class="score-card"><div class="score-label">Total Crew</div><div class="score-value" style="color:var(--mc-cyan)">${totalMembers}</div></div>`;
+    html += `<div class="score-card"><div class="score-label">Avg RAGAS</div><div class="score-value" style="color:${avgRagas !== 'N/A' && avgRagas >= 0.7 ? 'var(--mc-green)' : 'var(--mc-orange)'}">${avgRagas}</div></div>`;
+    html += `<div class="score-card"><div class="score-label">Dependencies</div><div class="score-value" style="color:var(--mc-blue)">${totalDeps}/168</div></div>`;
+    html += `<div class="score-card"><div class="score-label">Peer Reviews</div><div class="score-value" style="color:var(--mc-purple)">${totalReviews}</div></div>`;
+    html += '</div>';
+
+    // === PER-TEAM DETAILS ===
+    TEAMS.forEach(t => {
+        const d = byTeam[t];
+        html += `<div class="team-section">`;
+        html += `<div class="team-title"><div class="team-dot" style="background:${TEAM_COLORS[t]}"></div><h2>Team ${TEAM_NAMES[t]}</h2><span style="font:500 0.75rem var(--mc-font);color:var(--mc-text-muted)">${d.members.length} members &middot; ${d.deps.length} deps &middot; ${d.reviewsGiven.length} reviews sent</span></div>`;
+
+        // Role cards
+        html += '<div class="role-grid">';
+        ROLES.forEach(role => {
+            const rs = d.statuses[role];
+            if (!rs) {
+                html += `<div class="role-card"><div class="role-top"><span class="role-name">${role}</span><span class="role-status-badge" style="background:var(--mc-panel-light);color:var(--mc-text-muted)">N/A</span></div><div class="role-meta" style="color:var(--mc-text-muted)">No data submitted</div></div>`;
+                return;
+            }
+            const ragasHtml = rs.ragas_score != null ? `<span class="ragas-badge ${ragasClass(parseFloat(rs.ragas_score))}">${parseFloat(rs.ragas_score).toFixed(2)}</span>` : '<span style="font:500 0.7rem var(--mc-font);color:var(--mc-text-muted)">N/A</span>';
+
+            html += `<div class="role-card ${rs.status}">
+                <div class="role-top">
+                    <span class="role-name">${role}</span>
+                    <span class="role-status-badge ${rs.status}">${rs.status}</span>
+                </div>
+                <div class="role-meta">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
+                        <span>RAGAS: ${ragasHtml}</span>
+                        <span style="font:500 0.7rem var(--mc-font);color:var(--mc-text-muted)">Conf: ${rs.confidence || '?'}/5</span>
+                    </div>
+                    ${rs.top_blocker ? `<div class="role-field"><div class="role-field-label">Top Blocker</div><div class="role-field-value">${esc(truncate(rs.top_blocker, 200))}</div></div>` : ''}
+                    ${rs.has_items ? `<div class="role-field"><div class="role-field-label">Has</div><div class="role-field-value">${esc(truncate(rs.has_items, 200))}</div></div>` : ''}
+                    ${rs.needs_items ? `<div class="role-field"><div class="role-field-label">Needs</div><div class="role-field-value">${esc(truncate(rs.needs_items, 200))}</div></div>` : ''}
+                    <div style="margin-top:0.3rem;font:400 0.65rem var(--mc-font);color:var(--mc-text-muted)">by ${esc(rs.updated_by || '?')}</div>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Dependencies
+        if (d.deps.length > 0) {
+            html += `<div class="sub-panel"><div class="sub-panel-title">Dependencies (${d.deps.length})</div><div class="dep-list">`;
+            d.deps.forEach(dep => {
+                html += `<div class="dep-item"><span class="dep-arrow">${dep.from_role} &rarr; ${dep.to_role}</span><span>${esc(truncate(dep.description, 120))}</span></div>`;
+            });
+            html += '</div></div>';
+        }
+
+        // Team Summary
+        if (d.summary && d.summary.summary_text) {
+            html += `<div class="sub-panel"><div class="sub-panel-title">Team Summary (confirmed by ${esc(d.summary.confirmed_by || '?')})</div><div class="summary-text">${esc(d.summary.summary_text)}</div></div>`;
+        }
+
+        // Peer Reviews Received
+        if (d.reviewsReceived.length > 0) {
+            html += `<div class="sub-panel"><div class="sub-panel-title">Peer Reviews Received (${d.reviewsReceived.length})</div>`;
+            d.reviewsReceived.forEach(r => {
+                html += `<div class="review-item">
+                    <div class="review-from">From Team ${TEAM_NAMES[r.from_team] || r.from_team} &middot; ${esc(r.reviewer_email)}</div>
+                    <div class="review-field"><strong>GREEN honest:</strong> ${r.green_honest ? 'Yes' : 'No'}${r.green_comment ? ' — ' + esc(truncate(r.green_comment, 150)) : ''}</div>
+                    ${r.missing_deps ? `<div class="review-field"><strong>Missing deps:</strong> ${esc(truncate(r.missing_deps, 150))}</div>` : ''}
+                    <div class="review-field"><strong>Monday priority:</strong> ${esc(truncate(r.monday_priority, 150))}</div>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        html += '</div>';
+    });
+
+    document.getElementById('content').innerHTML = html;
+}
+
+loadReport().catch(e => {
+    console.error('Report load error:', e);
+    document.getElementById('content').innerHTML = '<div class="loading" style="color:var(--mc-red)">Failed to load report data. Please refresh.</div>';
+});
+</script>
+</body>
+</html>
