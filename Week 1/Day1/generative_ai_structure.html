@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/js/auth-guard.js"></script>
+    <noscript><meta http-equiv="refresh" content="0;url=/login"></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Project Structure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d0d0d;
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 30px 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        h1 .highlight {
+            color: #e4002b;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tree-column {
+            font-size: 14px;
+        }
+
+        .info-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Tree Structure */
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 0;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-radius: 4px;
+            padding-left: 4px;
+        }
+
+        .tree-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tree-item.active {
+            background: rgba(79, 195, 247, 0.15);
+        }
+
+        .tree-line {
+            color: #555;
+            margin-right: 4px;
+            font-family: monospace;
+            user-select: none;
+        }
+
+        .folder-icon {
+            width: 18px;
+            height: 14px;
+            border-radius: 2px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .file-icon {
+            width: 16px;
+            height: 18px;
+            margin-right: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .item-name {
+            color: #e0e0e0;
+        }
+
+        /* Static info panel that shows on right */
+        .static-box {
+            background: transparent;
+        }
+
+        .static-header {
+            padding: 6px 14px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .static-list {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .static-list div {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .static-list div::before {
+            content: "•";
+            color: #555;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .fname {
+            color: #888;
+        }
+
+        .fdesc {
+            color: #bbb;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1><span class="highlight">Generative AI</span> Project Structure</h1>
+    
+    <div class="container">
+        <div class="tree-column" id="tree"></div>
+        <div class="info-column" id="info">
+            <!-- Config -->
+            <div class="static-box" data-section="config">
+                <div class="static-header" style="background: #ef5350;">config/</div>
+                <div class="static-list">
+                    <div><span class="fname">model_config.yaml</span><span class="fdesc"> – LLM providers, models, & parameters.</span></div>
+                    <div><span class="fname">logging_config.yaml</span><span class="fdesc"> – Logging setup and levels.</span></div>
+                </div>
+            </div>
+
+            <!-- Data -->
+            <div class="static-box" data-section="data">
+                <div class="static-header" style="background: #ffca28; color: #000;">data/</div>
+                <div class="static-list">
+                    <div><span class="fname">cache/</span><span class="fdesc"> – Cached responses and intermediates.</span></div>
+                    <div><span class="fname">embeddings/</span><span class="fdesc"> – Generated vector embeddings.</span></div>
+                    <div><span class="fname">vectordb/</span><span class="fdesc"> – Vector database indexes (FAISS, ChromaDB).</span></div>
+                </div>
+            </div>
+
+            <!-- src/ -->
+            <div class="static-box" data-section="src">
+                <div class="static-header" style="background: #66bb6a;">src/</div>
+                <div class="static-list">
+                    <div><span class="fdesc">LLM abstraction and integrations.</span></div>
+                    <div><span class="fname">base_llm.py</span><span class="fdesc"> – Common LLM interface.</span></div>
+                    <div><span class="fname">gpt_client.py</span><span class="fdesc"> – OpenAI GPT client.</span></div>
+                    <div><span class="fname">claude_client.py</span><span class="fdesc"> – Anthropic Claude client.</span></div>
+                    <div><span class="fname">local_llm.py</span><span class="fdesc"> – Local models (Ollama, vLLM).</span></div>
+                    <div><span class="fname">model_factory.py</span><span class="fdesc"> – Model selection and instantiation.</span></div>
+                </div>
+            </div>
+
+            <!-- prompts/ -->
+            <div class="static-box" data-section="prompts">
+                <div class="static-header" style="background: #ab47bc;">prompts/</div>
+                <div class="static-list">
+                    <div><span class="fname">templates.py</span><span class="fdesc"> – Reusable prompt templates.</span></div>
+                    <div><span class="fname">chain.py</span><span class="fdesc"> – Multi-step prompt chaining.</span></div>
+                </div>
+            </div>
+
+            <!-- rag/ -->
+            <div class="static-box" data-section="rag">
+                <div class="static-header" style="background: #26a69a;">rag/</div>
+                <div class="static-list">
+                    <div><span class="fdesc">Retrieval-Augmented Generation components.</span></div>
+                    <div><span class="fname">embedder.py</span><span class="fdesc"> – Embedding generation.</span></div>
+                    <div><span class="fname">generate.py</span><span class="fdesc"> – Document indexer.</span></div>
+                    <div><span class="fname">vector_store.py</span><span class="fdesc"> – Vector DB retrieval.</span></div>
+                    <div><span class="fname">indexer.py</span><span class="fdesc"> – Relevance scoring and metadata.</span></div>
+                </div>
+            </div>
+
+            <!-- processing/ -->
+            <div class="static-box" data-section="processing">
+                <div class="static-header" style="background: #ff7043;">processing/</div>
+                <div class="static-list">
+                    <div><span class="fname">chunking.py</span><span class="fdesc"> – Text splitting.</span></div>
+                    <div><span class="fname">cleaner.py</span><span class="fdesc"> – Text extraction and cleaning.</span></div>
+                    <div><span class="fname">preprocessor.py</span><span class="fdesc"> – Data normalization.</span></div>
+                    <div><span class="fname">postprocessor.py</span><span class="fdesc"> – Output formatting.</span></div>
+                </div>
+            </div>
+
+            <!-- inference/ -->
+            <div class="static-box" data-section="inference">
+                <div class="static-header" style="background: #ec407a;">inference/</div>
+                <div class="static-list">
+                    <div><span class="fname">inference.py</span><span class="fdesc"> – Inference engine and environment setup.</span></div>
+                </div>
+            </div>
+
+            <!-- docs/ -->
+            <div class="static-box" data-section="docs">
+                <div class="static-header" style="background: #78909c;">docs/</div>
+                <div class="static-list">
+                    <div><span class="fname">README.md</span><span class="fdesc"> – Overview and usage.</span></div>
+                    <div><span class="fname">SETUP.md</span><span class="fdesc"> – Installation and setup.</span></div>
+                </div>
+            </div>
+
+            <!-- scripts/ -->
+            <div class="static-box" data-section="scripts">
+                <div class="static-header" style="background: #5c6bc0;">scripts/</div>
+                <div class="static-list">
+                    <div><span class="fname">setup_env.sh</span><span class="fdesc"> – Environment setup.</span></div>
+                    <div><span class="fname">run_tests.sh</span><span class="fdesc"> – Test execution.</span></div>
+                    <div><span class="fname">build_embeddings.py</span><span class="fdesc"> – Embedding generation.</span></div>
+                    <div><span class="fname">cleanup.py</span><span class="fdesc"> – Cleanup tasks.</span></div>
+                </div>
+            </div>
+
+            <!-- Root Files -->
+            <div class="static-box" data-section="root">
+                <div class="static-header" style="background: #c62828;">Root Files</div>
+                <div class="static-list">
+                    <div><span class="fname">.gitignore</span><span class="fdesc"> – Git exclusions.</span></div>
+                    <div><span class="fname">Dockerfile</span><span class="fdesc"> – Container configuration.</span></div>
+                    <div><span class="fname">docker-compose.yml</span><span class="fdesc"> – Multi-service setup.</span></div>
+                    <div><span class="fname">requirements.txt</span><span class="fdesc"> – Python dependencies.</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const treeData = [
+            { name: "generative_ai_project/", type: "folder", color: "#f4a460", level: 0, line: "📁" },
+            { name: "config/", type: "folder", color: "#ef5350", level: 1, line: "├──" },
+            { name: "model_config.yaml", type: "file", level: 2, line: "│   ├──", icon: "📄" },
+            { name: "logging_config.yaml", type: "file", level: 2, line: "│   └──", icon: "📄" },
+            { name: "data/", type: "folder", color: "#ffca28", level: 1, line: "├──" },
+            { name: "cache/", type: "folder", color: "#ffca28", level: 2, line: "│   ├──" },
+            { name: "embeddings/", type: "folder", color: "#ffca28", level: 2, line: "│   ├──" },
+            { name: "vectordb/", type: "folder", color: "#ffca28", level: 2, line: "│   └──" },
+            { name: "src/", type: "folder", color: "#66bb6a", level: 1, line: "├──" },
+            { name: "core/", type: "folder", color: "#42a5f5", level: 2, line: "│   ├──" },
+            { name: "base_llm.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "gpt_client.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "claude_client.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "local_llm.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "model_factory.py", type: "file", level: 3, line: "│   │   └──", icon: "🐍" },
+            { name: "prompts/", type: "folder", color: "#ab47bc", level: 2, line: "│   ├──" },
+            { name: "templates.py", type: "file", level: 3, line: "│   │   └──", icon: "🐍" },
+            { name: "rag/", type: "folder", color: "#26a69a", level: 2, line: "│   ├──" },
+            { name: "embedder.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "generate.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "vector_store.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "indexer.py", type: "file", level: 3, line: "│   │   └──", icon: "🐍" },
+            { name: "processing/", type: "folder", color: "#ff7043", level: 2, line: "│   ├──" },
+            { name: "chunking.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "cleaner.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "preprocessor.py", type: "file", level: 3, line: "│   │   ├──", icon: "🐍" },
+            { name: "postprocessor.py", type: "file", level: 3, line: "│   │   └──", icon: "🐍" },
+            { name: "inference/", type: "folder", color: "#ec407a", level: 2, line: "│   └──" },
+            { name: "inference.py", type: "file", level: 3, line: "│       └──", icon: "🐍" },
+            { name: "docs/", type: "folder", color: "#78909c", level: 1, line: "├──" },
+            { name: "README.md", type: "file", level: 2, line: "│   ├──", icon: "📝" },
+            { name: "SETUP.md", type: "file", level: 2, line: "│   └──", icon: "📝" },
+            { name: "scripts/", type: "folder", color: "#5c6bc0", level: 1, line: "├──" },
+            { name: "setup_env.sh", type: "file", level: 2, line: "│   ├──", icon: "⚙️" },
+            { name: "run_tests.sh", type: "file", level: 2, line: "│   ├──", icon: "⚙️" },
+            { name: "build_embeddings.py", type: "file", level: 2, line: "│   ├──", icon: "🐍" },
+            { name: "cleanup.py", type: "file", level: 2, line: "│   └──", icon: "🐍" },
+            { name: ".gitignore", type: "file", level: 1, line: "├──", icon: "📋" },
+            { name: "Dockerfile", type: "file", level: 1, line: "├──", icon: "🐳" },
+            { name: "docker-compose.yml", type: "file", level: 1, line: "├──", icon: "🐳" },
+            { name: "requirements.txt", type: "file", level: 1, line: "└──", icon: "📋" },
+        ];
+
+        const treeContainer = document.getElementById('tree');
+
+        treeData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'tree-item';
+            
+            let iconHtml = '';
+            if (item.type === 'folder') {
+                iconHtml = `<div class="folder-icon" style="background: ${item.color}"></div>`;
+            } else {
+                iconHtml = `<div class="file-icon">${item.icon || '📄'}</div>`;
+            }
+            
+            div.innerHTML = `
+                <span class="tree-line">${item.line}</span>
+                ${iconHtml}
+                <span class="item-name">${item.name}</span>
+            `;
+            
+            treeContainer.appendChild(div);
+        });
+    </script>
+<script>
+    (function () {
+        var VALID_ROLES = ['FDE', 'AI-SE', 'AI-DS', 'AI-DA', 'AI-PM', 'AI-FE', 'AI-SEC', 'AI-DX'];
+        var role = 'FDE';
+        try {
+            var pageRole = (localStorage.getItem('aa-role') || '').toUpperCase();
+            if (VALID_ROLES.indexOf(pageRole) !== -1) {
+                role = pageRole;
+                localStorage.setItem('mentor-widget-selected-role', role);
+            }
+        } catch (e) {}
+
+        var s = document.createElement('script');
+        s.src = '/js/mentor-widget.js';
+        s.setAttribute('data-role', role);
+        s.setAttribute('data-lesson', 'Day 1 - GenAI Structure');
+        s.setAttribute('data-day', '1');
+        document.body.appendChild(s);
+    })();
+    </script>
+</body>
+</html>
