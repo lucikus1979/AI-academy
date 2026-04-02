@@ -1,0 +1,123 @@
+1) Jednovetové zhrnutie
+
+Kyndryl Agentic AI Framework je podnikové „agentic“ (autonómne-agentné) riešenie / metodika a platforma, ktorej cieľom je premeniť izolované AI proof-of-concepty na škálovateľnú, bezpečnú a riadenú „AI-native“ platformu — teda ekosystém agentov, ktorí nielen odpovedajú na otázky, ale vykonávajú akcie, orchesterujú viac agentov a integrujú sa do podnikového prostredia. 
+
+Seller Presentation Kyndryl Age…
+
+2) Kľúčová vízia a prečo to má význam
+
+Vízia: „Agentic AI Ecosystem“ — jednotná platforma pre tvorbu, orchestráciu a spúšťanie agentov, ktorá kombinuje dôveryhodné znalosti a autonómne schopnosti (nie iba Q&A). Platforma má umožniť rýchle vytváranie agentov aj pre ne-technické persony a zároveň poskytovať enterprise-grade governance. 
+
+Agentic AI Framework
+
+Dôvod: existujúce riešenia sú často silo-rované, statické alebo nie sú použiteľné bez velikej technickej práce — Kyndryl chce znížiť duplicitu, zrýchliť adopciu a dodať auditovateľné, bezpečné riešenia. 
+
+Agentic AI Framework
+
+3) Hlavné funkčné časti / komponenty (prehľad)
+
+Platforma obsahuje (medzi hlavné komponenty patria):
+
+Agent Builder / Agent Designer — low-code / guided nástroj, ktorý konverzačne navrhne agenta a workflow, vygeneruje návrh na stavbu agenta. 
+
+Agentic AI Framework
+
+AI Core / LLM Orchestrator — „mozog“, ktorý koordinuje a optimizuje modely, routing modelov (lacnejšie vs. drahšie), a riadi, kedy agent vykoná akciu. 
+
+Agentic AI Framework
+
+Agent Registry & Catalog / Marketplace — evidence agentov, šablón, pluginov a opätovne použiteľných komponentov. 
+
+Agentic AI Framework
+
+Memory management — krátkodobé aj dlhodobé ukladanie stavu a kontextu medzi agentmi / workflow. 
+
+Agentic AI Framework
+
+Integrácie / Connectors — predpripravené konektory na systémy (ServiceNow, CRM, hyperscalers, interné DB, websearch), MCP nástroje atď. 
+
+Agentic AI Framework
+
+Orchestration / Runtime — orchestrátor, ktorý za behu rozhoduje ktoré úlohy má agent vykonať autonómne a čo treba eskalovať človeku. 
+
+Agentic AI Framework
+
+CI/CD, monitoring, cost governance — prevádzkové komponenty (observability, verzovanie, audit, náklady). 
+
+Agentic AI Framework
+
+4) Architektúra a princípy implementácie
+
+Platforma nad Bridge: KAIF/Bridge ako ekosystém — cieľ je ponúknuť kompletnú infraštruktúru, aby tímy nemuseli riešiť bežné základné prvky (hosting, škálovanie, bezpečnosť). 
+
+Agentic AI Framework
+
+Nebudujeme všetko od nuly: stratégia je zložiť existujúce silné riešenia (LangChain, LangGraph, CrewAI, AutoGen, Semantic Kernel a pod.) do hybridnej podpory podľa potrieb a hodnotenia. V dokumente sú porovnania a hodnotenia týchto frameworkov. 
+
+Agentic AI Framework
+
+Multi-agent a multi-RAG: podpora viacnásobného RAG (retrieval-augmented generation), multi-agent workflows a komunikácie medzi agentmi (s prechodom stavu a kontextu). 
+
+Agentic AI Framework
+
+5) Riadenie, bezpečnosť a dôvera (Governance)
+
+„Security-by-design“, zero-trust architektúra, audity, logging, compliance reporting a guardrails sú súčasťou návrhu (vstavané kontroly, RBAC, auditovateľnosť). Cieľom je, aby každá akcia agenta bola vysledovateľná a v súlade s politikami. 
+
+Agentic AI Framework
+
+Dôraz na data sovereignty a enterprise-grade governance pri prístupe k vnútorným znalostiam a dátam. 
+
+Agentic AI Framework
+
+6) Personas (pre koho je určené)
+
+Agent Developer / Solution Builder (data scientist, eng., AI dev) — buduje a rozširuje agentov.
+
+Configurator (SRE, process owner) — nastavuje a spúšťa workflowy.
+
+Business User — konzumuje výstupy cez UI/chat/dashboards.
+
+Admin — monitoruje zdravie, výkon, náklady a compliance. 
+
+Agentic AI Framework
+
+7) Typické schopnosti / čo agenti dokážu robiť
+
+Nielen odpovedať — agenti vykonávajú akcie (napr. plánovanie meetingov, posielanie e-mailov, update CRM, automatizované root-cause analýzy, remediation).
+
+Samoučiace sa a škálovateľné riešenia: continuous learning, self-improving agents, optimalizácia výkonu vs. nákladov. 
+
+Agentic AI Framework
+
+8) Použitie & benefity (príklady)
+
+Riešenia pre contact-centres (voice insights), root-cause analytics, device/app logs correlation, automatizované odporúčania a remediation, zrýchlené onboardingy a generovanie reportov. Dokument uvádza opatrenia ako zvýšenie produktivity, zníženie chýb a dramatické skrátenie procesov. 
+
+Agentic AI Framework
+
+Biznis prínosy: rýchlejšie nasadenie AI, zníženie duplicity práce, vyššia bezpečnosť a auditovateľnosť, možnosť „AI-native“ transformácie. 
+
+Seller Presentation Kyndryl Age…
+
+9) Ako Kyndryl túto rámcovú architektúru dodáva zákazníkovi
+
+Agentic Ingestion: Kyndryl analyzuje zákazníkov technický a dátový estate (kód, procesy, politiky) a navrhne architektúru.
+
+Agent Builder + Reference architectures + Agent Catalog: použitie referenčných architektúr a katalógu šablón pre rýchle návrhy a nasadenia. 
+
+Seller Presentation Kyndryl Age…
+
+AI consult methodology / Vital Studios / Labs: kombinácia konzultácií, co-creation a akcelerátorov (lab, Vital Studios) na rýchle prototypovanie a škálovanie. 
+
+Seller Presentation Kyndryl Age…
+
+10) Hlavné diferenciátory (čo Kyndryl zdôrazňuje)
+
+Je to framework + služba + metodika, nie iba produkt. Cieľom je end-to-end transformácia (ingest → návrh → build → orchestration → governance). 
+
+Seller Presentation Kyndryl Age…
+
+Enterprise-grade bezpečnosť, governance, multitenancy a integrácia do existujúcich podnikov-systémov (Bridge ako základ). 
+
+Agentic AI Framework
