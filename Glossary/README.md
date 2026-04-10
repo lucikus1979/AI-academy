@@ -1,2 +1,7 @@
-This is a test file to check if it is readable by chatgpt and other assistnts.
-porekadlo : Kdo jinemu jamu kopa, sam do ni pada.
+# Test File
+
+This is a test file to check if it is readable by ChatGPT and other assistants.
+
+## Porekadlo (Proverb)
+
+> Kdo jinému jámu kopá, sám do ní padá.
